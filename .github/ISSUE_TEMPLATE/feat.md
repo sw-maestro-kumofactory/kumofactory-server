@@ -1,7 +1,7 @@
 ---
 name: feat
-about: 기능 개발, 추가 관련 (Feature enhancement with modifying source code.)
-title: 'feat: '
+about: "기능 개발, 추가 관련 (Feature enhancement with modifying source code.)"
+title: "feat: "
 labels: ''
 assignees: ''
 
