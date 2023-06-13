@@ -20,7 +20,7 @@ public class OauthServiceImpl implements OauthService{
     }
     // TODO : 에러처리 -> null 값
     assert accessTokenFromGithub != null;
-    return accessTokenFromGithub.getAccess_token().toString();
+    return accessTokenFromGithub.getAccess_token();
   }
 
 }

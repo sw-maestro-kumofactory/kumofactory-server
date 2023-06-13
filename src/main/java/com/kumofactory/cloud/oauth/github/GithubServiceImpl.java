@@ -47,11 +47,13 @@ public class GithubServiceImpl implements GithubService {
                                             .build();
     ResponseEntity<Map> response = restTemplate
         .postForEntity(uri.toUriString(), httpEntity, Map.class);
-    if (response.getStatusCode() == HttpStatus.ACCEPTED){
-      return new ObjectMapper().readValue(Objects.requireNonNull(response.getBody()).toString(),
+    if (response.getStatusCode() == HttpStatus.OK){
+      logger.info("response : {}", response.getBody());
+      return new ObjectMapper().readValue(new ObjectMapper().writeValueAsString(response.getBody()),
                                           TokenFromGithub.class);
     }
-
+    logger.error("response : {}", response.getBody());
+    logger.error("response : {}", response.getStatusCode());
     return null;
   }
 }
