@@ -1,9 +1,8 @@
 name: KUMO-SERVER-Build-Test-on-Push CI/CD
 
 on:
-  push:
-    branches:
-      - '*'
+  pull_request:
+    branches: ['main', 'dev']
 
 jobs:
   build:
