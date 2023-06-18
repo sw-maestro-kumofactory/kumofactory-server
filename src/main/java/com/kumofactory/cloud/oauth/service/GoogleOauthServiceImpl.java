@@ -15,7 +15,8 @@ public class GoogleOauthServiceImpl implements OauthService {
 
     @Override
     public String getAccessToken(String code) throws JsonProcessingException{
-        TokenFromGoogle accessTokenFromGoogle = googleService.getAccessTokenFormGoogle(code);
+        TokenFromGoogle accessTokenFromGoogle = googleService.requestAccessToken(code);
+
         if(accessTokenFromGoogle != null) {
             // TODO : 유저 ID 가져오고 Jwt 토큰 만들어서 access token 은 body, refresh token 은 cookie 에 담아서 전달하기
         }

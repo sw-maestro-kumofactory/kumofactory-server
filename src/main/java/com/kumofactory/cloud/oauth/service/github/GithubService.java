@@ -5,5 +5,5 @@ import com.kumofactory.cloud.oauth.dto.TokenFromGithub;
 
 public interface
 GithubService {
-  TokenFromGithub getAccessTokenFromGithub(String code) throws JsonProcessingException;
+  TokenFromGithub requestAccessToken(String code) throws JsonProcessingException;
 }

@@ -31,7 +31,7 @@ public class GithubServiceImpl implements GithubService {
   private final RestTemplate restTemplate = new RestTemplate();
 
   @Override
-  public TokenFromGithub getAccessTokenFromGithub(String code) throws JsonProcessingException {
+  public TokenFromGithub requestAccessToken(String code) throws JsonProcessingException {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Accept", "application/json");
     HttpEntity<String> httpEntity = new HttpEntity<>(headers);

@@ -5,5 +5,5 @@ import com.kumofactory.cloud.oauth.dto.TokenFromGoogle;
 
 public interface
 GoogleService {
-    TokenFromGoogle getAccessTokenFormGoogle(String code) throws JsonProcessingException;
+    TokenFromGoogle requestAccessToken(String code) throws JsonProcessingException;
 }
