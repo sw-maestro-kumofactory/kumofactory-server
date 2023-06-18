@@ -32,14 +32,14 @@ public class GoogleServiceImpl implements GoogleService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
-    public TokenFromGoogle getAccessTokenFormGoogle(String code) throws JsonProcessingException {
+    public TokenFromGoogle requestAccessToken(String code) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
 
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("client_id", oauthConfig.getGoogleClientId());
-        queryParams.add("Client_secret", oauthConfig.getGoogleClientSecretId());
+        queryParams.add("client_secret", oauthConfig.getGoogleClientSecretId());
         queryParams.add("code", code);
         queryParams.add("redirect_uri", oauthConfig.getGoogleOauthRedirectUrl());
         queryParams.add("grant_type", "authorization_code");
