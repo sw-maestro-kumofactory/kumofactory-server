@@ -1,11 +1,11 @@
-package com.kumofactory.cloud.oauth.github;
+package com.kumofactory.cloud.oauth.service.github;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kumofactory.cloud.config.OauthConfig;
 import com.kumofactory.cloud.oauth.dto.TokenFromGithub;
 import java.util.Map;
-import java.util.Objects;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;

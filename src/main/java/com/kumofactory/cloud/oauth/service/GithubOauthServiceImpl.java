@@ -1,8 +1,8 @@
-package com.kumofactory.cloud.oauth;
+package com.kumofactory.cloud.oauth.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kumofactory.cloud.oauth.dto.TokenFromGithub;
-import com.kumofactory.cloud.oauth.github.GithubService;
+import com.kumofactory.cloud.oauth.service.github.GithubService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class OauthServiceImpl implements OauthService{
+public class GithubOauthServiceImpl implements OauthService {
   private final GithubService githubService;
   @Override
   public String getAccessToken(String code) throws JsonProcessingException {

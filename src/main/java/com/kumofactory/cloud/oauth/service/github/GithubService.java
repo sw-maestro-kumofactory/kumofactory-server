@@ -1,4 +1,4 @@
-package com.kumofactory.cloud.oauth.github;
+package com.kumofactory.cloud.oauth.service.github;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kumofactory.cloud.oauth.dto.TokenFromGithub;
