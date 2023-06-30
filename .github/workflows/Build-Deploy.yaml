@@ -28,9 +28,9 @@ jobs:
 
 
       - name: make application.yml
-        if: |
-          contains(github.ref, 'main') ||
-          contains(github.ref, 'dev')
+        # if: |
+        #   contains(github.ref, 'main') ||
+        #   contains(github.ref, 'dev')
         run: |
           mkdir ./src/main/resources
           cd ./src/main/resources
@@ -39,7 +39,7 @@ jobs:
         shell: bash
 
       - name: make application-dev.yml
-        if: contains(github.ref, 'dev')
+        # if: contains(github.ref, 'dev')
         run: |
           cd ./src/main/resources
           touch ./application-dev.yml
@@ -68,7 +68,7 @@ jobs:
 
 
       - name: Build, tag, and push image to Amazon ECR
-        if: contains(github.ref, 'dev')
+        # if: contains(github.ref, 'dev')
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
