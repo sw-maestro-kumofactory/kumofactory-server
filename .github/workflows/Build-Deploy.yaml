@@ -2,7 +2,8 @@ name: KUMO-SERVER Build-and-Deploy CI/CD
 
 on:
   push:
-    branches: [ 'main', 'dev' ]
+    # branches: [ 'main', 'dev' ]
+    branches: '**'
   
   workflow_dispatch:
 
