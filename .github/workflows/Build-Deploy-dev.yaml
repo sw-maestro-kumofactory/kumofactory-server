@@ -2,8 +2,7 @@ name: DEV Build-and-Deploy CI/CD
 
 on:
   push:
-    # branches: [ 'dev' ]
-    branches: '**'
+    branches: [ 'dev' ]
   
   workflow_dispatch:
 
@@ -71,8 +70,6 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:dev-$DATE
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:dev-latest
 
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:dev-$DATE"
-
       # - name: Build, tag, and push server-main image to Amazon ECR
       #   if: contains(github.ref, 'main')
       #   id: build-image
@@ -85,8 +82,6 @@ jobs:
 
       #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:main-$DATE
       #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:main-latest
-
-      #     echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:main-$DATE"
 
   deploy:
     needs: build
@@ -116,4 +111,4 @@ jobs:
       #     script: |
       #       docker pull $ECR_REGISTRY/$ECR_REPOSITORY:main-latest
       #       docker stop $ECR_REPOSITORY
-      #       docker run --rm -p 8080:8080 --name kumo-server $ECR_REGISTRY/$ECR_REPOSITORY:main-latest
+      #       docker run --rm -d -p 8080:8080 --name kumo-server $ECR_REGISTRY/$ECR_REPOSITORY:main-latest
