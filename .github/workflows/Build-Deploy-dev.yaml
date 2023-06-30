@@ -1,4 +1,4 @@
-name: [KUMO-SERVER][DEV] Build-and-Deploy CI/CD
+name: DEV Build-and-Deploy CI/CD
 
 on:
   push:
