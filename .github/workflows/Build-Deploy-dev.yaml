@@ -103,7 +103,7 @@ jobs:
           script: |
             docker pull ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:dev-latest
             docker stop ${{ env.ECR_REPOSITORY }}
-            docker run --rm -p 8080:8080 --name kumo-server ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:dev-latest
+            docker run --rm -d -p 8080:8080 --name kumo-server ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:dev-latest
 
       # - name: Deploy on Product Server
       #   # if: contains(github.ref, 'main')
