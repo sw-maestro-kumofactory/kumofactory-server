@@ -23,6 +23,11 @@ jobs:
         with:
           java-version: 17
           distribution: 'oracle'
+      
+      - name: Setup Gradle 7.6
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.6
 
 
       - name: make application.yml
@@ -40,14 +45,8 @@ jobs:
           echo "${{ secrets.YML_DEV }}" > ./application-dev.yml
         shell: bash
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
       - name: Build Project
-        run: |
-          cat ./src/main/resources/application.yml
-          ./gradlew --version
-          ./gradlew build
+        run: gradle build
 
       # Push container image on ECR
       - name: Configure AWS credentials

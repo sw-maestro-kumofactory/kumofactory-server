@@ -2,7 +2,6 @@ name: Build Test CI/CD
 
 on:
   push:
-    branches: '**'
     branches-ignore: [ 'main', 'dev']
 
 jobs:
