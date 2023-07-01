@@ -16,6 +16,9 @@ public class OauthConfig {
   @Value("${oauth.github.get_access_token_url}")
   private String getAccessTokenUrlFromGithub;
 
+  @Value("${oauth.github.user_info_endpoint}")
+  private String getUserInfoUrlFromGitHub;
+
   @Value("${oauth.google.client_id}")
   private String googleClientId;
   @Value("${oauth.google.client_secret_id}")
@@ -25,4 +28,6 @@ public class OauthConfig {
   @Value("${oauth.google.get_access_token_url}")
   private String getAccessTokenUrlFromGoogle;
 
+  @Value("${oauth.google.user_info_endpoint}")
+  private String getUserInfoUrlFromGoogle;
 }
