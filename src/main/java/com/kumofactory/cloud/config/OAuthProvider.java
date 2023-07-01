@@ -1,6 +1,6 @@
 package com.kumofactory.cloud.config;
 
-public enum SocialLoginType {
+public enum OAuthProvider {
     GOOGLE,
     GITHUB
 }
