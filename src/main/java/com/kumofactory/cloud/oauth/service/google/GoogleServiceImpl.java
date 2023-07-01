@@ -1,9 +1,12 @@
 package com.kumofactory.cloud.oauth.service.google;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kumofactory.cloud.config.OAuthProvider;
 import com.kumofactory.cloud.config.OauthConfig;
-import com.kumofactory.cloud.oauth.dto.TokenFromGoogle;
+import com.kumofactory.cloud.oauth.dto.OAuthDto.GoogleToken;
+import com.kumofactory.cloud.oauth.dto.UserInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -32,7 +35,7 @@ public class GoogleServiceImpl implements GoogleService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
-    public TokenFromGoogle requestAccessToken(String code) throws JsonProcessingException {
+    public GoogleToken requestAccessToken(String code) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
@@ -54,7 +57,33 @@ public class GoogleServiceImpl implements GoogleService {
         if (response.getStatusCode() == HttpStatus.OK) {
             logger.info("response : {}", response.getBody());
             return new ObjectMapper().readValue(new ObjectMapper().writeValueAsString(response.getBody()),
-                                                TokenFromGoogle.class);
+                                                GoogleToken.class);
+        }
+        logger.error("response : {}", response.getBody());
+        logger.error("response : {}", response.getStatusCode());
+        return null;
+    }
+
+    @Override
+    public UserInfoDto requestUserInfo(String accessToken) throws JsonProcessingException {
+        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+        queryParams.add("access_token", accessToken);
+
+        UriComponents uri = UriComponentsBuilder.fromHttpUrl(
+                        oauthConfig.getGetUserInfoUrlFromGoogle())
+                .queryParams(queryParams)
+                .build();
+
+        ResponseEntity<JsonNode> response = restTemplate.getForEntity(uri.toUriString(), JsonNode.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            logger.info("response : {}", response.getBody());
+            JsonNode responseBody = response.getBody();
+            if(responseBody != null) {
+                String id = responseBody.get("id").asText();
+                String provider = String.valueOf(OAuthProvider.GOOGLE);
+                return new UserInfoDto(id, provider);
+            }
         }
         logger.error("response : {}", response.getBody());
         logger.error("response : {}", response.getStatusCode());
