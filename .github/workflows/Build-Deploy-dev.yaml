@@ -113,7 +113,7 @@ jobs:
           script: |
             docker pull ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:dev-latest
             docker stop ${{ env.ECR_REPOSITORY }}-dev
-            docker run --rm -d -p 8080:8081 --name kumo-server ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:dev-latest
+            docker run --rm -d -p 8080:8081 --name kumo-server-dev ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:dev-latest
 
       #########################################################
       # MAIN # MAIN # MAIN # MAIN # MAIN # MAIN # MAIN # MAIN #
@@ -129,4 +129,4 @@ jobs:
           script: |
             docker pull ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:main-latest
             docker stop ${{ env.ECR_REPOSITORY }}-main
-            docker run --rm -d -p 8080:8080 --name kumo-server ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:main-latest
+            docker run --rm -d -p 8080:8080 --name kumo-server-main ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:main-latest
