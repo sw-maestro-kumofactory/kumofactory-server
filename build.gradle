@@ -27,6 +27,7 @@ dependencies {
     implementation platform('software.amazon.awssdk:bom:2.20.56')
     implementation('software.amazon.awssdk:s3')
     implementation('software.amazon.awssdk:sts')
+    implementation('software.amazon.awssdk:ssm')
     implementation('software.amazon.awssdk:iam')
     implementation('software.amazon.awssdk:ec2')
     implementation('software.amazon.awssdk:auth')
