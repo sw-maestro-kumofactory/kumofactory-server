@@ -4,5 +4,6 @@ import com.kumofactory.cloud.infra.dto.CreateVpcDto;
 
 public interface DeployVpcService {
 
-  void createVpc(CreateVpcDto createVpcDto);
+  // create vpc and return vpc id
+  String createVpc(CreateVpcDto createVpcDto);
 }

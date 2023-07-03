@@ -28,7 +28,7 @@ public class DeployVpcServiceImpl implements DeployVpcService {
   private final AwsCredentialService awsCredentialService;
 
   @Override
-  public void createVpc(CreateVpcDto createVpcDto) {
+  public String createVpc(CreateVpcDto createVpcDto) {
     Ec2Client ec2Client = getEc2Client(createVpcDto.getRegion(),
                                        createVpcDto.getAccessKey(),
                                        createVpcDto.getSecretKey());
@@ -47,10 +47,11 @@ public class DeployVpcServiceImpl implements DeployVpcService {
     logger.info("CIDR Block: " + vpc2.cidrBlock());
     logger.info("State: " + vpc2.state());
     logger.info("Tags: " + vpc2.tags());
+    return vpc2.vpcId();
   }
 
   private Ec2Client getEc2Client(String region, String accessKey, String secretKey) {
-    if (accessKey == null || secretKey == null) {
+    if (accessKey == null || secretKey == null || accessKey.equals("") || secretKey.equals("")) {
       accessKey = "";
       secretKey = "";
     }
