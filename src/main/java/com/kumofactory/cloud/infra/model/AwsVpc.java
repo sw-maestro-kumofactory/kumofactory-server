@@ -13,17 +13,19 @@ import java.sql.Date;
 @Entity
 @Data
 public class AwsVpc {
-    @Id
-    @Column(name = "aws_vpc", nullable = false)
-    private Long id;
 
-    private String name;
-    private String cidr;
-    private String memberId;
+  @Id
+  @Column(name = "aws_vpc", nullable = false)
+  private Long id;
 
-    @CreationTimestamp
-    private Date createdAt;
+  private String name;
+  private String cidr;
+  private String memberId;
 
-    @UpdateTimestamp
-    private Date updatedAt;
+
+  @CreationTimestamp
+  private Date createdAt;
+
+  @UpdateTimestamp
+  private Date updatedAt;
 }

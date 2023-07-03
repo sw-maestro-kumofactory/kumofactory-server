@@ -1,7 +1,7 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '2.7.12'
-	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'java'
+    id 'org.springframework.boot' version '2.7.12'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
 
 group = 'com.kumofactory'
@@ -9,29 +9,38 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'mysql:mysql-connector-java:8.0.28'
-	implementation platform('software.amazon.awssdk:bom:2.20.56')
-	// https://mvnrepository.com/artifact/software.amazon.awssdk/core
-	implementation 'software.amazon.awssdk:service'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'mysql:mysql-connector-java:8.0.28'
 
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    //******* AWS SDK ********//
+    implementation platform('software.amazon.awssdk:bom:2.20.56')
+    implementation('software.amazon.awssdk:s3')
+    implementation('software.amazon.awssdk:sts')
+    implementation('software.amazon.awssdk:iam')
+    implementation('software.amazon.awssdk:ec2')
+    implementation('software.amazon.awssdk:auth')
+    implementation "software.amazon.awssdk:regions"
+    implementation 'software.amazon.awssdk:cloudformation:2.20.97'
+    implementation 'software.amazon.awssdk:sdk-core:2.20.97'
+
+
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
