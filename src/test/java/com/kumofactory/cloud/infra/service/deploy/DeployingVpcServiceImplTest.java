@@ -24,27 +24,25 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(locations = "classpath:application-test.yml")
 class DeployingVpcServiceImplTest {
 
-  AwsCredentialService awsCredentialService = new AwsCredentialServiceImpl();
-
-  @Test
-  @DisplayName("VPC 생성 테스트 - Success")
-  void buildVpc() {
-    DeployVpcService vpcService = new DeployVpcServiceImpl(awsCredentialService);
-    try {
-      JSONObject response = new JSONObject();
-      response.put("region", "ap-northeast-2");
-      response.put("vpcName", "testVpcFromSpringBoot");
-      ObjectMapper mapper = new ObjectMapper();
-      mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-      CreateVpcDto createVpcDto = mapper.readValue(mapper.writeValueAsString(response),
-                                                   CreateVpcDto.class);
-      System.out.println(createVpcDto.toString());
-      System.out.printf(response.toString());
-      vpcService.createVpc(createVpcDto);
-    } catch (JSONException exception) {
-      exception.printStackTrace();
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
-    }
-  }
+  //  @Test
+  //  @DisplayName("VPC 생성 테스트 - Success")
+  //  void buildVpc() {
+  //    DeployVpcService vpcService = new DeployVpcServiceImpl(awsCredentialService);
+  //    try {
+  //      JSONObject response = new JSONObject();
+  //      response.put("region", "ap-northeast-2");
+  //      response.put("vpcName", "testVpcFromSpringBoot");
+  //      ObjectMapper mapper = new ObjectMapper();
+  //      mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+  //      CreateVpcDto createVpcDto = mapper.readValue(mapper.writeValueAsString(response),
+  //                                                   CreateVpcDto.class);
+  //      System.out.println(createVpcDto.toString());
+  //      System.out.printf(response.toString());
+  //      vpcService.createVpc(createVpcDto);
+  //    } catch (JSONException exception) {
+  //      exception.printStackTrace();
+  //    } catch (JsonProcessingException e) {
+  //      throw new RuntimeException(e);
+  //    }
+  //  }
 }

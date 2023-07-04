@@ -51,11 +51,8 @@ public class DeployVpcServiceImpl implements DeployVpcService {
   }
 
   private Ec2Client getEc2Client(String region, String accessKey, String secretKey) {
-    if (accessKey == null || secretKey == null || accessKey.equals("") || secretKey.equals("")) {
-      accessKey = "";
-      secretKey = "";
-    }
     if (!StringUtils.hasText(accessKey)) {
+      logger.info("accessKey is null");
       return Ec2Client.builder()
                       .credentialsProvider(awsCredentialService.getRootCredential())
                       .region(Region.of(region))
