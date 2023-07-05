@@ -14,6 +14,7 @@ public class CreateTagsRequestVo {
   public CreateTagsRequestVo(String resourceId, String tagValue) {
     this.resourceId = resourceId;
     this.tagName = "Name";
+    this.tagValue = tagValue;
   }
 
   public CreateTagsRequestVo(String resourceId, String tagName, String tagValue) {
