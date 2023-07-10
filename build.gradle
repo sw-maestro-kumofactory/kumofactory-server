@@ -34,6 +34,7 @@ dependencies {
     implementation "software.amazon.awssdk:regions"
     implementation 'software.amazon.awssdk:cloudformation:2.20.97'
     implementation 'software.amazon.awssdk:sdk-core:2.20.97'
+    implementation 'software.amazon.awscdk:aws-cdk-lib:2.87.0'
 
 
     compileOnly 'org.projectlombok:lombok'
