@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AwsBluePrintRepository extends JpaRepository<AwsBluePrint, Long> {
-
+		AwsBluePrint findAwsBluePrintById(long id);
 }
