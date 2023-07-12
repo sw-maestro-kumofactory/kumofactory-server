@@ -1,6 +1,5 @@
-package com.kumofactory.cloud.blueprint.domain;
+package com.kumofactory.cloud.blueprint.domain.aws;
 
-import com.kumofactory.cloud.blueprint.domain.aws.AwsComponent;
 import com.kumofactory.cloud.member.domain.Member;
 import java.util.Date;
 import java.util.List;
@@ -12,11 +11,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
-public class BluePrint {
+@Getter
+@Setter
+@NoArgsConstructor
+public class AwsBluePrint {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,4 +39,6 @@ public class BluePrint {
 
     @OneToMany(mappedBy = "bluePrint", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<AwsComponent> cspComponents;
+
+
 }

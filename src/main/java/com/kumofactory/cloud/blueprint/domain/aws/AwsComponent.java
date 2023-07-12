@@ -1,8 +1,8 @@
 package com.kumofactory.cloud.blueprint.domain.aws;
 
-import com.kumofactory.cloud.blueprint.domain.BluePrint;
 import com.kumofactory.cloud.blueprint.domain.ComponentPoint;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsComponentDto;
+
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -47,18 +48,20 @@ public class AwsComponent {
     private Integer position_y;
 
     @ManyToOne
-    private BluePrint bluePrint;
+    private AwsBluePrint bluePrint;
 
-    @OneToMany(mappedBy = "cspComponent", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "cspComponent", cascade = CascadeType.ALL)
     private List<ComponentPoint> componentPoint;
 
     // ============== 생성함수 ================= //
-    public static AwsComponent createAwsComponent(AwsComponentDto awsComponentDto) {
+    public static AwsComponent createAwsComponent(AwsComponentDto awsComponentDto,
+                                                  AwsBluePrint awsBluePrint) {
         AwsComponent awsComponent = new AwsComponent();
         awsComponent.setUi_id(awsComponentDto.getId());
         awsComponent.setPosition_x(awsComponentDto.getX());
         awsComponent.setPosition_y(awsComponentDto.getY());
         awsComponent.setType(awsComponentDto.getType());
+        awsComponent.setBluePrint(awsBluePrint);
         return awsComponent;
     }
 }

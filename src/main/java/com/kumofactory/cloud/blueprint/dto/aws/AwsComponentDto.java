@@ -22,6 +22,5 @@ public class AwsComponentDto {
     @NotNull
     private AwsComponentType type;
 
-    @Nullable
     private List<ComponentPointDto> points;
 }
