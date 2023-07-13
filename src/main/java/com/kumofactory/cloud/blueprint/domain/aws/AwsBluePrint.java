@@ -1,6 +1,8 @@
 package com.kumofactory.cloud.blueprint.domain.aws;
 
+import com.kumofactory.cloud.blueprint.domain.ComponentLine;
 import com.kumofactory.cloud.member.domain.Member;
+
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -11,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -40,5 +43,7 @@ public class AwsBluePrint {
     @OneToMany(mappedBy = "bluePrint", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<AwsComponent> cspComponents;
 
+    @OneToMany(mappedBy = "bluePrint", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<ComponentLine> lines;
 
 }

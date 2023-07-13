@@ -1,26 +1,21 @@
 package com.kumofactory.cloud.blueprint.service;
 
-import com.kumofactory.cloud.blueprint.domain.ComponentPoint;
-import com.kumofactory.cloud.blueprint.domain.PointLink;
+import com.kumofactory.cloud.blueprint.domain.ComponentLine;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsBluePrint;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsComponent;
-import com.kumofactory.cloud.blueprint.dto.ComponentPointDto;
-import com.kumofactory.cloud.blueprint.dto.PointLinkDto;
+import com.kumofactory.cloud.blueprint.dto.ComponentLineDto;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
 
 import com.kumofactory.cloud.blueprint.dto.aws.AwsComponentDto;
-import com.kumofactory.cloud.blueprint.repository.ComponentPointRepository;
-import com.kumofactory.cloud.blueprint.repository.PointLinkRepository;
+import com.kumofactory.cloud.blueprint.repository.ComponentDotRepository;
+import com.kumofactory.cloud.blueprint.repository.ComponentLineRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsBluePrintRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsComponentRepository;
 import com.kumofactory.cloud.member.MemberRepository;
-import com.kumofactory.cloud.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
@@ -33,72 +28,63 @@ import java.util.List;
 @Repository
 public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 
-		private final MemberRepository memberRepository;
-		private final AwsBluePrintRepository awsBluePrintRepository;
-		private final AwsComponentRepository awsComponentRepository;
-		private final ComponentPointRepository componentPointRepository;
-		private final PointLinkRepository pointLinkRepository;
-		private final Logger logger = LoggerFactory.getLogger(AwsBlueprintServiceImpl.class);
+    private final MemberRepository memberRepository;
+    private final AwsBluePrintRepository awsBluePrintRepository;
+    private final AwsComponentRepository awsComponentRepository;
+    private final ComponentLineRepository componentLineRepository;
+    private final ComponentDotRepository componentDotRepository;
+    private final Logger logger = LoggerFactory.getLogger(AwsBlueprintServiceImpl.class);
 
 
-		@Override
-		public AwsBluePrintDto getAwsBlueprint() {
-				AwsBluePrint awsBluePrintById = awsBluePrintRepository.findAwsBluePrintById(1L);
-				List<AwsComponent> awsComponents = awsComponentRepository.findAllByBluePrint(awsBluePrintById);
-				List<PointLink> pointLinks = pointLinkRepository.findAllByBluePrint(awsBluePrintById);
-				logger.info("awsBluePrintById: {}", awsBluePrintById);
-				if (awsBluePrintById == null) {
-						throw new RuntimeException("awsBluePrintById is null");
-				}
-				AwsBluePrintDto awsBluePrintDto = new AwsBluePrintDto();
-				awsBluePrintDto.setName(awsBluePrintById.getName());
-				awsBluePrintDto.setComponents(AwsBluePrintDto.awsComponentDtosMapper(awsComponents));
-				awsBluePrintDto.setLinks(AwsBluePrintDto.pointLinkDtosMapper(pointLinks));
+    @Override
+    public AwsBluePrintDto getAwsBlueprint() {
+        AwsBluePrint awsBluePrintById = awsBluePrintRepository.findAwsBluePrintById(1L);
+        logger.info("awsBluePrintById: {}", awsBluePrintById);
+        if (awsBluePrintById == null) {
+            throw new RuntimeException("awsBluePrintById is null");
+        }
 
-				return awsBluePrintDto;
-		}
+        List<AwsComponent> awsComponents = awsComponentRepository.findAllByBluePrint(awsBluePrintById);
+        List<ComponentLine> componentLines = componentLineRepository.findAllByBluePrint(awsBluePrintById);
+        AwsBluePrintDto awsBluePrintDto = new AwsBluePrintDto();
+        awsBluePrintDto.setName(awsBluePrintById.getName());
+        awsBluePrintDto.setComponents(AwsBluePrintDto.awsComponentDtosMapper(awsComponents));
+        awsBluePrintDto.setLinks(AwsBluePrintDto.componentLinkDtoListMapper(componentLines));
+        return awsBluePrintDto;
+    }
 
-		@Override
-		public void store(AwsBluePrintDto awsBluePrintDto) {
+    @Override
+    public List<AwsBluePrintDto> getMyAwsBlueprints() {
+        return null;
+    }
+
+    @Override
+    public void store(AwsBluePrintDto awsBluePrintDto) {
 //        Member member = memberRepository.findMemberById(1L);
 
-				// BluePrint 저장
-				AwsBluePrint awsBluePrint = new AwsBluePrint();
-				awsBluePrint.setName(awsBluePrintDto.getName());
+        // BluePrint 저장
+        AwsBluePrint awsBluePrint = new AwsBluePrint();
+        awsBluePrint.setName(awsBluePrintDto.getName());
 //        awsBluePrint.setMember(member);
-				AwsBluePrint savedBlueprint = awsBluePrintRepository.save(awsBluePrint);
-				logger.info("savedBlueprint: {}", savedBlueprint);
+        AwsBluePrint savedBlueprint = awsBluePrintRepository.save(awsBluePrint);
+        logger.info("savedBlueprint: {}", savedBlueprint);
 
-				List<AwsComponent> components = new ArrayList<>();
-				List<PointLinkDto> links = awsBluePrintDto.getLinks();
+        List<AwsComponent> components = new ArrayList<>();
+        List<ComponentLineDto> links = awsBluePrintDto.getLinks();
 
-				for (AwsComponentDto component : awsBluePrintDto.getComponents()) {
-						AwsComponent awsComponent = AwsComponent.createAwsComponent(component, savedBlueprint);
+        // Components 저장
+        for (AwsComponentDto component : awsBluePrintDto.getComponents()) {
+            AwsComponent awsComponent = AwsComponent.createAwsComponent(component, savedBlueprint);
+            components.add(awsComponent);
+        }
+        awsComponentRepository.saveAll(components);
 
-						List<ComponentPoint> componentPoints = new ArrayList<>();
-						List<ComponentPointDto> points = component.getPoints();
-						if (points.size() != 0) {
-								for (ComponentPointDto point : points) {
-										ComponentPoint componentPoint = ComponentPoint.createComponentPoint(point,
-																																												awsComponent);
-										componentPoints.add(componentPoint);
-								}
-						}
-						awsComponent.setComponentPoint(componentPoints);
-						components.add(awsComponent);
-				}
-				awsComponentRepository.saveAll(components);
-
-				// Component 저장
-				if (links.size() != 0) {
-						// PointLink 저장
-						List<PointLink> toSaveLink = new ArrayList<>();
-						for (PointLinkDto link : links) {
-								PointLink pointLink = PointLink.createPointLink(link, savedBlueprint);
-								toSaveLink.add(pointLink);
-						}
-
-						pointLinkRepository.saveAll(toSaveLink);
-				}
-		}
+        // Lines 저장
+        List<ComponentLine> componentLines = new ArrayList<>();
+        for (ComponentLineDto link : links) {
+            ComponentLine componentLink = ComponentLine.createComponentLink(link, savedBlueprint);
+            componentLines.add(componentLink);
+        }
+        componentLineRepository.saveAll(componentLines);
+    }
 }
