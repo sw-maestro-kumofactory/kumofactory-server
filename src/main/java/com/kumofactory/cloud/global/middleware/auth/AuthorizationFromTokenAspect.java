@@ -37,7 +37,7 @@ public class AuthorizationFromTokenAspect {
 				}
 				// 추출된 사용자 정보를 매개변수로 전달
 				Object[] args = joinPoint.getArgs();
-				args[0] = userId;
+				args[args.length - 1] = userId;
 
 				return joinPoint.proceed(args);
 		}

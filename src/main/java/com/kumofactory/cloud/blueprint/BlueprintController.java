@@ -2,6 +2,7 @@ package com.kumofactory.cloud.blueprint;
 
 import com.kumofactory.cloud.blueprint.domain.aws.AwsBluePrint;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
+import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintListDto;
 import com.kumofactory.cloud.blueprint.service.AwsBlueprintService;
 import com.kumofactory.cloud.global.middleware.auth.AuthorizationFromToken;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +20,10 @@ import java.util.List;
 public class BlueprintController {
 		private final Logger logger = LoggerFactory.getLogger(BlueprintController.class);
 		private final AwsBlueprintService awsBlueprintService;
-		
+
 		@GetMapping("/aws/{id}")
 		@AuthorizationFromToken
-		public AwsBluePrintDto getAwsBlueprint(@PathVariable("id") Long id) {
+		public AwsBluePrintDto getAwsBlueprint(@PathVariable("id") Long id, String userId) {
 				try {
 						logger.info("aws blue print id: {}", id);
 						AwsBluePrintDto awsBlueprint = awsBlueprintService.getAwsBlueprint(id);
@@ -34,15 +35,16 @@ public class BlueprintController {
 
 		@GetMapping("/aws/list")
 		@AuthorizationFromToken
-		public List<AwsBluePrintDto> getAwsBlueprintList(String userId) {
+		public List<AwsBluePrintListDto> getAwsBlueprintList(String userId) {
 				logger.info("userId: {}", userId);
-				List<AwsBluePrintDto> awsBlueprintList = awsBlueprintService.getMyAwsBlueprints(userId);
-				return awsBlueprintList;
+				return awsBlueprintService.getMyAwsBlueprints(userId);
 		}
 
 		@PostMapping("/aws")
-		public String createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto) {
-				awsBlueprintService.store(awsBluePrintDto);
+		@AuthorizationFromToken
+		public String createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto, String userId) {
+				logger.info(userId);
+				awsBlueprintService.store(awsBluePrintDto, userId);
 				return "hello-world";
 		}
 

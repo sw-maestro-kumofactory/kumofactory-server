@@ -13,7 +13,6 @@ import lombok.Data;
 @Data
 public class AwsBluePrintDto {
 
-		private Long id;
 		private String name;
 		private List<AwsComponentDto> components;
 		private List<ComponentLineDto> links;

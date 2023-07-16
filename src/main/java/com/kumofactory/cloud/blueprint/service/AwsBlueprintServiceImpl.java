@@ -6,6 +6,7 @@ import com.kumofactory.cloud.blueprint.domain.aws.AwsComponent;
 import com.kumofactory.cloud.blueprint.dto.ComponentLineDto;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
 
+import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintListDto;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsComponentDto;
 import com.kumofactory.cloud.blueprint.repository.ComponentDotRepository;
 import com.kumofactory.cloud.blueprint.repository.ComponentLineRepository;
@@ -39,7 +40,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 
 		@Override
 		public AwsBluePrintDto getAwsBlueprint(Long bluePrintId) {
-				AwsBluePrint awsBluePrintById = awsBluePrintRepository.findAwsBluePrintByMemberId(bluePrintId);
+				AwsBluePrint awsBluePrintById = awsBluePrintRepository.findAwsBluePrintById(bluePrintId);
 				if (awsBluePrintById == null) {
 						throw new RuntimeException("awsBluePrintById is null");
 				}
@@ -47,7 +48,6 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 				List<AwsComponent> awsComponents = awsComponentRepository.findAllByBluePrint(awsBluePrintById);
 				List<ComponentLine> componentLines = componentLineRepository.findAllByBluePrint(awsBluePrintById);
 				AwsBluePrintDto awsBluePrintDto = new AwsBluePrintDto();
-				awsBluePrintDto.setId(awsBluePrintById.getId());
 				awsBluePrintDto.setName(awsBluePrintById.getName());
 				awsBluePrintDto.setComponents(AwsBluePrintDto.awsComponentDtosMapper(awsComponents));
 				awsBluePrintDto.setLinks(AwsBluePrintDto.componentLinkDtoListMapper(componentLines));
@@ -55,29 +55,31 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 		}
 
 		@Override
-		public List<AwsBluePrintDto> getMyAwsBlueprints(String oauthId) {
+		public List<AwsBluePrintListDto> getMyAwsBlueprints(String oauthId) {
 				Member member = memberRepository.findMemberByOauthId(oauthId);
 				if (member == null) {
 						throw new RuntimeException("member is null");
 				}
 
 				List<AwsBluePrint> awsBluePrints = awsBluePrintRepository.findAwsBluePrintsByMember(member);
-				List<AwsBluePrintDto> awsBluePrintDtos = new ArrayList<>();
+				List<AwsBluePrintListDto> awsBluePrintDtos = new ArrayList<>();
 				for (AwsBluePrint awsBluePrint : awsBluePrints) {
-						AwsBluePrintDto dto = new AwsBluePrintDto();
-						dto.setId(awsBluePrint.getId());
+						AwsBluePrintListDto dto = new AwsBluePrintListDto();
 						dto.setName(awsBluePrint.getName());
+						dto.setId(awsBluePrint.getId());
+						dto.setCreatedAt(awsBluePrint.getCreated_at());
 						awsBluePrintDtos.add(dto);
 				}
 				return awsBluePrintDtos;
 		}
 
 		@Override
-		public void store(AwsBluePrintDto awsBluePrintDto) {
+		public void store(AwsBluePrintDto awsBluePrintDto, String userId) {
+				Member member = memberRepository.findMemberByOauthId(userId);
 				// BluePrint 저장
 				AwsBluePrint awsBluePrint = new AwsBluePrint();
 				awsBluePrint.setName(awsBluePrintDto.getName());
-//        awsBluePrint.setMember(member);
+				awsBluePrint.setMember(member);
 				AwsBluePrint savedBlueprint = awsBluePrintRepository.save(awsBluePrint);
 				logger.info("savedBlueprint: {}", savedBlueprint);
 
