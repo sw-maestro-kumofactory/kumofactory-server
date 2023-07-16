@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.kumofactory.cloud.oauth.dto.UserInfoDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,8 +24,18 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long social_id;
+    private String oauth_id;
+
+    private String provider;
 
     @OneToMany(mappedBy = "member")
     private List<AwsBluePrint> bluePrints;
+
+    // =========== 생성함수 =========== //
+    public static Member createMember(UserInfoDto userInfoDto) {
+        Member member = new Member();
+        member.setOauth_id(userInfoDto.id());
+        member.setProvider(userInfoDto.provider());
+        return member;
+    }
 }
