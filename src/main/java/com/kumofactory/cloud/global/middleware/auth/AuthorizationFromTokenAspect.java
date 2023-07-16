@@ -32,14 +32,17 @@ public class AuthorizationFromTokenAspect {
 				ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 				HttpServletRequest request = Objects.requireNonNull(attributes).getRequest();
 				String userId = getUserFromAccessToken(request.getHeader("Authorization"));
-
+				if (userId == null) {
+						throw new RuntimeException("유효하지 않은 토큰입니다.");
+				}
 				// 추출된 사용자 정보를 매개변수로 전달
 				Object[] args = joinPoint.getArgs();
 				args[0] = userId;
 
 				return joinPoint.proceed(args);
 		}
-		
+
+		// user oauth id 추출
 		private String getUserFromAccessToken(String token) {
 				String accessToken = token.split(" ")[1];
 				boolean isValidate = jwtTokenProvider.validateAccessToken(accessToken);
