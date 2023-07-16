@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface AwsBlueprintService {
 
-    AwsBluePrintDto getAwsBlueprint();
+		AwsBluePrintDto getAwsBlueprint(Long bluePrintId);
 
-    List<AwsBluePrintDto> getMyAwsBlueprints();
+		List<AwsBluePrintDto> getMyAwsBlueprints(String userId);
 
-    void store(AwsBluePrintDto awsBluePrintDto);
+		void store(AwsBluePrintDto awsBluePrintDto);
 }
