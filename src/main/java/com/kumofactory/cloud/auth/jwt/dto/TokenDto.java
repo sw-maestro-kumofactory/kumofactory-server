@@ -1,4 +1,4 @@
-package com.kumofactory.cloud.jwt.dto;
+package com.kumofactory.cloud.auth.jwt.dto;
 
 import lombok.*;
 
