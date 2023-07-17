@@ -20,22 +20,22 @@ import lombok.Setter;
 @Setter
 public class Member {
 
-		@Id
-		@GeneratedValue(strategy = GenerationType.IDENTITY)
-		private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-		private String oauthId;
+    private String oauth_id;
 
-		private String provider;
+    private String provider;
 
-		@OneToMany(mappedBy = "member")
-		private List<AwsBluePrint> bluePrints;
+    @OneToMany(mappedBy = "member")
+    private List<AwsBluePrint> bluePrints;
 
-		// =========== 생성함수 =========== //
-		public static Member createMember(UserInfoDto userInfoDto) {
-				Member member = new Member();
-				member.setOauthId(userInfoDto.id());
-				member.setProvider(userInfoDto.provider());
-				return member;
-		}
+    // =========== 생성함수 =========== //
+    public static Member createMember(UserInfoDto userInfoDto) {
+        Member member = new Member();
+        member.setOauth_id(userInfoDto.id());
+        member.setProvider(userInfoDto.provider());
+        return member;
+    }
 }

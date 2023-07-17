@@ -3,15 +3,14 @@ package com.kumofactory.cloud.blueprint.service;
 
 import com.kumofactory.cloud.blueprint.domain.aws.AwsBluePrint;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
-import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintListDto;
 
 import java.util.List;
 
 public interface AwsBlueprintService {
 
-		AwsBluePrintDto getAwsBlueprint(Long bluePrintId);
+    AwsBluePrintDto getAwsBlueprint();
 
-		List<AwsBluePrintListDto> getMyAwsBlueprints(String userId);
+    List<AwsBluePrintDto> getMyAwsBlueprints();
 
-		void store(AwsBluePrintDto awsBluePrintDto, String userId);
+    void store(AwsBluePrintDto awsBluePrintDto);
 }
