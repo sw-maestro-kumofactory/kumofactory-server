@@ -1,5 +1,5 @@
 package com.kumofactory.cloud.blueprint.domain.aws;
 
 public enum AwsComponentType {
-    VPC, SUBNET, ELB, EC2, EFS, WAF, ROUTE53, NAT_GATEWAY, RDS,
+		VPC, SUBNET, ELB, EC2, EFS, WAF, ROUTE53, NAT_GATEWAY, RDS, S3, ElastiCache, CloudFront, AutoScaling
 }
