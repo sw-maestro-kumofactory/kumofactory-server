@@ -30,7 +30,7 @@ public class JwtTokenProvider {
         String accessToken = Jwts.builder()
                 .setSubject(id)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + VALIDITY))
+                .setExpiration(new Date(now.getTime() + 3))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
 
