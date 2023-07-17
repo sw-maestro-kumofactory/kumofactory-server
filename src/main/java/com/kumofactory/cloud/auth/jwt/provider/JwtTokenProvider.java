@@ -1,6 +1,6 @@
-package com.kumofactory.cloud.jwt.provider;
+package com.kumofactory.cloud.auth.jwt.provider;
 
-import com.kumofactory.cloud.jwt.dto.TokenDto;
+import com.kumofactory.cloud.auth.jwt.dto.TokenDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +20,10 @@ public class JwtTokenProvider {
 
     @Value("${jwt.secret}")
     private String secret;
-    @Value("${jwt.token-validity-in-milliseconds}")
+    @Value("${jwt.ac-token-validity-in-milliseconds}")
     private long VALIDITY;
+    @Value("${jwt.re-token-validity-in-milliseconds}")
+    private long REFRESH_VALIDITY;
 
     public TokenDto create(String id) {
 
@@ -30,14 +32,14 @@ public class JwtTokenProvider {
         String accessToken = Jwts.builder()
                 .setSubject(id)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + 3))
+                .setExpiration(new Date(now.getTime() + VALIDITY))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
 
         String refreshToken = Jwts.builder()
                 .setSubject(id)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + (VALIDITY * 365)))
+                .setExpiration(new Date(now.getTime() + (REFRESH_VALIDITY * 365)))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
 
@@ -48,7 +50,7 @@ public class JwtTokenProvider {
                 .build();
     }
 
-    public boolean validateAccessToken(String token) {
+    public boolean validateToken(String token) {
         try {
             Claims claims = getClaimsFormToken(token);
             return true;
@@ -62,23 +64,6 @@ public class JwtTokenProvider {
             logger.error("Token is null");
             return new NullPointerException().getMessage().equals(exception.getMessage());
         }
-    }
-
-    public boolean validateRefreshToken(String token) {
-        try {
-            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secret.getBytes())).build().parseClaimsJws(token);
-            return !claims.getBody().getExpiration().before(new Date());
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-
-    // TODO : Refresh Token API 구현
-    public String refreshAccessToken(Claims claims) {
-        String id = claims.getSubject();
-        TokenDto tokenDto = create(id);
-        return null;
     }
 
     public Claims getClaimsFormToken(String token) {
