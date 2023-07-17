@@ -29,9 +29,8 @@ public class AuthServiceImpl implements AuthService {
                 return jwtTokenProvider.create(oauthId);
             }
         } catch (JwtException e) {
-            return null;
+            throw new RuntimeException("Token is not valid");
         }
-
 
         return null;
     }

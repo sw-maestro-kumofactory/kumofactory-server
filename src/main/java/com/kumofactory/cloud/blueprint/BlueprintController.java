@@ -24,7 +24,7 @@ public class BlueprintController {
 
     @GetMapping("/aws/{id}")
     @AuthorizationFromToken
-    public AwsBluePrintDto getAwsBlueprint(@PathVariable("id") Long id, String userId) {
+    public Object getAwsBlueprint(@PathVariable("id") Long id, String userId) {
         logger.info("aws blue print id: {}", id);
         AwsBluePrintDto awsBlueprint = awsBlueprintService.getAwsBlueprint(id);
         return awsBlueprint;
@@ -32,7 +32,7 @@ public class BlueprintController {
 
     @GetMapping("/aws/list")
     @AuthorizationFromToken
-    public List<AwsBluePrintListDto> getAwsBlueprintList(String userId) {
+    public Object getAwsBlueprintList(String userId) {
         logger.info("userId: {}", userId);
         return awsBlueprintService.getMyAwsBlueprints(userId);
     }

@@ -32,16 +32,15 @@ public class AuthorizationFromTokenAspect {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = Objects.requireNonNull(attributes).getRequest();
         String userId = getUserFromAccessToken(request.getHeader("Authorization"));
+        log.info("userId: {}", userId);
         if (userId == null) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("토큰이 유효하지 않습니다.");
-        } else if (userId.equals("expired")) {
+            log.info("토큰이 만료되었습니다.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰이 만료되었습니다.");
-        } else {
-            // 추출된 사용자 정보를 매개변수로 전달
-            Object[] args = joinPoint.getArgs();
-            args[args.length - 1] = userId;
-            return joinPoint.proceed(args);
         }
+        // 추출된 사용자 정보를 매개변수로 전달
+        Object[] args = joinPoint.getArgs();
+        args[args.length - 1] = userId;
+        return joinPoint.proceed(args);
     }
 
     // user oauth id 추출
@@ -53,7 +52,7 @@ public class AuthorizationFromTokenAspect {
                 return jwtTokenProvider.getClaimsFormToken(accessToken).getSubject();
             }
         } catch (ExpiredJwtException exception) { // Access Token 이 만료됐을 때
-            return "expired";
+            return null;
         } catch (JwtException e) { // Access Token 이 유효하지 않을 때
             return null;
         } catch (NullPointerException e) { // Access Token 이 null 일 때
