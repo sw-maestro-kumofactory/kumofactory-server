@@ -2,8 +2,10 @@ package com.kumofactory.cloud.oauth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kumofactory.cloud.config.OAuthProvider;
-import com.kumofactory.cloud.jwt.dto.TokenDto;
-import com.kumofactory.cloud.jwt.provider.JwtTokenProvider;
+import com.kumofactory.cloud.auth.jwt.dto.TokenDto;
+import com.kumofactory.cloud.auth.jwt.provider.JwtTokenProvider;
+import com.kumofactory.cloud.member.MemberRepository;
+import com.kumofactory.cloud.member.domain.Member;
 import com.kumofactory.cloud.oauth.dto.UserInfoDto;
 import com.kumofactory.cloud.oauth.service.github.GitHubService;
 import com.kumofactory.cloud.oauth.service.google.GoogleService;
@@ -29,6 +31,7 @@ public class OAuthService {
     private final GitHubService githubService;
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final MemberRepository memberRepository;
 
     private TokenDto token;
 
@@ -38,15 +41,15 @@ public class OAuthService {
         HttpHeaders responseHeaders = new HttpHeaders();
 
         switch (provider) {
-            case GOOGLE:{
+            case GOOGLE: {
                 token = getAccessTokenFromGoogle(code);
                 break;
             }
-            case GITHUB:{
+            case GITHUB: {
                 token = getAccessTokenFromGitHub(code);
                 break;
             }
-            default:{
+            default: {
                 throw new IllegalArgumentException("Unknown type of social login.");
             }
         }
@@ -72,32 +75,40 @@ public class OAuthService {
 
     // TODO : 중복된 코드 간소화 (getAccessTokenFromXXX)
     private TokenDto getAccessTokenFromGoogle(String code)
-            throws JsonProcessingException{
+            throws JsonProcessingException {
 
         GoogleToken accessTokenFromGoogle = googleService.requestAccessToken(code);
-        if(accessTokenFromGoogle != null) {
+        if (accessTokenFromGoogle != null) {
 
             UserInfoDto userInfo = googleService.requestUserInfo(accessTokenFromGoogle.accessToken());
-            TokenDto token = jwtTokenProvider.create(userInfo.id());
+            saveMember(userInfo);
 
-            return token;
+            return jwtTokenProvider.create(userInfo.id());
         }
-        assert accessTokenFromGoogle != null;
         return null;
     }
 
     private TokenDto getAccessTokenFromGitHub(String code)
-            throws JsonProcessingException{
+            throws JsonProcessingException {
 
         GitHubToken accessTokenFromGithub = githubService.requestAccessToken(code);
-        if(accessTokenFromGithub != null) {
+        if (accessTokenFromGithub != null) {
 
             UserInfoDto userInfo = githubService.requestUserInfo(accessTokenFromGithub.accessToken());
-            TokenDto token = jwtTokenProvider.create(userInfo.id());
+            saveMember(userInfo);
 
-            return token;
+
+            return jwtTokenProvider.create(userInfo.id());
         }
-        assert accessTokenFromGithub != null;
         return null;
+    }
+
+    // 처음 가입한 member 일때만 저장
+    private void saveMember(UserInfoDto userInfo) {
+        Member member = memberRepository.findMemberByOauthId(userInfo.id());
+        if (member == null) {
+            member = Member.createMember(userInfo);
+            memberRepository.save(member);
+        }
     }
 }
