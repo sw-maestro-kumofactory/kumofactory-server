@@ -9,7 +9,6 @@ import com.kumofactory.cloud.member.domain.Member;
 import com.kumofactory.cloud.oauth.dto.UserInfoDto;
 import com.kumofactory.cloud.oauth.service.github.GitHubService;
 import com.kumofactory.cloud.oauth.service.google.GoogleService;
-
 import static com.kumofactory.cloud.oauth.dto.OAuthDto.*;
 
 import lombok.extern.slf4j.Slf4j;
