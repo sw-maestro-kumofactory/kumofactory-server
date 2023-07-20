@@ -32,7 +32,6 @@ public class AuthorizationFromTokenAspect {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = Objects.requireNonNull(attributes).getRequest();
         String userId = getUserFromAccessToken(request.getHeader("Authorization"));
-        log.info("userId: {}", userId);
         if (userId == null) {
             log.info("토큰이 만료되었습니다.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰이 만료되었습니다.");
@@ -46,6 +45,7 @@ public class AuthorizationFromTokenAspect {
     // user oauth id 추출
     private String getUserFromAccessToken(String token) {
         String accessToken = token.split(" ")[1];
+        logger.info("get From Client accessToken: {}", accessToken);
         try {
             boolean isValidate = jwtTokenProvider.validateToken(accessToken);
             if (isValidate) {
