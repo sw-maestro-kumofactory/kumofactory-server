@@ -2,8 +2,11 @@ package com.kumofactory.cloud.appDeploy;
 
 import com.kumofactory.cloud.appDeploy.dto.BuildRequestDto;
 import com.kumofactory.cloud.appDeploy.dto.GitHubRepoDto;
+import com.kumofactory.cloud.appDeploy.service.BuildRequestService;
 import com.kumofactory.cloud.appDeploy.service.UserRepoService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,12 +15,10 @@ import java.util.List;
 @RequestMapping("/build")
 @RequiredArgsConstructor
 public class AppDeployController {
+    Logger logger = org.slf4j.LoggerFactory.getLogger(AppDeployController.class);
 
     private final UserRepoService userRepoService = new UserRepoService();
-//    @GetMapping("/list")
-//    public UserRepoDto list() {
-//        return appDeployService.RequestUserRepoInfo();
-//    }
+    private final BuildRequestService buildRequestService = new BuildRequestService();
 
     @GetMapping("/list/{org}/repo")
     public List<GitHubRepoDto.RepoInfoDto> listOrgRepo(@PathVariable String org) {
@@ -29,13 +30,22 @@ public class AppDeployController {
         return userRepoService.RequestUserRepoInfoAndOrgList(user);
     }
 
-    @GetMapping("/list/{user}/{repo}/branch")
-    public String listRepoBranches(@PathVariable String user, @PathVariable String repo) {
-        return "listRepoBranches";
+    @GetMapping("/list/{owner}/{repo}/branch")
+    public List<String> listRepoBranches(@PathVariable String owner, @PathVariable String repo) {
+        return userRepoService.RequestRepoBranches(owner, repo);
     }
 
     @PostMapping("/deploy")
-    public BuildRequestDto deployRequest(@RequestBody BuildRequestDto request) {
-        return request;
+    public ResponseEntity<String> deployRequest(@RequestBody BuildRequestDto request) {
+        logger.info("request : {}", "message");
+        buildRequestService.RequestBuild(request);
+//        logger.info("request : {}", request);
+
+        return ResponseEntity.ok("success");
+    }
+
+    @GetMapping("/health")
+    public ResponseEntity<String> checkHealth() {
+        return ResponseEntity.ok("success");
     }
 }

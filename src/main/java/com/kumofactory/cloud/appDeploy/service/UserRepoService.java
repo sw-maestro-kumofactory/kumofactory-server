@@ -116,4 +116,28 @@ public class UserRepoService {
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
         return new RestTemplate().exchange(uri, HttpMethod.GET, httpEntity, JsonNode.class);
     }
+
+    public List<String> RequestRepoBranches(String owner, String repo) {
+        String uri = "https://api.github.com/repos/" + owner + "/" + repo + "/branches";
+        ResponseEntity<JsonNode> response = RequestGitHubAPIs(uri);
+
+        List<String> branchList = new ArrayList<>();
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            JsonNode responseBody = response.getBody();
+            logger.info("response : {}", responseBody);
+
+            if (responseBody.isArray()) {
+                for (JsonNode node : responseBody) {
+                    if (node.has("name")) {
+                        branchList.add(node.get("name").asText());
+                    }
+                }
+            }
+            return branchList;
+        }
+        logger.error("response : {}", response.getBody());
+        logger.error("response : {}", response.getStatusCode());
+        return branchList;
+    }
 }
