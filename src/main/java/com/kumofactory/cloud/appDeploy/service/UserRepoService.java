@@ -21,16 +21,6 @@ public class UserRepoService {
     private final Logger logger = LoggerFactory.getLogger(UserRepoService.class);
     private String token;
 
-//    public UserRepoDto RequestUserRepoInfo() {
-//        List<UserRepoDto.RepoInfoDto> repoInfoList = listRepos();
-//        List<UserRepoDto.OrganizationDto> orgAndRepoList = listOrgAndRepos();
-//
-//        return new UserRepoDto(
-//                repoInfoList.size(), repoInfoList,
-//                orgAndRepoList.size(), orgAndRepoList
-//        );
-//    }
-
     public List<GitHubRepoDto.RepoInfoDto> RequestOrgRepoInfo(String org) {
         String uri = "https://api.github.com/search/repositories?q=org:" + org;
         ResponseEntity<JsonNode> response = RequestGitHubAPIs(uri);
@@ -93,76 +83,6 @@ public class UserRepoService {
         return null;
     }
 
-//    public List<UserRepoDto.RepoInfoDto> listRepos() {
-//        String uri = "https://api.github.com/search/repositories?q=user:" + "coding-convention";
-//        ResponseEntity<JsonNode> response = RequestGitHubAPIs(uri);
-//
-//        if (response.getStatusCode() == HttpStatus.OK) {
-//            JsonNode responseBody = response.getBody();
-//
-//            List<UserRepoDto.RepoInfoDto> repoInfoList = new ArrayList<>();
-//
-//            for (JsonNode node : responseBody.get("items")) {
-//                String name = node.get("name").asText();
-//                String fullName = node.get("full_name").asText();
-//                Boolean isPrivate = node.get("private").asBoolean();
-//                Boolean isFork = node.get("fork").asBoolean();
-//
-//                UserRepoDto.RepoInfoDto repoInfo = new UserRepoDto.RepoInfoDto(name, fullName, isPrivate, isFork);
-//                repoInfoList.add(repoInfo);
-//            }
-//            logger.info("response : {}", responseBody);
-//            return repoInfoList;
-//        }
-//        logger.error("response : {}", response.getBody());
-//        logger.error("response : {}", response.getStatusCode());
-//        return null;
-//    }
-
-//    public List<UserRepoDto.RepoInfoDto> listRepos(String org) {
-//        String uri = "https://api.github.com/search/repositories?q=org:" + org;
-//        ResponseEntity<JsonNode> response = RequestGitHubAPIs(uri);
-//
-//        if (response.getStatusCode() == HttpStatus.OK) {
-//            JsonNode responseBody = response.getBody();
-//
-//            List<UserRepoDto.RepoInfoDto> repoInfoList = new ArrayList<>();
-//
-//            for (JsonNode node : responseBody.get("items")) {
-//                String name = node.get("name").asText();
-//                String fullName = node.get("full_name").asText();
-//                Boolean isPrivate = node.get("private").asBoolean();
-//                Boolean isFork = node.get("fork").asBoolean();
-//
-//                UserRepoDto.RepoInfoDto repoInfo = new UserRepoDto.RepoInfoDto(name, fullName, isPrivate, isFork);
-//                repoInfoList.add(repoInfo);
-//            }
-//            logger.info("response : {}", responseBody);
-//            return repoInfoList;
-//        }
-//        logger.error("response : {}", response.getBody());
-//        logger.error("response : {}", response.getStatusCode());
-//        return null;
-//    }
-
-//    public List<UserRepoDto.OrganizationDto> listOrgAndRepos() {
-//        List<String> orgList = listOrganization();
-//        List<UserRepoDto.OrganizationDto> orgRepoList = new ArrayList<>();
-//
-//        for (String orgName : orgList) {
-//            List<UserRepoDto.RepoInfoDto> orgRepo = listRepos(orgName);
-//            Integer repoCount = orgRepo.size();
-//
-//            UserRepoDto.OrganizationDto orgRepoInfo = new UserRepoDto.OrganizationDto(
-//                    orgName, repoCount, orgRepo
-//            );
-//
-//            orgRepoList.add(orgRepoInfo);
-//        }
-//
-//        return orgRepoList;
-//    }
-
     public List<String> listOrganization() {
         String uri = "https://api.github.com/user/orgs";
         ResponseEntity<JsonNode> response = RequestGitHubAPIs(uri);
@@ -189,15 +109,11 @@ public class UserRepoService {
 
     private ResponseEntity<JsonNode> RequestGitHubAPIs(String uri) {
         HttpHeaders headers = new HttpHeaders();
-
         headers.set("Accept", "application/json");
         if( StringUtils.hasText(token) ) {
             headers.setBearerAuth(token);
         }
-
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
-
         return new RestTemplate().exchange(uri, HttpMethod.GET, httpEntity, JsonNode.class);
     }
-
 }
