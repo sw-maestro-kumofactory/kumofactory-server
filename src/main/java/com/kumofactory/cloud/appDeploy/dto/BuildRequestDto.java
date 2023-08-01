@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public record BuildRequestDto(
-        @JsonProperty("target-instance") String instanceId, // required
-        @JsonProperty("github-token") String gitHubToken,
+        @JsonProperty("targetInstance") String instanceId, // required
+        @JsonProperty("githubToken") String gitHubToken,
         @JsonProperty("user") String user, // required
         @JsonProperty("repo") String repo, // required
         @JsonProperty("branch") String branch, // required
         @JsonProperty("Dockerfile") Boolean dockerfile,
-        @JsonProperty("Language") String language, // required
+        @JsonProperty("language") String language, // required
         @JsonProperty("env") List<EnvInfoDTO> env) // required
  {
     public record EnvInfoDTO(

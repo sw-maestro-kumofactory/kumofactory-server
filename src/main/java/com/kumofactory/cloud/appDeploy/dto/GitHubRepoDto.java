@@ -7,21 +7,19 @@ import java.util.List;
 public class GitHubRepoDto {
     public record RepoInfoDto(
             @JsonProperty("name") String name,
-            @JsonProperty("full_name") String fullName,
+            @JsonProperty("fullName") String fullName,
             @JsonProperty("private") Boolean isPrivate,
             @JsonProperty("fork") Boolean isFork
     ) { }
 
-    public record OrganizationDto(
-            @JsonProperty("organization_name") String organizationName,
-            @JsonProperty("organization_repo_count") Integer organizationRepoCount,
-            @JsonProperty("organization_repo") List<RepoInfoDto> organizationRepo
-    ) { }
-
     public record UserDto(
-            @JsonProperty("personal_repo_count") Integer personalRepoCount,
-            @JsonProperty("personal_repo") List<RepoInfoDto> personalRepo,
-            @JsonProperty("organization_count") Integer organizationCount,
-            @JsonProperty("organization") List<String> organizationList
+//            @JsonProperty("personal_repo_count") Integer personalRepoCount,
+//            @JsonProperty("personal_repo") List<RepoInfoDto> personalRepo,
+//            @JsonProperty("organization_count") Integer organizationCount,
+//            @JsonProperty("organization") List<String> organizationList
+            @JsonProperty("repoCount") Integer personalRepoCount,
+            @JsonProperty("repoInfo") List<RepoInfoDto> personalRepo,
+            @JsonProperty("orgCount") Integer organizationCount,
+            @JsonProperty("orgList") List<String> organizationList
     ) { }
 }
