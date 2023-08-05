@@ -28,6 +28,8 @@ public class Member {
 
 		private String provider;
 
+		private String githubAccessToken;
+
 		@OneToMany(mappedBy = "member")
 		private List<AwsBluePrint> bluePrints;
 

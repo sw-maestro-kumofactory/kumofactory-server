@@ -1,5 +1,6 @@
 package com.kumofactory.cloud.blueprint.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kumofactory.cloud.blueprint.domain.ComponentLine;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsBluePrint;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsComponent;
@@ -7,11 +8,13 @@ import com.kumofactory.cloud.blueprint.dto.ComponentLineDto;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
 
 import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintListDto;
+import com.kumofactory.cloud.blueprint.dto.aws.AwsCdkDto;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsComponentDto;
 import com.kumofactory.cloud.blueprint.repository.ComponentDotRepository;
 import com.kumofactory.cloud.blueprint.repository.ComponentLineRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsBluePrintRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsComponentRepository;
+import com.kumofactory.cloud.global.rabbitmq.MessageProducer;
 import com.kumofactory.cloud.member.MemberRepository;
 import com.kumofactory.cloud.member.domain.Member;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +37,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 		private final AwsBluePrintRepository awsBluePrintRepository;
 		private final AwsComponentRepository awsComponentRepository;
 		private final ComponentLineRepository componentLineRepository;
-		private final ComponentDotRepository componentDotRepository;
+		private final MessageProducer sender;
 		private final Logger logger = LoggerFactory.getLogger(AwsBlueprintServiceImpl.class);
 
 
@@ -74,7 +77,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 		}
 
 		@Override
-		public void store(AwsBluePrintDto awsBluePrintDto, String userId) {
+		public void store(AwsBluePrintDto awsBluePrintDto, String userId) throws JsonProcessingException {
 				Member member = memberRepository.findMemberByOauthId(userId);
 				// BluePrint 저장
 				AwsBluePrint awsBluePrint = new AwsBluePrint();
@@ -85,13 +88,16 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 
 				List<AwsComponent> components = new ArrayList<>();
 				List<ComponentLineDto> links = awsBluePrintDto.getLinks();
+				List<AwsCdkDto> awsCdkDtos = new ArrayList<>();
 
 				// Components 저장
 				for (AwsComponentDto component : awsBluePrintDto.getComponents()) {
 						AwsComponent awsComponent = AwsComponent.createAwsComponent(component, savedBlueprint);
+						AwsCdkDto awsCdkDto = AwsCdkDto.createAwsCdkDto(component);
 						components.add(awsComponent);
+						awsCdkDtos.add(awsCdkDto);
 				}
-				awsComponentRepository.saveAll(components);
+//				awsComponentRepository.saveAll(components);
 
 				// Lines 저장
 				List<ComponentLine> componentLines = new ArrayList<>();
@@ -99,6 +105,8 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 						ComponentLine componentLink = ComponentLine.createComponentLink(link, savedBlueprint);
 						componentLines.add(componentLink);
 				}
-				componentLineRepository.saveAll(componentLines);
+//				componentLineRepository.saveAll(componentLines);
+
+				sender.sendAwsCdkOption(awsCdkDtos);
 		}
 }
