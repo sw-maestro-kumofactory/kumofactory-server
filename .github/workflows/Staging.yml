@@ -36,6 +36,7 @@ jobs:
           cd ./src/main/resources
           touch ./application-dev.yml
           echo "${{ secrets.YML_STAGING }}" > ./application-dev.yml
+          cat ./application-dev.yml
         shell: bash
 
       - name: Build Spring Boot application
