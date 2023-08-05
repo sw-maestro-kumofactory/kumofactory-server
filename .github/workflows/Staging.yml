@@ -54,8 +54,8 @@ jobs:
 
       - name: Build and tag Docker image
         run: |
-          docker build -t ${{ secrets.ECR_REGISTRY }}//dev:latest .
+          docker build -t ${{ secrets.ECR_REGISTRY }}/dev:latest .
 
       - name: Push Docker image to ECR
         run: |
-          docker push ${{ secrets.ECR_REGISTRY }}//dev:latest
+          docker push ${{ secrets.ECR_REGISTRY }}/dev:latest
