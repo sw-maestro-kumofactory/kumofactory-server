@@ -35,7 +35,7 @@ jobs:
         run: |
           cd ./src/main/resources
           touch ./application-dev.yml
-          echo "${{ secrets.YML_DEV }}" > ./application-dev.yml
+          echo "${{ secrets.YML_STAGING }}" > ./application-dev.yml
         shell: bash
 
       - name: Build Spring Boot application
@@ -51,11 +51,11 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-        
+
       - name: Build and tag Docker image
         run: |
-          docker build -t ${{ secrets.ECR_REGISTRY }}/spring-app-image:latest .
+          docker build -t ${{ secrets.ECR_REGISTRY }}//dev:latest .
 
       - name: Push Docker image to ECR
         run: |
-          docker push ${{ secrets.ECR_REGISTRY }}/spring-app-image:latest
+          docker push ${{ secrets.ECR_REGISTRY }}//dev:latest
