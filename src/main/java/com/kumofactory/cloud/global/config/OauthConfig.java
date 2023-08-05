@@ -1,4 +1,4 @@
-package com.kumofactory.cloud.config;
+package com.kumofactory.cloud.global.config;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,5 +30,5 @@ public class OauthConfig {
 
 		@Value("${oauth.google.user_info_endpoint}")
 		private String getUserInfoUrlFromGoogle;
-  
+
 }

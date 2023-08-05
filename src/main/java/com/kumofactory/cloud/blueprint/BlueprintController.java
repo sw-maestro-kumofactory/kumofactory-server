@@ -1,5 +1,6 @@
 package com.kumofactory.cloud.blueprint;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
 import com.kumofactory.cloud.blueprint.service.AwsBlueprintService;
 import com.kumofactory.cloud.global.annotation.auth.AuthorizationFromToken;
@@ -36,33 +37,9 @@ public class BlueprintController {
 
 		@PostMapping("/aws")
 		@AuthorizationFromToken
-		public Object createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto, String userId) {
+		public Object createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto, String userId) throws JsonProcessingException {
 				logger.info(userId);
 				awsBlueprintService.store(awsBluePrintDto, userId);
 				return "hello-world";
-		}
-
-		@GetMapping("/test")
-		public String testMiddleware() {
-				String message = "Hello World I'm test Message";
-				try {
-						sender.sendMessage(message);
-						return "send message success";
-				} catch (Exception e) {
-						System.out.println(e);
-						return "send message fail";
-				}
-		}
-
-		@GetMapping("/test2")
-		public String testMiddleware2() {
-				String message = "Hello World I'm test Message2";
-				try {
-						sender.sendMessage2(message);
-						return "send message success";
-				} catch (Exception e) {
-						System.out.println(e);
-						return "send message fail";
-				}
 		}
 }
