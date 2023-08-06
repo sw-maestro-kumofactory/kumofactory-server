@@ -34,6 +34,8 @@ public class AwsBluePrint {
     private Date created_at;
     @UpdateTimestamp
     private Date updated_at;
+    
+    private String uuid; // Client 에서 생성하는 uuid
 
     private String name; // 블루프린트 이름
 

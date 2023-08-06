@@ -8,7 +8,8 @@ import java.util.Date;
 @Getter
 @Setter
 public class AwsBluePrintListDto {
-		private Long id;
-		private String name;
-		private Date createdAt;
+    private Long id;
+    private String uuid;
+    private String name;
+    private Date createdAt;
 }

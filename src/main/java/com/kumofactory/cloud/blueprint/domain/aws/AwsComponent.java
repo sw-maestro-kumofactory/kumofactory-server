@@ -1,15 +1,8 @@
 package com.kumofactory.cloud.blueprint.domain.aws;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.kumofactory.cloud.blueprint.dto.aws.AccessScope;
 import com.kumofactory.cloud.blueprint.dto.aws.AvailabilityZone;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsComponentDto;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import javax.persistence.*;
-
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,6 +13,10 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import javax.persistence.*;
+import java.util.Date;
+import java.util.Map;
+
 import static javax.persistence.EnumType.STRING;
 
 @Entity
@@ -27,56 +24,52 @@ import static javax.persistence.EnumType.STRING;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@TypeDef(
-				name = "json",
-				typeClass = JsonType.class
-)
+@TypeDef(name = "json", typeClass = JsonType.class)
 public class AwsComponent {
 
-		@Id
-		@GeneratedValue(strategy = GenerationType.IDENTITY)
-		private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-		@CreationTimestamp
-		private Date created_at;
-		@UpdateTimestamp
-		private Date updated_at;
+    @CreationTimestamp
+    private Date created_at;
+    @UpdateTimestamp
+    private Date updated_at;
 
-		@Column(unique = true)
-		private String ui_id; // Client 에서 생성하는 uuid
+    @Column(unique = true)
+    private String ui_id; // Client 에서 생성하는 uuid
 
-		@Enumerated(STRING)
-		private AwsComponentType type; // Component 타입 (vm, vpc, subnet, ...)
+    @Enumerated(STRING)
+    private AwsComponentType type; // Component 타입 (vm, vpc, subnet, ...)
 
-		@Enumerated(STRING)
-		private AccessScope scope;
+    @Enumerated(STRING)
+    private AccessScope scope;
 
-		@Enumerated(STRING)
-		private AvailabilityZone az;
+    @Enumerated(STRING)
+    private AvailabilityZone az;
 
-		@Type(type = "json")
-		@Column(columnDefinition = "json")
-		private Map<String, Object> options;
+    @Type(type = "json")
+    @Column(columnDefinition = "json")
+    private Map<String, Object> options;
 
-		// Component 의 좌측 상단 좌표
-		private Integer position_x;
-		private Integer position_y;
+    // Component 의 좌측 상단 좌표
+    private Integer position_x;
+    private Integer position_y;
 
-		@ManyToOne
-		private AwsBluePrint bluePrint;
+    @ManyToOne
+    private AwsBluePrint bluePrint;
 
-		// ============== 생성함수 ================= //
-		public static AwsComponent createAwsComponent(AwsComponentDto awsComponentDto,
-																									AwsBluePrint awsBluePrint) {
-				AwsComponent awsComponent = new AwsComponent();
-				awsComponent.setUi_id(awsComponentDto.getId());
-				awsComponent.setPosition_x(awsComponentDto.getX());
-				awsComponent.setPosition_y(awsComponentDto.getY());
-				awsComponent.setType(awsComponentDto.getType());
-				awsComponent.setAz(awsComponentDto.getAz());
-				awsComponent.setScope(awsComponentDto.getScope());
-				awsComponent.setOptions(awsComponentDto.getOptions());
-				awsComponent.setBluePrint(awsBluePrint);
-				return awsComponent;
-		}
+    // ============== 생성함수 ================= //
+    public static AwsComponent createAwsComponent(AwsComponentDto awsComponentDto, AwsBluePrint awsBluePrint) {
+        AwsComponent awsComponent = new AwsComponent();
+        awsComponent.setUi_id(awsComponentDto.getId());
+        awsComponent.setPosition_x(awsComponentDto.getX());
+        awsComponent.setPosition_y(awsComponentDto.getY());
+        awsComponent.setType(awsComponentDto.getType());
+        awsComponent.setAz(awsComponentDto.getAz());
+        awsComponent.setScope(awsComponentDto.getScope());
+        awsComponent.setOptions(awsComponentDto.getOptions());
+        awsComponent.setBluePrint(awsBluePrint);
+        return awsComponent;
+    }
 }

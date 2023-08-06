@@ -33,80 +33,82 @@ import java.util.List;
 @Repository
 public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 
-		private final MemberRepository memberRepository;
-		private final AwsBluePrintRepository awsBluePrintRepository;
-		private final AwsComponentRepository awsComponentRepository;
-		private final ComponentLineRepository componentLineRepository;
-		private final MessageProducer sender;
-		private final Logger logger = LoggerFactory.getLogger(AwsBlueprintServiceImpl.class);
+    private final MemberRepository memberRepository;
+    private final AwsBluePrintRepository awsBluePrintRepository;
+    private final AwsComponentRepository awsComponentRepository;
+    private final ComponentLineRepository componentLineRepository;
+    private final MessageProducer sender;
+    private final Logger logger = LoggerFactory.getLogger(AwsBlueprintServiceImpl.class);
 
 
-		@Override
-		public AwsBluePrintDto getAwsBlueprint(Long bluePrintId) {
-				AwsBluePrint awsBluePrintById = awsBluePrintRepository.findAwsBluePrintById(bluePrintId);
-				if (awsBluePrintById == null) {
-						throw new RuntimeException("awsBluePrintById is null");
-				}
+    @Override
+    public AwsBluePrintDto getAwsBlueprint(Long bluePrintId) {
+        AwsBluePrint awsBluePrintById = awsBluePrintRepository.findAwsBluePrintById(bluePrintId);
+        if (awsBluePrintById == null) {
+            throw new RuntimeException("awsBluePrintById is null");
+        }
 
-				List<AwsComponent> awsComponents = awsComponentRepository.findAllByBluePrint(awsBluePrintById);
-				List<ComponentLine> componentLines = componentLineRepository.findAllByBluePrint(awsBluePrintById);
-				AwsBluePrintDto awsBluePrintDto = new AwsBluePrintDto();
-				awsBluePrintDto.setName(awsBluePrintById.getName());
-				awsBluePrintDto.setComponents(AwsBluePrintDto.awsComponentDtosMapper(awsComponents));
-				awsBluePrintDto.setLinks(AwsBluePrintDto.componentLinkDtoListMapper(componentLines));
-				return awsBluePrintDto;
-		}
+        List<AwsComponent> awsComponents = awsComponentRepository.findAllByBluePrint(awsBluePrintById);
+        List<ComponentLine> componentLines = componentLineRepository.findAllByBluePrint(awsBluePrintById);
+        AwsBluePrintDto awsBluePrintDto = new AwsBluePrintDto();
+        awsBluePrintDto.setName(awsBluePrintById.getName());
+        awsBluePrintDto.setComponents(AwsBluePrintDto.awsComponentDtosMapper(awsComponents));
+        awsBluePrintDto.setLinks(AwsBluePrintDto.componentLinkDtoListMapper(componentLines));
+        return awsBluePrintDto;
+    }
 
-		@Override
-		public List<AwsBluePrintListDto> getMyAwsBlueprints(String oauthId) {
-				Member member = memberRepository.findMemberByOauthId(oauthId);
-				if (member == null) {
-						throw new RuntimeException("member is null");
-				}
+    @Override
+    public List<AwsBluePrintListDto> getMyAwsBlueprints(String oauthId) {
+        Member member = memberRepository.findMemberByOauthId(oauthId);
+        if (member == null) {
+            throw new RuntimeException("member is null");
+        }
 
-				List<AwsBluePrint> awsBluePrints = awsBluePrintRepository.findAwsBluePrintsByMember(member);
-				List<AwsBluePrintListDto> awsBluePrintDtos = new ArrayList<>();
-				for (AwsBluePrint awsBluePrint : awsBluePrints) {
-						AwsBluePrintListDto dto = new AwsBluePrintListDto();
-						dto.setName(awsBluePrint.getName());
-						dto.setId(awsBluePrint.getId());
-						dto.setCreatedAt(awsBluePrint.getCreated_at());
-						awsBluePrintDtos.add(dto);
-				}
-				return awsBluePrintDtos;
-		}
+        List<AwsBluePrint> awsBluePrints = awsBluePrintRepository.findAwsBluePrintsByMember(member);
+        List<AwsBluePrintListDto> awsBluePrintDtos = new ArrayList<>();
+        for (AwsBluePrint awsBluePrint : awsBluePrints) {
+            AwsBluePrintListDto dto = new AwsBluePrintListDto();
+            dto.setName(awsBluePrint.getName());
+            dto.setUuid(awsBluePrint.getUuid());
+            dto.setId(awsBluePrint.getId());
+            dto.setCreatedAt(awsBluePrint.getCreated_at());
+            awsBluePrintDtos.add(dto);
+        }
+        return awsBluePrintDtos;
+    }
 
-		@Override
-		public void store(AwsBluePrintDto awsBluePrintDto, String userId) throws JsonProcessingException {
-				Member member = memberRepository.findMemberByOauthId(userId);
-				// BluePrint 저장
-				AwsBluePrint awsBluePrint = new AwsBluePrint();
-				awsBluePrint.setName(awsBluePrintDto.getName());
-				awsBluePrint.setMember(member);
-				AwsBluePrint savedBlueprint = awsBluePrintRepository.save(awsBluePrint);
-				logger.info("savedBlueprint: {}", savedBlueprint);
+    @Override
+    public void store(AwsBluePrintDto awsBluePrintDto, String userId) throws JsonProcessingException {
+        Member member = memberRepository.findMemberByOauthId(userId);
+        // BluePrint 저장
+        AwsBluePrint awsBluePrint = new AwsBluePrint();
+        awsBluePrint.setUuid(awsBluePrintDto.getUuid());
+        awsBluePrint.setName(awsBluePrintDto.getName());
+        awsBluePrint.setMember(member);
+        AwsBluePrint savedBlueprint = awsBluePrintRepository.save(awsBluePrint);
+        logger.info("savedBlueprint: {}", savedBlueprint);
 
-				List<AwsComponent> components = new ArrayList<>();
-				List<ComponentLineDto> links = awsBluePrintDto.getLinks();
-				List<AwsCdkDto> awsCdkDtos = new ArrayList<>();
+        List<AwsComponent> components = new ArrayList<>();
+        List<ComponentLineDto> links = awsBluePrintDto.getLinks();
+        List<AwsCdkDto> awsCdkDtos = new ArrayList<>();
 
-				// Components 저장
-				for (AwsComponentDto component : awsBluePrintDto.getComponents()) {
-						AwsComponent awsComponent = AwsComponent.createAwsComponent(component, savedBlueprint);
-						AwsCdkDto awsCdkDto = AwsCdkDto.createAwsCdkDto(component);
-						components.add(awsComponent);
-						awsCdkDtos.add(awsCdkDto);
-				}
-//				awsComponentRepository.saveAll(components);
+        // Components 저장
+        for (AwsComponentDto component : awsBluePrintDto.getComponents()) {
+            AwsComponent awsComponent = AwsComponent.createAwsComponent(component, savedBlueprint);
+            AwsCdkDto awsCdkDto = AwsCdkDto.createAwsCdkDto(component);
+            components.add(awsComponent);
+            awsCdkDtos.add(awsCdkDto);
+        }
+        awsComponentRepository.saveAll(components);
 
-				// Lines 저장
-				List<ComponentLine> componentLines = new ArrayList<>();
-				for (ComponentLineDto link : links) {
-						ComponentLine componentLink = ComponentLine.createComponentLink(link, savedBlueprint);
-						componentLines.add(componentLink);
-				}
-//				componentLineRepository.saveAll(componentLines);
+        // Lines 저장
+        List<ComponentLine> componentLines = new ArrayList<>();
+        for (ComponentLineDto link : links) {
+            ComponentLine componentLink = ComponentLine.createComponentLink(link, savedBlueprint);
+            componentLines.add(componentLink);
+        }
+        componentLineRepository.saveAll(componentLines);
 
-				sender.sendAwsCdkOption(awsCdkDtos);
-		}
+        sender.sendAwsCdkOption(awsCdkDtos);
+    }
 }

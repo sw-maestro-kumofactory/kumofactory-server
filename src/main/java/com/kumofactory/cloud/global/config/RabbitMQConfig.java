@@ -11,43 +11,43 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-		public static final String topicExchangeName = "aws.cdk";
-		private final String queueName = "kumofactory-queue";
+    public static final String topicExchangeName = "aws.cdk";
+    private final String queueName = "kumofactory-queue";
 
-		@Bean
-		public Queue queue() {
-				return new Queue(queueName, false);
-		}
+    @Bean
+    public Queue queue() {
+        return new Queue(queueName, false);
+    }
 
-		@Bean
-		DirectExchange exchange() {
-				return new DirectExchange("direct");
-		}
+    @Bean
+    DirectExchange exchange() {
+        return new DirectExchange("direct");
+    }
 
-		@Bean
-		TopicExchange exchange2() {
-				return new TopicExchange(topicExchangeName);
-		}
+    @Bean
+    TopicExchange exchange2() {
+        return new TopicExchange(topicExchangeName);
+    }
 
-		@Bean
-		Binding binding(Queue queue, TopicExchange exchange) {
-				return BindingBuilder.bind(queue).to(exchange).with("foo.bar");
-		}
+    @Bean
+    Binding binding(Queue queue, TopicExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with("foo.bar");
+    }
 
-		@Bean
-		public ConnectionFactory connectionFactory() {
-				CachingConnectionFactory factory = new CachingConnectionFactory();
-				factory.setHost("rabbitmq");
-				factory.setUsername("guest");
-				factory.setPassword("guest");
-				return factory.getRabbitConnectionFactory();
-		}
+    @Bean
+    public ConnectionFactory connectionFactory() {
+        CachingConnectionFactory factory = new CachingConnectionFactory();
+        factory.setHost("localhost");
+        factory.setUsername("guest");
+        factory.setPassword("guest");
+        return factory.getRabbitConnectionFactory();
+    }
 
-		@Bean
-		public AmqpTemplate rabbitTemplate() {
-				RabbitTemplate template = new RabbitTemplate((org.springframework.amqp.rabbit.connection.ConnectionFactory) connectionFactory());
-				template.setRoutingKey(queueName);
-				template.setMessageConverter(new Jackson2JsonMessageConverter());
-				return template;
-		}
+    @Bean
+    public AmqpTemplate rabbitTemplate() {
+        RabbitTemplate template = new RabbitTemplate((org.springframework.amqp.rabbit.connection.ConnectionFactory) connectionFactory());
+        template.setRoutingKey(queueName);
+        template.setMessageConverter(new Jackson2JsonMessageConverter());
+        return template;
+    }
 }
