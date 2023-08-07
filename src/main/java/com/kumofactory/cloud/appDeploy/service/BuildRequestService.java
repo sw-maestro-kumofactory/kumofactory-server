@@ -22,12 +22,14 @@ public class BuildRequestService {
     private String token = null;
     private String baseUri = "https://api.github.com";
     @Value("${build.server}")
-    private String buildServerUri;
+    private String buildServerUri = "http://3.38.34.254:8080";
 
     public void RequestBuild(BuildRequestDto request) {
         String url = buildServerUri + "/api/v1/deploy";
         request.setDockerfile(isDockerfileExist(request.user(), request.repo()));
         request.setgithubToken(token);
+
+        logger.info(request.toString());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
