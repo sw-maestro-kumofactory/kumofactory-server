@@ -14,6 +14,7 @@ import com.kumofactory.cloud.blueprint.repository.aws.AwsBluePrintRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsComponentRepository;
 import com.kumofactory.cloud.member.MemberRepository;
 import com.kumofactory.cloud.member.domain.Member;
+import com.kumofactory.cloud.util.aws.s3.AwsS3Helper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -35,6 +36,8 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 		private final AwsComponentRepository awsComponentRepository;
 		private final ComponentLineRepository componentLineRepository;
 		private final ComponentDotRepository componentDotRepository;
+
+		private final AwsS3Helper awsS3Helper;
 		private final Logger logger = LoggerFactory.getLogger(AwsBlueprintServiceImpl.class);
 
 
@@ -68,6 +71,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 						dto.setName(awsBluePrint.getName());
 						dto.setId(awsBluePrint.getId());
 						dto.setCreatedAt(awsBluePrint.getCreated_at());
+						dto.setPresignedUrl(_getObjectKey(member.getId(), awsBluePrint.getId()));
 						awsBluePrintDtos.add(dto);
 				}
 				return awsBluePrintDtos;
@@ -100,5 +104,17 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 						componentLines.add(componentLink);
 				}
 				componentLineRepository.saveAll(componentLines);
+
+				// thumbnail 저장
+				String objectKey = _getObjectKey(member.getId(), savedBlueprint.getId());
+				try {
+						awsS3Helper.putS3Object(awsBluePrintDto.getSvgFile(), objectKey);
+				} catch (Exception e) {
+						logger.error("thumbnail upload failed: {}", e.getMessage());
+				}
+		}
+
+		private String _getObjectKey(Long memberId, Long blueprintId) {
+				return memberId + "/" + blueprintId + ".svg";
 		}
 }
