@@ -3,16 +3,15 @@ package com.kumofactory.cloud.blueprint.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kumofactory.cloud.blueprint.domain.ComponentLine;
 import com.kumofactory.cloud.blueprint.domain.ProvisionStatus;
+import com.kumofactory.cloud.blueprint.domain.aws.AwsArea;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsBluePrint;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsComponent;
 import com.kumofactory.cloud.blueprint.dto.ComponentLineDto;
-import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
+import com.kumofactory.cloud.blueprint.dto.aws.*;
 
-import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintListDto;
-import com.kumofactory.cloud.blueprint.dto.aws.AwsCdkDto;
-import com.kumofactory.cloud.blueprint.dto.aws.AwsComponentDto;
 import com.kumofactory.cloud.blueprint.repository.ComponentDotRepository;
 import com.kumofactory.cloud.blueprint.repository.ComponentLineRepository;
+import com.kumofactory.cloud.blueprint.repository.aws.AwsAreaRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsBluePrintRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsComponentRepository;
 import com.kumofactory.cloud.global.rabbitmq.MessageProducer;
@@ -41,6 +40,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
     private final AwsBluePrintRepository awsBluePrintRepository;
     private final AwsComponentRepository awsComponentRepository;
     private final ComponentLineRepository componentLineRepository;
+    private final AwsAreaRepository awsAreaRepository;
     private final MessageProducer sender;
     private final Logger logger = LoggerFactory.getLogger(AwsBlueprintServiceImpl.class);
 
@@ -52,11 +52,13 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
             throw new RuntimeException("awsBluePrintById is null");
         }
 
+        List<AwsArea> awsAreas = awsAreaRepository.findAllByBluePrint(awsBluePrintById);
         List<AwsComponent> awsComponents = awsComponentRepository.findAllByBluePrint(awsBluePrintById);
         List<ComponentLine> componentLines = componentLineRepository.findAllByBluePrint(awsBluePrintById);
         AwsBluePrintDto awsBluePrintDto = new AwsBluePrintDto();
         awsBluePrintDto.setName(awsBluePrintById.getName());
         awsBluePrintDto.setStatus(awsBluePrintById.getStatus());
+        awsBluePrintDto.setAreas(AwsBluePrintDto.awsAreaDtosMapper(awsAreas));
         awsBluePrintDto.setComponents(AwsBluePrintDto.awsComponentDtosMapper(awsComponents));
         awsBluePrintDto.setLinks(AwsBluePrintDto.componentLinkDtoListMapper(componentLines));
         return awsBluePrintDto;
@@ -87,6 +89,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
     public void store(AwsBluePrintDto awsBluePrintDto, String provision, String userId) throws JsonProcessingException {
         AwsBluePrint savedBlueprint = saveBlueprint(awsBluePrintDto, provision, userId); // BluePrint 저장
         saveComponentLines(savedBlueprint, awsBluePrintDto.getLinks()); // ComponentLine 저장
+        saveAwsAreas(savedBlueprint, awsBluePrintDto.getAreas()); // Area 저장
 
         List<AwsComponent> components = new ArrayList<>();
         List<AwsCdkDto> awsCdkDtos = new ArrayList<>();
@@ -131,6 +134,14 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
             componentLines.add(componentLink);
         }
         componentLineRepository.saveAll(componentLines);
+    }
 
+    private void saveAwsAreas(AwsBluePrint blueprint, List<AwsAreaDto> areas) {
+        List<AwsArea> awsArea = new ArrayList<>();
+        for (AwsAreaDto link : areas) {
+            AwsArea area = AwsArea.createAwsArea(link, blueprint);
+            awsArea.add(area);
+        }
+        awsAreaRepository.saveAll(awsArea);
     }
 }

@@ -2,6 +2,7 @@ package com.kumofactory.cloud.blueprint.dto.aws;
 
 import com.kumofactory.cloud.blueprint.domain.ComponentLine;
 import com.kumofactory.cloud.blueprint.domain.ProvisionStatus;
+import com.kumofactory.cloud.blueprint.domain.aws.AwsArea;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsComponent;
 import com.kumofactory.cloud.blueprint.dto.ComponentLineDto;
 
@@ -18,8 +19,17 @@ public class AwsBluePrintDto {
     private String uuid;
     private String name;
     private ProvisionStatus status;
+    private List<AwsAreaDto> areas;
     private List<AwsComponentDto> components;
     private List<ComponentLineDto> links;
+
+    public static List<AwsAreaDto> awsAreaDtosMapper(List<AwsArea> awsAreaDtos) {
+        List<AwsAreaDto> awsAreaDtoList = new ArrayList<>();
+        for (AwsArea awsAreaDto : awsAreaDtos) {
+            awsAreaDtoList.add(AwsAreaDto.mapper(awsAreaDto));
+        }
+        return awsAreaDtoList;
+    }
 
     public static List<AwsComponentDto> awsComponentDtosMapper(List<AwsComponent> awsComponentDtos) {
         List<AwsComponentDto> awsComponentDtoList = new ArrayList<>();
