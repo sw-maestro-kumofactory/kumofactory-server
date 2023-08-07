@@ -16,30 +16,29 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/blueprint")
 @Slf4j
 public class BlueprintController {
-		private final Logger logger = LoggerFactory.getLogger(BlueprintController.class);
-		private final AwsBlueprintService awsBlueprintService;
-		private final MessageProducer sender;
+    private final Logger logger = LoggerFactory.getLogger(BlueprintController.class);
+    private final AwsBlueprintService awsBlueprintService;
 
-		@GetMapping("/aws/{id}")
-		@AuthorizationFromToken
-		public Object getAwsBlueprint(@PathVariable("id") Long id, String userId) {
-				logger.info("aws blue print id: {}", id);
-				AwsBluePrintDto awsBlueprint = awsBlueprintService.getAwsBlueprint(id);
-				return awsBlueprint;
-		}
+    @GetMapping("/aws/{id}")
+    @AuthorizationFromToken
+    public Object getAwsBlueprint(@PathVariable("id") Long id, String userId) {
+        logger.info("aws blue print id: {}", id);
+        AwsBluePrintDto awsBlueprint = awsBlueprintService.getAwsBlueprint(id);
+        return awsBlueprint;
+    }
 
-		@GetMapping("/aws/list")
-		@AuthorizationFromToken
-		public Object getAwsBlueprintList(String userId) {
-				logger.info("userId: {}", userId);
-				return awsBlueprintService.getMyAwsBlueprints(userId);
-		}
+    @GetMapping("/aws/list")
+    @AuthorizationFromToken
+    public Object getAwsBlueprintList(String userId) {
+        logger.info("userId: {}", userId);
+        return awsBlueprintService.getMyAwsBlueprints(userId);
+    }
 
-		@PostMapping("/aws")
-		@AuthorizationFromToken
-		public Object createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto, String userId) throws JsonProcessingException {
-				logger.info(userId);
-				awsBlueprintService.store(awsBluePrintDto, userId);
-				return "hello-world";
-		}
+    @PostMapping("/aws")
+    @AuthorizationFromToken
+    public Object createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto, String userId) throws JsonProcessingException {
+        logger.info(userId);
+        awsBlueprintService.store(awsBluePrintDto, userId);
+        return "hello-world";
+    }
 }
