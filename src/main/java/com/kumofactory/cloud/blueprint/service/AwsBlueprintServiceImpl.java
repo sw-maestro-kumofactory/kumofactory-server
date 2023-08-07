@@ -18,6 +18,7 @@ import com.kumofactory.cloud.blueprint.repository.aws.AwsComponentRepository;
 import com.kumofactory.cloud.global.rabbitmq.MessageProducer;
 import com.kumofactory.cloud.member.MemberRepository;
 import com.kumofactory.cloud.member.domain.Member;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
