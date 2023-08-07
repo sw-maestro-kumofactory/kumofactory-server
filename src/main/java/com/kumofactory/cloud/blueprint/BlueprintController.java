@@ -19,12 +19,10 @@ public class BlueprintController {
     private final Logger logger = LoggerFactory.getLogger(BlueprintController.class);
     private final AwsBlueprintService awsBlueprintService;
 
-    @GetMapping("/aws/{id}")
+    @GetMapping("/aws/{uuid}")
     @AuthorizationFromToken
-    public Object getAwsBlueprint(@PathVariable("id") Long id, String userId) {
-        logger.info("aws blue print id: {}", id);
-        AwsBluePrintDto awsBlueprint = awsBlueprintService.getAwsBlueprint(id);
-        return awsBlueprint;
+    public Object getAwsBlueprint(@PathVariable("uuid") String uuid, String userId) {
+        return awsBlueprintService.getAwsBlueprint(uuid);
     }
 
     @GetMapping("/aws/list")
@@ -36,9 +34,9 @@ public class BlueprintController {
 
     @PostMapping("/aws")
     @AuthorizationFromToken
-    public Object createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto, String userId) throws JsonProcessingException {
+    public Object createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto, @RequestParam String provision, String userId) throws JsonProcessingException {
         logger.info(userId);
-        awsBlueprintService.store(awsBluePrintDto, userId);
+        awsBlueprintService.store(awsBluePrintDto, provision, userId);
         return "hello-world";
     }
 }

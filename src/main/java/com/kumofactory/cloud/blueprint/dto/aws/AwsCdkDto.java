@@ -10,19 +10,15 @@ import java.util.UUID;
 @Getter
 @Setter
 public class AwsCdkDto {
-    String id;
-    AwsComponentType type;
-    AccessScope scope;
-    AvailabilityZone az;
-    Map<String, Object> options;
-
-    public static AwsCdkDto createAwsCdkDto(AwsComponentDto awsComponentDto) {
-        AwsCdkDto awsCdkDto = new AwsCdkDto();
-        awsCdkDto.setId(UUID.randomUUID().toString());
-        awsCdkDto.setAz(awsComponentDto.getAz());
-        awsCdkDto.setType(awsComponentDto.getType());
-        awsCdkDto.setScope(awsComponentDto.getScope());
-        awsCdkDto.setOptions(awsComponentDto.getOptions());
-        return awsCdkDto;
-    }
+	String id;
+	AwsComponentType type;
+	Map<String, Object> options;
+	
+	public static AwsCdkDto createAwsCdkDto(AwsComponentDto awsComponentDto) {
+			AwsCdkDto awsCdkDto = new AwsCdkDto();
+			awsCdkDto.setId(awsComponentDto.getId());
+			awsCdkDto.setType(awsComponentDto.getType());
+			awsCdkDto.setOptions(awsComponentDto.getOptions());
+			return awsCdkDto;
+	}
 }

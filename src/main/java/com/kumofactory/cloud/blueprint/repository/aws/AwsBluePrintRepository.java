@@ -9,9 +9,12 @@ import java.util.List;
 
 @Repository
 public interface AwsBluePrintRepository extends JpaRepository<AwsBluePrint, Long> {
-		AwsBluePrint findAwsBluePrintById(long id);
+    AwsBluePrint findAwsBluePrintById(long id);
 
-		AwsBluePrint findAwsBluePrintByMemberId(long memberId);
+    AwsBluePrint findAwsBluePrintByUuid(String uuid);
 
-		List<AwsBluePrint> findAwsBluePrintsByMember(Member member);
+    AwsBluePrint findAwsBluePrintByMemberId(long memberId);
+
+    List<AwsBluePrint> findAwsBluePrintsByMember(Member member);
+
 }
