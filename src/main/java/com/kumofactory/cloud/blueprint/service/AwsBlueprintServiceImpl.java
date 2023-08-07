@@ -55,6 +55,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         List<ComponentLine> componentLines = componentLineRepository.findAllByBluePrint(awsBluePrintById);
         AwsBluePrintDto awsBluePrintDto = new AwsBluePrintDto();
         awsBluePrintDto.setName(awsBluePrintById.getName());
+        awsBluePrintDto.setStatus(awsBluePrintById.getStatus());
         awsBluePrintDto.setComponents(AwsBluePrintDto.awsComponentDtosMapper(awsComponents));
         awsBluePrintDto.setLinks(AwsBluePrintDto.componentLinkDtoListMapper(componentLines));
         return awsBluePrintDto;
@@ -75,6 +76,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
             dto.setUuid(awsBluePrint.getUuid());
             dto.setId(awsBluePrint.getId());
             dto.setCreatedAt(awsBluePrint.getCreated_at());
+            dto.setStatus(awsBluePrint.getStatus());
             awsBluePrintDtos.add(dto);
         }
         return awsBluePrintDtos;
