@@ -10,9 +10,9 @@ import java.util.List;
 
 public interface AwsBlueprintService {
 
-		AwsBluePrintDto getAwsBlueprint(Long bluePrintId);
+    AwsBluePrintDto getAwsBlueprint(String uuid);
 
-		List<AwsBluePrintListDto> getMyAwsBlueprints(String userId);
+    List<AwsBluePrintListDto> getMyAwsBlueprints(String userId);
 
-		void store(AwsBluePrintDto awsBluePrintDto, String userId) throws JsonProcessingException;
+    void store(AwsBluePrintDto awsBluePrintDto, String provision, String userId) throws JsonProcessingException;
 }

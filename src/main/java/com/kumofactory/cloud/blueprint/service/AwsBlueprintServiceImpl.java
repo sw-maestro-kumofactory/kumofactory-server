@@ -2,6 +2,7 @@ package com.kumofactory.cloud.blueprint.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kumofactory.cloud.blueprint.domain.ComponentLine;
+import com.kumofactory.cloud.blueprint.domain.ProvisionStatus;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsBluePrint;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsComponent;
 import com.kumofactory.cloud.blueprint.dto.ComponentLineDto;
@@ -27,6 +28,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Boolean.parseBoolean;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -42,8 +45,8 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 
 
     @Override
-    public AwsBluePrintDto getAwsBlueprint(Long bluePrintId) {
-        AwsBluePrint awsBluePrintById = awsBluePrintRepository.findAwsBluePrintById(bluePrintId);
+    public AwsBluePrintDto getAwsBlueprint(String uuid) {
+        AwsBluePrint awsBluePrintById = awsBluePrintRepository.findAwsBluePrintByUuid(uuid);
         if (awsBluePrintById == null) {
             throw new RuntimeException("awsBluePrintById is null");
         }
@@ -78,18 +81,11 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
     }
 
     @Override
-    public void store(AwsBluePrintDto awsBluePrintDto, String userId) throws JsonProcessingException {
-        Member member = memberRepository.findMemberByOauthId(userId);
-        // BluePrint 저장
-        AwsBluePrint awsBluePrint = new AwsBluePrint();
-        awsBluePrint.setUuid(awsBluePrintDto.getUuid());
-        awsBluePrint.setName(awsBluePrintDto.getName());
-        awsBluePrint.setMember(member);
-        AwsBluePrint savedBlueprint = awsBluePrintRepository.save(awsBluePrint);
-        logger.info("savedBlueprint: {}", savedBlueprint);
+    public void store(AwsBluePrintDto awsBluePrintDto, String provision, String userId) throws JsonProcessingException {
+        AwsBluePrint savedBlueprint = saveBlueprint(awsBluePrintDto, provision, userId); // BluePrint 저장
+        saveComponentLines(savedBlueprint, awsBluePrintDto.getLinks()); // ComponentLine 저장
 
         List<AwsComponent> components = new ArrayList<>();
-        List<ComponentLineDto> links = awsBluePrintDto.getLinks();
         List<AwsCdkDto> awsCdkDtos = new ArrayList<>();
 
         // Components 저장
@@ -101,14 +97,37 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         }
         awsComponentRepository.saveAll(components);
 
-        // Lines 저장
+        if (parseBoolean(provision)) {
+            sender.sendAwsCdkOption(awsCdkDtos);
+        }
+    }
+
+    // Blueprint 저장
+    private AwsBluePrint saveBlueprint(AwsBluePrintDto awsBluePrintDto, String provision, String userId) {
+        Member member = memberRepository.findMemberByOauthId(userId);
+        ProvisionStatus status;
+        if (parseBoolean(provision)) {
+            status = ProvisionStatus.PROVISIONING;
+        } else {
+            status = ProvisionStatus.PENDING;
+        }
+        // BluePrint 저장
+        AwsBluePrint awsBluePrint = new AwsBluePrint();
+        awsBluePrint.setUuid(awsBluePrintDto.getUuid());
+        awsBluePrint.setName(awsBluePrintDto.getName());
+        awsBluePrint.setStatus(status);
+        awsBluePrint.setMember(member);
+        return awsBluePrintRepository.save(awsBluePrint);
+    }
+
+    // ComponentLine 저장
+    private void saveComponentLines(AwsBluePrint blueprint, List<ComponentLineDto> lines) {
         List<ComponentLine> componentLines = new ArrayList<>();
-        for (ComponentLineDto link : links) {
-            ComponentLine componentLink = ComponentLine.createComponentLink(link, savedBlueprint);
+        for (ComponentLineDto link : lines) {
+            ComponentLine componentLink = ComponentLine.createComponentLink(link, blueprint);
             componentLines.add(componentLink);
         }
         componentLineRepository.saveAll(componentLines);
 
-        sender.sendAwsCdkOption(awsCdkDtos);
     }
 }

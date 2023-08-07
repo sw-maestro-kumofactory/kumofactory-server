@@ -1,18 +1,12 @@
 package com.kumofactory.cloud.blueprint.domain.aws;
 
 import com.kumofactory.cloud.blueprint.domain.ComponentLine;
+import com.kumofactory.cloud.blueprint.domain.ProvisionStatus;
 import com.kumofactory.cloud.member.domain.Member;
 
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,10 +28,12 @@ public class AwsBluePrint {
     private Date created_at;
     @UpdateTimestamp
     private Date updated_at;
-    
+
     private String uuid; // Client 에서 생성하는 uuid
 
     private String name; // 블루프린트 이름
+    @Enumerated(EnumType.STRING)
+    private ProvisionStatus status; // 배포 상태
 
     @ManyToOne
     private Member member;
