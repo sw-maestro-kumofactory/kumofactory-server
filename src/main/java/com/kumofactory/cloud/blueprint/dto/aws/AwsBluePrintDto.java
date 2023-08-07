@@ -1,6 +1,7 @@
 package com.kumofactory.cloud.blueprint.dto.aws;
 
 import com.kumofactory.cloud.blueprint.domain.ComponentLine;
+import com.kumofactory.cloud.blueprint.domain.ProvisionStatus;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsComponent;
 import com.kumofactory.cloud.blueprint.dto.ComponentLineDto;
 
@@ -14,6 +15,7 @@ import lombok.Data;
 public class AwsBluePrintDto {
     private String uuid;
     private String name;
+    private ProvisionStatus status;
     private List<AwsComponentDto> components;
     private List<ComponentLineDto> links;
 

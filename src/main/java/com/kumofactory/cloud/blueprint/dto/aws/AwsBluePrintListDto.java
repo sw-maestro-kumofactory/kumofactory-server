@@ -1,5 +1,6 @@
 package com.kumofactory.cloud.blueprint.dto.aws;
 
+import com.kumofactory.cloud.blueprint.domain.ProvisionStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,4 +13,5 @@ public class AwsBluePrintListDto {
     private String uuid;
     private String name;
     private Date createdAt;
+    private ProvisionStatus status;
 }
