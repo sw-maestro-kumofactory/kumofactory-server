@@ -6,6 +6,9 @@ import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintListDto;
 import com.kumofactory.cloud.blueprint.service.AwsBlueprintService;
 import com.kumofactory.cloud.global.annotation.auth.AuthorizationFromToken;
 import com.kumofactory.cloud.global.rabbitmq.MessageProducer;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Tag(name = "AwsBlueprintService", description = "AwsBlueprintService")
@@ -24,13 +28,14 @@ public class BlueprintController {
     private final Logger logger = LoggerFactory.getLogger(BlueprintController.class);
     private final AwsBlueprintService awsBlueprintService;
 
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = AwsBluePrintDto.class)))
     @GetMapping("/aws/{uuid}")
     @AuthorizationFromToken
-
     public AwsBluePrintDto getAwsBlueprint(@PathVariable("uuid") String uuid, String userId) {
         return awsBlueprintService.getAwsBlueprint(uuid);
     }
 
+    @ApiResponse(responseCode = "200", description = "OK")
     @GetMapping("/aws/list")
     @AuthorizationFromToken
     public List<AwsBluePrintListDto> getAwsBlueprintList(String userId) {

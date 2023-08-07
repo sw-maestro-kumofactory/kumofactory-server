@@ -8,10 +8,12 @@ import com.kumofactory.cloud.blueprint.dto.ComponentLineDto;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 
 @Data
+@Schema(name = "AwsBluePrintDto", description = "AwsBluePrintDto")
 public class AwsBluePrintDto {
     private String uuid;
     private String name;
