@@ -26,17 +26,22 @@ public class AwsBluePrint {
 
     @CreationTimestamp
     private Date created_at;
+
     @UpdateTimestamp
     private Date updated_at;
 
     private String uuid; // Client 에서 생성하는 uuid
 
     private String name; // 블루프린트 이름
+
     @Enumerated(EnumType.STRING)
     private ProvisionStatus status; // 배포 상태
 
     @ManyToOne
     private Member member;
+
+    @OneToMany(mappedBy = "bluePrint", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<AwsArea> areas;
 
     @OneToMany(mappedBy = "bluePrint", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<AwsComponent> cspComponents;
