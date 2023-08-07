@@ -11,4 +11,5 @@ public class AwsBluePrintListDto {
 		private Long id;
 		private String name;
 		private Date createdAt;
+		private String presignedUrl;
 }

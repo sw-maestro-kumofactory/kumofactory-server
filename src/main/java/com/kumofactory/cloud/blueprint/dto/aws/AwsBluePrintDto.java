@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Data
@@ -16,6 +17,7 @@ public class AwsBluePrintDto {
 		private String name;
 		private List<AwsComponentDto> components;
 		private List<ComponentLineDto> links;
+		private MultipartFile svgFile;
 
 		public static List<AwsComponentDto> awsComponentDtosMapper(List<AwsComponent> awsComponentDtos) {
 				List<AwsComponentDto> awsComponentDtoList = new ArrayList<>();
