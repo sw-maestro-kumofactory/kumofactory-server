@@ -1,4 +1,4 @@
-package com.kumofactory.cloud.global.middleware.auth;
+package com.kumofactory.cloud.global.annotation.auth;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

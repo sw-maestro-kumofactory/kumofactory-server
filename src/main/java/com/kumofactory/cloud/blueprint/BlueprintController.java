@@ -1,14 +1,25 @@
 package com.kumofactory.cloud.blueprint;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
+import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintListDto;
 import com.kumofactory.cloud.blueprint.service.AwsBlueprintService;
-import com.kumofactory.cloud.global.middleware.auth.AuthorizationFromToken;
+import com.kumofactory.cloud.global.annotation.auth.AuthorizationFromToken;
+import com.kumofactory.cloud.global.rabbitmq.MessageProducer;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Tag(name = "AwsBlueprintService", description = "AwsBlueprintService")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/blueprint")
@@ -17,33 +28,24 @@ public class BlueprintController {
     private final Logger logger = LoggerFactory.getLogger(BlueprintController.class);
     private final AwsBlueprintService awsBlueprintService;
 
-    @GetMapping("/aws/{id}")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = AwsBluePrintDto.class)))
+    @GetMapping("/aws/{uuid}")
     @AuthorizationFromToken
-    public Object getAwsBlueprint(@PathVariable("id") Long id, String userId) {
-        logger.info("aws blue print id: {}", id);
-        AwsBluePrintDto awsBlueprint = awsBlueprintService.getAwsBlueprint(id);
-        return awsBlueprint;
+    public AwsBluePrintDto getAwsBlueprint(@PathVariable("uuid") String uuid, String userId) {
+        return awsBlueprintService.getAwsBlueprint(uuid);
     }
 
+    @ApiResponse(responseCode = "200", description = "OK")
     @GetMapping("/aws/list")
     @AuthorizationFromToken
-    public Object getAwsBlueprintList(String userId) {
-        logger.info("userId: {}", userId);
+    public List<AwsBluePrintListDto> getAwsBlueprintList(String userId) {
         return awsBlueprintService.getMyAwsBlueprints(userId);
     }
 
     @PostMapping("/aws")
     @AuthorizationFromToken
-    public Object createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto, String userId) {
-        logger.info(userId);
-        awsBlueprintService.store(awsBluePrintDto, userId);
+    public Object createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto, @RequestParam String provision, String userId) throws JsonProcessingException {
+        awsBlueprintService.store(awsBluePrintDto, provision, userId);
         return "hello-world";
-    }
-
-    @GetMapping("/test")
-    @AuthorizationFromToken
-    public String testMiddleware(String userId) {
-        System.out.printf("userId: %s\n", userId);
-        return userId;
     }
 }
