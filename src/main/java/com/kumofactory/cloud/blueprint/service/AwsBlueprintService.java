@@ -15,4 +15,6 @@ public interface AwsBlueprintService {
     List<AwsBluePrintListDto> getMyAwsBlueprints(String userId);
 
     void store(AwsBluePrintDto awsBluePrintDto, String provision, String userId) throws JsonProcessingException;
+
+    boolean delete(String uuid); // blueprint uuid 로 모든 정보 삭세
 }

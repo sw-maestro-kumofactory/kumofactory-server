@@ -83,6 +83,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
             dto.setId(awsBluePrint.getId());
             dto.setCreatedAt(awsBluePrint.getCreated_at());
             dto.setStatus(awsBluePrint.getStatus());
+            dto.setPresignedUrl(_getObjectKey(member.getOauthId(), awsBluePrint.getUuid()));
             awsBluePrintDtos.add(dto);
         }
         return awsBluePrintDtos;
@@ -90,6 +91,8 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 
     @Override
     public void store(AwsBluePrintDto awsBluePrintDto, String provision, String userId) throws JsonProcessingException {
+        this.delete(awsBluePrintDto.getUuid()); // 기존 BluePrint 삭제
+
         AwsBluePrint savedBlueprint = saveBlueprint(awsBluePrintDto, provision, userId); // BluePrint 저장
         saveComponentLines(savedBlueprint, awsBluePrintDto.getLinks()); // ComponentLine 저장
         saveAwsAreas(savedBlueprint, awsBluePrintDto.getAreas()); // Area 저장
@@ -111,6 +114,16 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         }
     }
 
+    @Override
+    public boolean delete(String uuid) {
+        AwsBluePrint awsBluePrint = awsBluePrintRepository.findAwsBluePrintByUuid(uuid);
+        if (awsBluePrint == null) {
+            return false;
+        }
+        awsBluePrintRepository.delete(awsBluePrint);
+        return true;
+    }
+
     // Blueprint 저장
     private AwsBluePrint saveBlueprint(AwsBluePrintDto awsBluePrintDto, String provision, String userId) {
         Member member = memberRepository.findMemberByOauthId(userId);
@@ -126,6 +139,15 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         awsBluePrint.setName(awsBluePrintDto.getName());
         awsBluePrint.setStatus(status);
         awsBluePrint.setMember(member);
+
+        // thumbnail 저장
+        String objectKey = _getObjectKey(member.getOauthId(), awsBluePrint.getUuid());
+        try {
+            awsS3Helper.putS3Object(awsBluePrintDto.getSvgFile(), objectKey);
+        } catch (Exception e) {
+            logger.error("thumbnail upload failed: {}", e.getMessage());
+        }
+
         return awsBluePrintRepository.save(awsBluePrint);
     }
 
@@ -148,7 +170,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         awsAreaRepository.saveAll(awsArea);
     }
 
-    private String _getObjectKey(Long memberId, Long blueprintId) {
+    private String _getObjectKey(String memberId, String blueprintId) {
         return memberId + "/" + blueprintId + ".svg";
     }
 }
