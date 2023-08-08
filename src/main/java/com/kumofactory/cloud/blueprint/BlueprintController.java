@@ -1,15 +1,18 @@
 package com.kumofactory.cloud.blueprint;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.kumofactory.cloud.blueprint.domain.BluePrintScope;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintListDto;
 import com.kumofactory.cloud.blueprint.service.AwsBlueprintService;
 import com.kumofactory.cloud.global.annotation.auth.AuthorizationFromToken;
 import com.kumofactory.cloud.global.dto.ResultDto;
 import com.kumofactory.cloud.global.rabbitmq.MessageProducer;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +39,36 @@ public class BlueprintController {
         return awsBlueprintService.getAwsBlueprint(uuid);
     }
 
+    @Operation(
+            summary = "BluePrint scope 업데이트",
+            description = "Requires authentication.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PutMapping("/aws/{uuid}")
+    @AuthorizationFromToken
+    public ResultDto updateBluePrintScope(@PathVariable("uuid") String uuid, @RequestParam("scope") BluePrintScope scope, String userId) {
+        boolean result = awsBlueprintService.updateBluePrintScope(scope, uuid, userId);
+        return ResultDto.builder()
+                .result(result)
+                .message(!result ? "Not Found or Not Authorized" : "")
+                .build();
+    }
+
+    @Operation(
+            summary = "BluePrint 삭제",
+            description = "Requires authentication.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @DeleteMapping("/aws/{uuid}")
+    @AuthorizationFromToken
+    public ResultDto deleteAwsBlueprint(@PathVariable("uuid") String uuid, String userId) {
+        boolean result = awsBlueprintService.delete(uuid);
+        return ResultDto.builder()
+                .result(result)
+                .message(!result ? "Not Found " : "")
+                .build();
+    }
+
     @ApiResponse(responseCode = "200", description = "OK")
     @GetMapping("/aws/list")
     @AuthorizationFromToken
@@ -48,14 +81,5 @@ public class BlueprintController {
     public Object createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto, @RequestParam String provision, String userId) throws JsonProcessingException {
         awsBlueprintService.store(awsBluePrintDto, provision, userId);
         return "hello-world";
-    }
-
-    @DeleteMapping("/aws/{uuid}")
-    public ResultDto deleteAwsBlueprint(@PathVariable("uuid") String uuid) {
-        boolean result = awsBlueprintService.delete(uuid);
-        return ResultDto.builder()
-                .result(result)
-                .message(!result ? "Not Found " : "")
-                .build();
     }
 }

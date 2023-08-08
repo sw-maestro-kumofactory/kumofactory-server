@@ -1,6 +1,7 @@
 package com.kumofactory.cloud.blueprint.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.kumofactory.cloud.blueprint.domain.BluePrintScope;
 import com.kumofactory.cloud.blueprint.domain.ComponentLine;
 import com.kumofactory.cloud.blueprint.domain.ProvisionStatus;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsArea;
@@ -124,6 +125,17 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         return true;
     }
 
+    @Override
+    public boolean updateBluePrintScope(BluePrintScope scope, String uuid, String userId) {
+        AwsBluePrint awsBluePrintByUuid = awsBluePrintRepository.findAwsBluePrintByUuid(uuid);
+        if (awsBluePrintByUuid == null || !awsBluePrintByUuid.getMember().getOauthId().equals(userId)) {
+            return false;
+        }
+        awsBluePrintByUuid.setScope(scope);
+        awsBluePrintRepository.save(awsBluePrintByUuid);
+        return true;
+    }
+
     // Blueprint 저장
     private AwsBluePrint saveBlueprint(AwsBluePrintDto awsBluePrintDto, String provision, String userId) {
         Member member = memberRepository.findMemberByOauthId(userId);
@@ -139,16 +151,21 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         awsBluePrint.setName(awsBluePrintDto.getName());
         awsBluePrint.setStatus(status);
         awsBluePrint.setMember(member);
+        awsBluePrint.setScope(BluePrintScope.PRIVATE);
 
-        // thumbnail 저장
-        String objectKey = _getObjectKey(member.getOauthId(), awsBluePrint.getUuid());
+        saveThumbnail(awsBluePrintDto, member); // thumbnail 저장
+
+        return awsBluePrintRepository.save(awsBluePrint);
+    }
+
+    // thumbnail 저장
+    private void saveThumbnail(AwsBluePrintDto bluePrint, Member member) {
+        String objectKey = _getObjectKey(member.getOauthId(), bluePrint.getUuid());
         try {
-            awsS3Helper.putS3Object(awsBluePrintDto.getSvgFile(), objectKey);
+            awsS3Helper.putS3Object(bluePrint.getSvgFile(), objectKey);
         } catch (Exception e) {
             logger.error("thumbnail upload failed: {}", e.getMessage());
         }
-
-        return awsBluePrintRepository.save(awsBluePrint);
     }
 
     // ComponentLine 저장
