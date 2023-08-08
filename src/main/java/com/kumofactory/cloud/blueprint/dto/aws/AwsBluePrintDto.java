@@ -24,7 +24,7 @@ public class AwsBluePrintDto {
     private List<AwsAreaDto> areas;
     private List<AwsComponentDto> components;
     private List<ComponentLineDto> links;
-    private MultipartFile svgFile;
+    private String svgFile;
 
     public static List<AwsAreaDto> awsAreaDtosMapper(List<AwsArea> awsAreaDtos) {
         List<AwsAreaDto> awsAreaDtoList = new ArrayList<>();

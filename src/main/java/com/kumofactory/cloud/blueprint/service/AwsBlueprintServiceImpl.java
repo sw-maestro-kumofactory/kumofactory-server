@@ -24,10 +24,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import static java.lang.Boolean.parseBoolean;
@@ -143,7 +146,9 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         // thumbnail 저장
         String objectKey = _getObjectKey(member.getOauthId(), awsBluePrint.getUuid());
         try {
-            awsS3Helper.putS3Object(awsBluePrintDto.getSvgFile(), objectKey);
+            byte[] svgContent = Base64.getDecoder().decode(awsBluePrintDto.getSvgFile());
+            MultipartFile svgFile = new MockMultipartFile("file", objectKey, "image/svg+xml", svgContent);
+            awsS3Helper.putS3Object(svgFile, objectKey);
         } catch (Exception e) {
             logger.error("thumbnail upload failed: {}", e.getMessage());
         }
