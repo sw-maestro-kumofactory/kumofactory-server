@@ -11,17 +11,20 @@ import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Data
 @Schema(name = "AwsBluePrintDto", description = "AwsBluePrintDto")
 public class AwsBluePrintDto {
+  
     private String uuid;
     private String name;
     private ProvisionStatus status;
     private List<AwsAreaDto> areas;
     private List<AwsComponentDto> components;
     private List<ComponentLineDto> links;
+    private MultipartFile svgFile;
 
     public static List<AwsAreaDto> awsAreaDtosMapper(List<AwsArea> awsAreaDtos) {
         List<AwsAreaDto> awsAreaDtoList = new ArrayList<>();

@@ -17,6 +17,7 @@ import com.kumofactory.cloud.blueprint.repository.aws.AwsComponentRepository;
 import com.kumofactory.cloud.global.rabbitmq.MessageProducer;
 import com.kumofactory.cloud.member.MemberRepository;
 import com.kumofactory.cloud.member.domain.Member;
+import com.kumofactory.cloud.util.aws.s3.AwsS3Helper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
     private final ComponentLineRepository componentLineRepository;
     private final AwsAreaRepository awsAreaRepository;
     private final MessageProducer sender;
+    private final AwsS3Helper awsS3Helper;
     private final Logger logger = LoggerFactory.getLogger(AwsBlueprintServiceImpl.class);
 
 
@@ -144,4 +146,8 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         }
         awsAreaRepository.saveAll(awsArea);
     }
+  
+  		private String _getObjectKey(Long memberId, Long blueprintId) {
+				return memberId + "/" + blueprintId + ".svg";
+		}
 }

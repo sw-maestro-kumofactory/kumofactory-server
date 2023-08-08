@@ -11,9 +11,11 @@ import java.util.Date;
 @Setter
 @Schema(name = "AwsBluePrintListDto", description = "AwsBluePrintListDto")
 public class AwsBluePrintListDto {
+  
     private Long id;
     private String uuid;
     private String name;
     private Date createdAt;
+    private String presignedUrl;
     private ProvisionStatus status;
 }
