@@ -1,9 +1,10 @@
 package com.kumofactory.cloud.util.aws.s3;
 
-import com.kumofactory.cloud.config.S3Config;
+import com.kumofactory.cloud.global.config.S3Config;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -19,6 +20,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
 import java.io.IOException;
 import java.time.Duration;
 
+@Service
 @RequiredArgsConstructor
 public class AwsS3HelperImpl implements AwsS3Helper {
 
@@ -26,7 +28,7 @@ public class AwsS3HelperImpl implements AwsS3Helper {
     private final ProfileCredentialsProvider credentialsProvider = ProfileCredentialsProvider.create();
     private final Logger logger = LoggerFactory.getLogger(AwsS3HelperImpl.class);
 
-    public void putS3Object(MultipartFile svgFile, String keyName) throws S3Exception, IOException{
+    public void putS3Object(MultipartFile svgFile, String keyName) throws S3Exception, IOException {
 
         S3Client s3Client = S3Client.builder()
                 .region(Region.of(s3Config.getRegion()))
