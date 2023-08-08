@@ -1,4 +1,4 @@
-package com.kumofactory.cloud.config;
+package com.kumofactory.cloud.global.config;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;

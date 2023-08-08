@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
@@ -146,8 +147,8 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         }
         awsAreaRepository.saveAll(awsArea);
     }
-  
-  		private String _getObjectKey(Long memberId, Long blueprintId) {
-				return memberId + "/" + blueprintId + ".svg";
-		}
+
+    private String _getObjectKey(Long memberId, Long blueprintId) {
+        return memberId + "/" + blueprintId + ".svg";
+    }
 }
