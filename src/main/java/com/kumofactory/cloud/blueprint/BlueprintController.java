@@ -5,6 +5,7 @@ import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintListDto;
 import com.kumofactory.cloud.blueprint.service.AwsBlueprintService;
 import com.kumofactory.cloud.global.annotation.auth.AuthorizationFromToken;
+import com.kumofactory.cloud.global.dto.ResultDto;
 import com.kumofactory.cloud.global.rabbitmq.MessageProducer;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -47,5 +48,14 @@ public class BlueprintController {
     public Object createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto, @RequestParam String provision, String userId) throws JsonProcessingException {
         awsBlueprintService.store(awsBluePrintDto, provision, userId);
         return "hello-world";
+    }
+
+    @DeleteMapping("/aws/{uuid}")
+    public ResultDto deleteAwsBlueprint(@PathVariable("uuid") String uuid) {
+        boolean result = awsBlueprintService.delete(uuid);
+        return ResultDto.builder()
+                .result(result)
+                .message(!result ? "Not Found " : "")
+                .build();
     }
 }
