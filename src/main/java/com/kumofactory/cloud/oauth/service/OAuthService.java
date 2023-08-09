@@ -76,7 +76,7 @@ public class OAuthService {
 		}
 
 		public TokenDto generateTestToken() {
-				UserInfoDto userInfoDto = new UserInfoDto("1234", "github");
+				UserInfoDto userInfoDto = new UserInfoDto("1234", "github", "access", "coding-convention");
 				return jwtTokenProvider.create(userInfoDto.id());
 		}
 
