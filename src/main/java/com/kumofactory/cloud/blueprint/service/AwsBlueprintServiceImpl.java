@@ -166,10 +166,13 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 		// thumbnail 저장
 		private String saveThumbnail(AwsBluePrintDto bluePrint, Member member) {
 				String objectKey = _getObjectKey(member.getOauthId(), bluePrint.getUuid());
+				logger.info("thumbnail upload start: {}", objectKey);
 				try {
 						byte[] svgContent = Base64.getDecoder().decode(bluePrint.getSvgFile().split(",")[1]);
 						MultipartFile svgFile = new MockMultipartFile("file", objectKey, "image/svg+xml", svgContent);
 						awsS3Helper.putS3Object(svgFile, objectKey);
+						logger.info("thumbnail upload success: {}", objectKey);
+						logger.info("thumbnail url: {}", awsS3Helper.getPresignedUrl(objectKey));
 				} catch (Exception e) {
 						logger.error("thumbnail upload failed: {}", e.getMessage());
 				}
