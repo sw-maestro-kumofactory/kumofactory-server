@@ -1,7 +1,9 @@
 package com.kumofactory.cloud.blueprint.repository.aws;
 
+import com.kumofactory.cloud.blueprint.domain.BluePrintScope;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsBluePrint;
 import com.kumofactory.cloud.member.domain.Member;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +19,7 @@ public interface AwsBluePrintRepository extends JpaRepository<AwsBluePrint, Long
 
     List<AwsBluePrint> findAwsBluePrintsByMember(Member member);
 
+    List<AwsBluePrint> findAllByScope(BluePrintScope scope, Pageable pageable);
+
+    List<AwsBluePrint> findAllByName(String name, Pageable pageable);
 }

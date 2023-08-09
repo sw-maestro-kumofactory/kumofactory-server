@@ -1,5 +1,6 @@
 package com.kumofactory.cloud.blueprint.domain.aws;
 
+import com.kumofactory.cloud.blueprint.domain.BluePrintScope;
 import com.kumofactory.cloud.blueprint.domain.ComponentLine;
 import com.kumofactory.cloud.blueprint.domain.ProvisionStatus;
 import com.kumofactory.cloud.member.domain.Member;
@@ -34,8 +35,13 @@ public class AwsBluePrint {
 
     private String name; // 블루프린트 이름
 
+    private String keyName; // 썸네일 이미지 파일명 (S3)
+
     @Enumerated(EnumType.STRING)
     private ProvisionStatus status; // 배포 상태
+
+    @Enumerated(EnumType.STRING)
+    private BluePrintScope scope; // 블루프린트 공개 범위
 
     @ManyToOne
     private Member member;
