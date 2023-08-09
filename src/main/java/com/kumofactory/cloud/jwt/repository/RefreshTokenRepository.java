@@ -1,4 +1,4 @@
-package com.kumofactory.cloud.auth.jwt.repository;
+package com.kumofactory.cloud.jwt.repository;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
