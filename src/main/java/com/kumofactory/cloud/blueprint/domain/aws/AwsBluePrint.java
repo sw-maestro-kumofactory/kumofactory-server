@@ -1,18 +1,13 @@
 package com.kumofactory.cloud.blueprint.domain.aws;
 
+import com.kumofactory.cloud.blueprint.domain.BluePrintScope;
 import com.kumofactory.cloud.blueprint.domain.ComponentLine;
+import com.kumofactory.cloud.blueprint.domain.ProvisionStatus;
 import com.kumofactory.cloud.member.domain.Member;
 
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,18 +27,32 @@ public class AwsBluePrint {
 
     @CreationTimestamp
     private Date created_at;
+
     @UpdateTimestamp
     private Date updated_at;
 
+    private String uuid; // Client 에서 생성하는 uuid
+
     private String name; // 블루프린트 이름
+
+    private String keyName; // 썸네일 이미지 파일명 (S3)
+
+    @Enumerated(EnumType.STRING)
+    private ProvisionStatus status; // 배포 상태
+
+    @Enumerated(EnumType.STRING)
+    private BluePrintScope scope; // 블루프린트 공개 범위
 
     @ManyToOne
     private Member member;
 
-    @OneToMany(mappedBy = "bluePrint", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "bluePrint", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AwsArea> areas;
+
+    @OneToMany(mappedBy = "bluePrint", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AwsComponent> cspComponents;
 
-    @OneToMany(mappedBy = "bluePrint", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "bluePrint", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ComponentLine> lines;
 
 }
