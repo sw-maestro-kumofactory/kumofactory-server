@@ -4,7 +4,9 @@ import com.kumofactory.cloud.appDeploy.dto.BuildRequestDto;
 import com.kumofactory.cloud.appDeploy.dto.GitHubRepoDto;
 import com.kumofactory.cloud.appDeploy.service.BuildRequestService;
 import com.kumofactory.cloud.appDeploy.service.UserRepoService;
+import com.kumofactory.cloud.global.annotation.auth.AuthorizationFromToken;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,38 +16,41 @@ import java.util.List;
 @RestController
 @RequestMapping("/build")
 @RequiredArgsConstructor
+@Slf4j
 public class AppDeployController {
-    Logger logger = org.slf4j.LoggerFactory.getLogger(AppDeployController.class);
+    private final Logger logger = org.slf4j.LoggerFactory.getLogger(AppDeployController.class);
 
-    private final UserRepoService userRepoService = new UserRepoService();
-    private final BuildRequestService buildRequestService = new BuildRequestService();
+    private final UserRepoService userRepoService;
+    private final BuildRequestService buildRequestService;
 
     @GetMapping("/list/{org}/repo")
-    public List<GitHubRepoDto.RepoInfoDto> listOrgRepo(@PathVariable String org) {
-        return userRepoService.RequestOrgRepoInfo(org);
+    @AuthorizationFromToken
+    public List<GitHubRepoDto.RepoInfoDto> listOrgRepo(@PathVariable String org, String userId) {
+        return userRepoService.RequestOrgRepoInfo(org, userId);
     }
 
-    @GetMapping("/list/{user}")
-    public GitHubRepoDto.UserDto listUserRepoAndOrgs(@PathVariable String user) {
-        return userRepoService.RequestUserRepoInfoAndOrgList(user);
+    @GetMapping("/list")
+    @AuthorizationFromToken
+    public GitHubRepoDto.UserDto listUserRepoAndOrgs(String userId) {
+        return userRepoService.RequestUserRepoInfoAndOrgList(userId);
     }
 
-    @GetMapping("/list/{owner}/{repo}/branch")
-    public List<String> listRepoBranches(@PathVariable String owner, @PathVariable String repo) {
-        return userRepoService.RequestRepoBranches(owner, repo);
+    @GetMapping("/list/{org}/{repo}/branch")
+    @AuthorizationFromToken
+    public List<String> listRepoBranches(@PathVariable String org, @PathVariable String repo, String userId) {
+        return userRepoService.RequestRepoBranches(org, repo, userId);
+    }
+
+    @GetMapping("/list/{repo}/branch")
+    @AuthorizationFromToken
+    public List<String> listRepoBranches(@PathVariable String repo, String userId) {
+        return userRepoService.RequestRepoBranches(repo, userId);
     }
 
     @PostMapping("/deploy")
-    public ResponseEntity<String> deployRequest(@RequestBody BuildRequestDto request) {
-        logger.info("request : {}", "message");
-        buildRequestService.RequestBuild(request);
-//        logger.info("request : {}", request);
-
-        return ResponseEntity.ok("success");
-    }
-
-    @GetMapping("/health")
-    public ResponseEntity<String> checkHealth() {
+    @AuthorizationFromToken
+    public ResponseEntity<String> deployRequest(@RequestBody BuildRequestDto request, String userId) {
+        buildRequestService.RequestBuild(request, userId);
         return ResponseEntity.ok("success");
     }
 }
