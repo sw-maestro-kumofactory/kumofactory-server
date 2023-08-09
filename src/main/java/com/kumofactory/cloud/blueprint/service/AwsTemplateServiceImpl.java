@@ -28,6 +28,16 @@ public class AwsTemplateServiceImpl implements AwsTemplateService {
 		@Override
 		public List<TemplatePreviewDto> searchTemplateFromKumofactory(Pageable pageable) throws S3Exception {
 				List<AwsBluePrint> all = templateRepository.findAllByScope(BluePrintScope.KUMOFACTORY, pageable);
+				return mapToTemplatePreviewDto(all);
+		}
+
+		@Override
+		public List<TemplatePreviewDto> searchTemplateFromTemplateName(Pageable pageable, String templateName) {
+				List<AwsBluePrint> all = templateRepository.findAllByNameContainsAndScope(templateName, pageable, BluePrintScope.PUBLIC);
+				return mapToTemplatePreviewDto(all);
+		}
+
+		private List<TemplatePreviewDto> mapToTemplatePreviewDto(List<AwsBluePrint> all) {
 				List<TemplatePreviewDto> dtos = new ArrayList<>();
 				try {
 						for (AwsBluePrint awsBluePrint : all) {
@@ -40,11 +50,5 @@ public class AwsTemplateServiceImpl implements AwsTemplateService {
 						logger.error("S3Exception: {}", e.getMessage());
 						throw S3Exception.builder().build();
 				}
-		}
-
-		@Override
-		public List<TemplatePreviewDto> searchTemplateFromTemplateName(Pageable pageable, String templateName) {
-
-				return null;
 		}
 }

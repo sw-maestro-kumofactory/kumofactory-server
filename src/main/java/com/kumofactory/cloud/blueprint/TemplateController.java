@@ -4,6 +4,7 @@ import com.kumofactory.cloud.blueprint.dto.template.TemplatePreviewDto;
 import com.kumofactory.cloud.blueprint.service.AwsTemplateService;
 import com.kumofactory.cloud.global.dto.PagingDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -29,5 +30,11 @@ public class TemplateController {
 		public List<TemplatePreviewDto> searchTemplateFromKumofactory(PagingDto page) {
 				Pageable pageable = PagingDto.createPageAble(page);
 				return templateService.searchTemplateFromKumofactory(pageable);
+		}
+
+		@GetMapping("/name")
+		public List<TemplatePreviewDto> searchTemplateByName(PagingDto page, @RequestParam("value") String templateName) {
+				Pageable pageable = PagingDto.createPageAble(page);
+				return templateService.searchTemplateFromTemplateName(pageable, templateName);
 		}
 }

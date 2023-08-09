@@ -21,7 +21,7 @@ public interface AwsBluePrintRepository extends JpaRepository<AwsBluePrint, Long
 
 		List<AwsBluePrint> findAllByScope(BluePrintScope scope, Pageable pageable);
 
-		List<AwsBluePrint> findAllByNameContains(String name, Pageable pageable);
+		List<AwsBluePrint> findAllByNameContainsAndScope(String name, Pageable pageable, BluePrintScope scope);
 
 		List<AwsBluePrint> findAllByName(String name, Pageable pageable);
 }
