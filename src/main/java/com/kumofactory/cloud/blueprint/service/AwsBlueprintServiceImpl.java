@@ -157,7 +157,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 				awsBluePrint.setName(awsBluePrintDto.getName());
 				awsBluePrint.setStatus(status);
 				awsBluePrint.setMember(member);
-				awsBluePrint.setScope(BluePrintScope.PRIVATE);
+				awsBluePrint.setScope(awsBluePrintDto.getScope() == null ? BluePrintScope.PRIVATE : awsBluePrintDto.getScope());
 				awsBluePrint.setKeyName(keyname);
 
 				return awsBluePrintRepository.save(awsBluePrint);
