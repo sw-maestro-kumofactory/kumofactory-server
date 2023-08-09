@@ -28,10 +28,6 @@ public class Member {
 
 		private String provider;
 
-		private String githubAccessToken;
-
-		private String profileName;
-
 		@OneToMany(mappedBy = "member")
 		private List<AwsBluePrint> bluePrints;
 
@@ -40,8 +36,6 @@ public class Member {
 				Member member = new Member();
 				member.setOauthId(userInfoDto.id());
 				member.setProvider(userInfoDto.provider());
-				member.setGithubAccessToken(userInfoDto.accessToken());
-				member.setProfileName(userInfoDto.profileName());
 				return member;
 		}
 }
