@@ -45,7 +45,7 @@ jobs:
         shell: bash
 
       - name: Build Project
-        run: gradle build
+        run: ./gradlew clean build
 
       ############################################
       ### Start Pushing container image on ECR ###
