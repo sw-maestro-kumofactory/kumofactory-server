@@ -59,18 +59,18 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 						throw new RuntimeException("awsBluePrintById is null");
 				}
 
-        List<AwsArea> awsAreas = awsAreaRepository.findAllByBluePrint(awsBluePrintById);
-        List<AwsComponent> awsComponents = awsComponentRepository.findAllByBluePrint(awsBluePrintById);
-        List<ComponentLine> componentLines = componentLineRepository.findAllByBluePrint(awsBluePrintById);
-        AwsBluePrintDto awsBluePrintDto = new AwsBluePrintDto();
-        awsBluePrintDto.setName(awsBluePrintById.getName());
-        awsBluePrintDto.setStatus(awsBluePrintById.getStatus());
-        awsBluePrintDto.setUuid(awsBluePrintById.getUuid());
-        awsBluePrintDto.setAreas(AwsBluePrintDto.awsAreaDtosMapper(awsAreas));
-        awsBluePrintDto.setComponents(AwsBluePrintDto.awsComponentDtosMapper(awsComponents));
-        awsBluePrintDto.setLinks(AwsBluePrintDto.componentLinkDtoListMapper(componentLines));
-        return awsBluePrintDto;
-    }
+				List<AwsArea> awsAreas = awsAreaRepository.findAllByBluePrint(awsBluePrintById);
+				List<AwsComponent> awsComponents = awsComponentRepository.findAllByBluePrint(awsBluePrintById);
+				List<ComponentLine> componentLines = componentLineRepository.findAllByBluePrint(awsBluePrintById);
+				AwsBluePrintDto awsBluePrintDto = new AwsBluePrintDto();
+				awsBluePrintDto.setName(awsBluePrintById.getName());
+				awsBluePrintDto.setStatus(awsBluePrintById.getStatus());
+				awsBluePrintDto.setUuid(awsBluePrintById.getUuid());
+				awsBluePrintDto.setAreas(AwsBluePrintDto.awsAreaDtosMapper(awsAreas));
+				awsBluePrintDto.setComponents(AwsBluePrintDto.awsComponentDtosMapper(awsComponents));
+				awsBluePrintDto.setLinks(AwsBluePrintDto.componentLinkDtoListMapper(componentLines));
+				return awsBluePrintDto;
+		}
 
 		@Override
 		public List<AwsBluePrintListDto> getMyAwsBlueprints(String oauthId) {
@@ -79,20 +79,20 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 						throw new RuntimeException("member is null");
 				}
 
-        List<AwsBluePrint> awsBluePrints = awsBluePrintRepository.findAwsBluePrintsByMember(member);
-        List<AwsBluePrintListDto> awsBluePrintDtos = new ArrayList<>();
-        for (AwsBluePrint awsBluePrint : awsBluePrints) {
-            AwsBluePrintListDto dto = new AwsBluePrintListDto();
-            dto.setName(awsBluePrint.getName());
-            dto.setUuid(awsBluePrint.getUuid());
-            dto.setId(awsBluePrint.getId());
-            dto.setCreatedAt(awsBluePrint.getCreated_at());
-            dto.setStatus(awsBluePrint.getStatus());
-            dto.setPresignedUrl(awsS3Helper.getPresignedUrl(awsBluePrint.getKeyName()));
-            awsBluePrintDtos.add(dto);
-        }
-        return awsBluePrintDtos;
-    }
+				List<AwsBluePrint> awsBluePrints = awsBluePrintRepository.findAwsBluePrintsByMember(member);
+				List<AwsBluePrintListDto> awsBluePrintDtos = new ArrayList<>();
+				for (AwsBluePrint awsBluePrint : awsBluePrints) {
+						AwsBluePrintListDto dto = new AwsBluePrintListDto();
+						dto.setName(awsBluePrint.getName());
+						dto.setUuid(awsBluePrint.getUuid());
+						dto.setId(awsBluePrint.getId());
+						dto.setCreatedAt(awsBluePrint.getCreated_at());
+						dto.setStatus(awsBluePrint.getStatus());
+						dto.setPresignedUrl(awsS3Helper.getPresignedUrl(awsBluePrint.getKeyName()));
+						awsBluePrintDtos.add(dto);
+				}
+				return awsBluePrintDtos;
+		}
 
 		@Override
 		public void store(AwsBluePrintDto awsBluePrintDto, String provision, String userId) throws JsonProcessingException {
@@ -129,53 +129,53 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 				return true;
 		}
 
-    @Override
-    public boolean updateBluePrintScope(BluePrintScope scope, String uuid, String userId) {
-        AwsBluePrint awsBluePrintByUuid = awsBluePrintRepository.findAwsBluePrintByUuid(uuid);
-        if (awsBluePrintByUuid == null || !awsBluePrintByUuid.getMember().getOauthId().equals(userId)) {
-            return false;
-        }
-        awsBluePrintByUuid.setScope(scope);
-        awsBluePrintRepository.save(awsBluePrintByUuid);
-        return true;
-    }
+		@Override
+		public boolean updateBluePrintScope(BluePrintScope scope, String uuid, String userId) {
+				AwsBluePrint awsBluePrintByUuid = awsBluePrintRepository.findAwsBluePrintByUuid(uuid);
+				if (awsBluePrintByUuid == null || !awsBluePrintByUuid.getMember().getOauthId().equals(userId)) {
+						return false;
+				}
+				awsBluePrintByUuid.setScope(scope);
+				awsBluePrintRepository.save(awsBluePrintByUuid);
+				return true;
+		}
 
-    // Blueprint 저장
-    private AwsBluePrint saveBlueprint(AwsBluePrintDto awsBluePrintDto, String provision, String userId) {
-        Member member = memberRepository.findMemberByOauthId(userId);
-        ProvisionStatus status;
-        if (parseBoolean(provision)) {
-            status = ProvisionStatus.PROVISIONING;
-        } else {
-            status = ProvisionStatus.PENDING;
-        }
-        // BluePrint 저장
-        String keyname = saveThumbnail(awsBluePrintDto, member);// thumbnail 저장
+		// Blueprint 저장
+		private AwsBluePrint saveBlueprint(AwsBluePrintDto awsBluePrintDto, String provision, String userId) {
+				Member member = memberRepository.findMemberByOauthId(userId);
+				ProvisionStatus status;
+				if (parseBoolean(provision)) {
+						status = ProvisionStatus.PROVISIONING;
+				} else {
+						status = ProvisionStatus.PENDING;
+				}
+				// BluePrint 저장
+				String keyname = saveThumbnail(awsBluePrintDto, member);// thumbnail 저장
 
-        AwsBluePrint awsBluePrint = new AwsBluePrint();
-        awsBluePrint.setUuid(awsBluePrintDto.getUuid());
-        awsBluePrint.setName(awsBluePrintDto.getName());
-        awsBluePrint.setStatus(status);
-        awsBluePrint.setMember(member);
-        awsBluePrint.setScope(BluePrintScope.PRIVATE);
-        awsBluePrint.setKeyName(keyname);
+				AwsBluePrint awsBluePrint = new AwsBluePrint();
+				awsBluePrint.setUuid(awsBluePrintDto.getUuid());
+				awsBluePrint.setName(awsBluePrintDto.getName());
+				awsBluePrint.setStatus(status);
+				awsBluePrint.setMember(member);
+				awsBluePrint.setScope(BluePrintScope.PRIVATE);
+				awsBluePrint.setKeyName(keyname);
 
-        return awsBluePrintRepository.save(awsBluePrint);
-    }
+				return awsBluePrintRepository.save(awsBluePrint);
+		}
 
-    // thumbnail 저장
-    private String saveThumbnail(AwsBluePrintDto bluePrint, Member member) {
-        String objectKey = _getObjectKey(member.getOauthId(), bluePrint.getUuid());
-        try {
-            byte[] svgContent = Base64.getDecoder().decode(awsBluePrintDto.getSvgFile());
-            MultipartFile svgFile = new MockMultipartFile("file", objectKey, "image/svg+xml", svgContent);
-            awsS3Helper.putS3Object(svgFile, objectKey);
-        } catch (Exception e) {
-            logger.error("thumbnail upload failed: {}", e.getMessage());
-        }
+		// thumbnail 저장
+		private String saveThumbnail(AwsBluePrintDto bluePrint, Member member) {
+				String objectKey = _getObjectKey(member.getOauthId(), bluePrint.getUuid());
+				try {
+						byte[] svgContent = Base64.getDecoder().decode(bluePrint.getSvgFile());
+						MultipartFile svgFile = new MockMultipartFile("file", objectKey, "image/svg+xml", svgContent);
+						awsS3Helper.putS3Object(svgFile, objectKey);
+				} catch (Exception e) {
+						logger.error("thumbnail upload failed: {}", e.getMessage());
+				}
 
-        return objectKey;
-    }
+				return objectKey;
+		}
 
 		// ComponentLine 저장
 		private void saveComponentLines(AwsBluePrint blueprint, List<ComponentLineDto> lines) {
