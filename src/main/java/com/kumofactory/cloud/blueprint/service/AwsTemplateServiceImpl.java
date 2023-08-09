@@ -26,6 +26,12 @@ public class AwsTemplateServiceImpl implements AwsTemplateService {
 		private final Logger logger = LoggerFactory.getLogger(AwsTemplateServiceImpl.class);
 
 		@Override
+		public List<TemplatePreviewDto> getAll(Pageable pageable) throws S3Exception {
+				List<AwsBluePrint> all = templateRepository.findAllByScopeNot(BluePrintScope.PRIVATE, pageable);
+				return mapToTemplatePreviewDto(all);
+		}
+
+		@Override
 		public List<TemplatePreviewDto> searchTemplateFromKumofactory(Pageable pageable) throws S3Exception {
 				List<AwsBluePrint> all = templateRepository.findAllByScope(BluePrintScope.KUMOFACTORY, pageable);
 				return mapToTemplatePreviewDto(all);
@@ -37,11 +43,12 @@ public class AwsTemplateServiceImpl implements AwsTemplateService {
 				return mapToTemplatePreviewDto(all);
 		}
 
+		// S3 에서 url 받아온 후 TemplatePreviewDto 로 변환
 		private List<TemplatePreviewDto> mapToTemplatePreviewDto(List<AwsBluePrint> all) {
 				List<TemplatePreviewDto> dtos = new ArrayList<>();
 				try {
 						for (AwsBluePrint awsBluePrint : all) {
-								String url = s3.getPresignedUrl(awsBluePrint.getUuid());
+								String url = s3.getPresignedUrl(awsBluePrint.getUuid()); // get url from s3
 								TemplatePreviewDto dto = TemplatePreviewDto.mapper(awsBluePrint, url);
 								dtos.add(dto);
 						}

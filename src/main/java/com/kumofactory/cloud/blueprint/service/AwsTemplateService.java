@@ -7,10 +7,11 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 import java.util.List;
 
 public interface AwsTemplateService {
-    // blueprint 이름으로 조회
-    List<TemplatePreviewDto> searchTemplateFromKumofactory(Pageable pageable) throws S3Exception;
+		// 전체 조회하기
+		List<TemplatePreviewDto> getAll(Pageable pageable) throws S3Exception;
 
-//    void searchTemplateFromUser();
+		// blueprint 이름으로 조회
+		List<TemplatePreviewDto> searchTemplateFromKumofactory(Pageable pageable) throws S3Exception;
 
-    List<TemplatePreviewDto> searchTemplateFromTemplateName(Pageable pageable, String templateName) throws S3Exception;
+		List<TemplatePreviewDto> searchTemplateFromTemplateName(Pageable pageable, String templateName) throws S3Exception;
 }
