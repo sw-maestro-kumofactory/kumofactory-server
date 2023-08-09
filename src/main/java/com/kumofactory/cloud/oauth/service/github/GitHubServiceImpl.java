@@ -78,12 +78,13 @@ public class GitHubServiceImpl implements GitHubService {
 				ResponseEntity<JsonNode> response = restTemplate.exchange(requestEntity, JsonNode.class);
 
 				if (response.getStatusCode() == HttpStatus.OK) {
-						JsonNode responseBody = response.getBody();
-						logger.info("response : {}", response.getBody());
-						if (responseBody != null) {
-								String id = responseBody.get("id").asText();
-								String provider = String.valueOf(OAuthProvider.GITHUB);
-								return new UserInfoDto(id, provider);
+					JsonNode responseBody = response.getBody();
+					logger.info("response : {}", response.getBody());
+					if (responseBody != null) {
+							String owner = responseBody.get("login").asText();
+							String id = responseBody.get("id").asText();
+							String provider = String.valueOf(OAuthProvider.GITHUB);
+							return new UserInfoDto(id, provider, accessToken, owner);
 						}
 				}
 				logger.error("response : {}", response.getBody());
