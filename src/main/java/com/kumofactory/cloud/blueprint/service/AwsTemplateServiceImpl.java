@@ -21,29 +21,30 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class AwsTemplateServiceImpl implements AwsTemplateService {
-    private final AwsBluePrintRepository templateRepository;
-    private final AwsS3Helper s3;
-    private final Logger logger = LoggerFactory.getLogger(AwsTemplateServiceImpl.class);
+		private final AwsBluePrintRepository templateRepository;
+		private final AwsS3Helper s3;
+		private final Logger logger = LoggerFactory.getLogger(AwsTemplateServiceImpl.class);
 
-    @Override
-    public List<TemplatePreviewDto> searchTemplateFromKumofactory(Pageable pageable) throws S3Exception {
-        List<AwsBluePrint> all = templateRepository.findAllByScope(BluePrintScope.KUMOFACTORY, pageable);
-        List<TemplatePreviewDto> dtos = new ArrayList<>();
-        try {
-            for (AwsBluePrint awsBluePrint : all) {
-                String url = s3.getPresignedUrl(awsBluePrint.getUuid());
-                TemplatePreviewDto dto = TemplatePreviewDto.mapper(awsBluePrint, url);
-                dtos.add(dto);
-            }
-            return dtos;
-        } catch (S3Exception e) {
-            logger.error("S3Exception: {}", e.getMessage());
-            throw S3Exception.builder().build();
-        }
-    }
+		@Override
+		public List<TemplatePreviewDto> searchTemplateFromKumofactory(Pageable pageable) throws S3Exception {
+				List<AwsBluePrint> all = templateRepository.findAllByScope(BluePrintScope.KUMOFACTORY, pageable);
+				List<TemplatePreviewDto> dtos = new ArrayList<>();
+				try {
+						for (AwsBluePrint awsBluePrint : all) {
+								String url = s3.getPresignedUrl(awsBluePrint.getUuid());
+								TemplatePreviewDto dto = TemplatePreviewDto.mapper(awsBluePrint, url);
+								dtos.add(dto);
+						}
+						return dtos;
+				} catch (S3Exception e) {
+						logger.error("S3Exception: {}", e.getMessage());
+						throw S3Exception.builder().build();
+				}
+		}
 
-    @Override
-    public List<TemplatePreviewDto> searchTemplateFromTemplateName(Pageable pageable, String templateName) {
+		@Override
+		public List<TemplatePreviewDto> searchTemplateFromTemplateName(Pageable pageable, String templateName) {
 
-    }
+				return null;
+		}
 }
