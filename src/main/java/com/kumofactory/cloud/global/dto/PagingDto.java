@@ -12,8 +12,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class PagingDto implements Serializable {
-		private int page;
-		private int size;
+		private int page = 0;
+		private int size = 10;
 		private String sort = "id.DESC";
 
 		public static Pageable createPageAble(PagingDto pagingDto) {
