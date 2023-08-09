@@ -39,22 +39,22 @@ import static java.lang.Boolean.parseBoolean;
 @Repository
 public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 
-    private final MemberRepository memberRepository;
-    private final AwsBluePrintRepository awsBluePrintRepository;
-    private final AwsComponentRepository awsComponentRepository;
-    private final ComponentLineRepository componentLineRepository;
-    private final AwsAreaRepository awsAreaRepository;
-    private final MessageProducer sender;
-    private final AwsS3Helper awsS3Helper;
-    private final Logger logger = LoggerFactory.getLogger(AwsBlueprintServiceImpl.class);
+		private final MemberRepository memberRepository;
+		private final AwsBluePrintRepository awsBluePrintRepository;
+		private final AwsComponentRepository awsComponentRepository;
+		private final ComponentLineRepository componentLineRepository;
+		private final AwsAreaRepository awsAreaRepository;
+		private final MessageProducer sender;
+		private final AwsS3Helper awsS3Helper;
+		private final Logger logger = LoggerFactory.getLogger(AwsBlueprintServiceImpl.class);
 
 
-    @Override
-    public AwsBluePrintDto getAwsBlueprint(String uuid) {
-        AwsBluePrint awsBluePrintById = awsBluePrintRepository.findAwsBluePrintByUuid(uuid);
-        if (awsBluePrintById == null) {
-            throw new RuntimeException("awsBluePrintById is null");
-        }
+		@Override
+		public AwsBluePrintDto getAwsBlueprint(String uuid) {
+				AwsBluePrint awsBluePrintById = awsBluePrintRepository.findAwsBluePrintByUuid(uuid);
+				if (awsBluePrintById == null) {
+						throw new RuntimeException("awsBluePrintById is null");
+				}
 
         List<AwsArea> awsAreas = awsAreaRepository.findAllByBluePrint(awsBluePrintById);
         List<AwsComponent> awsComponents = awsComponentRepository.findAllByBluePrint(awsBluePrintById);
@@ -69,12 +69,12 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         return awsBluePrintDto;
     }
 
-    @Override
-    public List<AwsBluePrintListDto> getMyAwsBlueprints(String oauthId) {
-        Member member = memberRepository.findMemberByOauthId(oauthId);
-        if (member == null) {
-            throw new RuntimeException("member is null");
-        }
+		@Override
+		public List<AwsBluePrintListDto> getMyAwsBlueprints(String oauthId) {
+				Member member = memberRepository.findMemberByOauthId(oauthId);
+				if (member == null) {
+						throw new RuntimeException("member is null");
+				}
 
         List<AwsBluePrint> awsBluePrints = awsBluePrintRepository.findAwsBluePrintsByMember(member);
         List<AwsBluePrintListDto> awsBluePrintDtos = new ArrayList<>();
@@ -91,40 +91,40 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         return awsBluePrintDtos;
     }
 
-    @Override
-    public void store(AwsBluePrintDto awsBluePrintDto, String provision, String userId) throws JsonProcessingException {
-        this.delete(awsBluePrintDto.getUuid()); // 기존 BluePrint 삭제
+		@Override
+		public void store(AwsBluePrintDto awsBluePrintDto, String provision, String userId) throws JsonProcessingException {
+				this.delete(awsBluePrintDto.getUuid()); // 기존 BluePrint 삭제
 
-        AwsBluePrint savedBlueprint = saveBlueprint(awsBluePrintDto, provision, userId); // BluePrint 저장
-        saveComponentLines(savedBlueprint, awsBluePrintDto.getLinks()); // ComponentLine 저장
-        saveAwsAreas(savedBlueprint, awsBluePrintDto.getAreas()); // Area 저장
+				AwsBluePrint savedBlueprint = saveBlueprint(awsBluePrintDto, provision, userId); // BluePrint 저장
+				saveComponentLines(savedBlueprint, awsBluePrintDto.getLinks()); // ComponentLine 저장
+				saveAwsAreas(savedBlueprint, awsBluePrintDto.getAreas()); // Area 저장
 
-        List<AwsComponent> components = new ArrayList<>();
-        List<AwsCdkDto> awsCdkDtos = new ArrayList<>();
+				List<AwsComponent> components = new ArrayList<>();
+				List<AwsCdkDto> awsCdkDtos = new ArrayList<>();
 
-        // Components 저장
-        for (AwsComponentDto component : awsBluePrintDto.getComponents()) {
-            AwsComponent awsComponent = AwsComponent.createAwsComponent(component, savedBlueprint);
-            AwsCdkDto awsCdkDto = AwsCdkDto.createAwsCdkDto(component);
-            components.add(awsComponent);
-            awsCdkDtos.add(awsCdkDto);
-        }
-        awsComponentRepository.saveAll(components);
+				// Components 저장
+				for (AwsComponentDto component : awsBluePrintDto.getComponents()) {
+						AwsComponent awsComponent = AwsComponent.createAwsComponent(component, savedBlueprint);
+						AwsCdkDto awsCdkDto = AwsCdkDto.createAwsCdkDto(component);
+						components.add(awsComponent);
+						awsCdkDtos.add(awsCdkDto);
+				}
+				awsComponentRepository.saveAll(components);
 
-        if (parseBoolean(provision)) {
-            sender.sendAwsCdkOption(awsCdkDtos);
-        }
-    }
+				if (parseBoolean(provision)) {
+						sender.sendAwsCdkOption(awsCdkDtos);
+				}
+		}
 
-    @Override
-    public boolean delete(String uuid) {
-        AwsBluePrint awsBluePrint = awsBluePrintRepository.findAwsBluePrintByUuid(uuid);
-        if (awsBluePrint == null) {
-            return false;
-        }
-        awsBluePrintRepository.delete(awsBluePrint);
-        return true;
-    }
+		@Override
+		public boolean delete(String uuid) {
+				AwsBluePrint awsBluePrint = awsBluePrintRepository.findAwsBluePrintByUuid(uuid);
+				if (awsBluePrint == null) {
+						return false;
+				}
+				awsBluePrintRepository.delete(awsBluePrint);
+				return true;
+		}
 
     @Override
     public boolean updateBluePrintScope(BluePrintScope scope, String uuid, String userId) {
@@ -172,26 +172,26 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         return objectKey;
     }
 
-    // ComponentLine 저장
-    private void saveComponentLines(AwsBluePrint blueprint, List<ComponentLineDto> lines) {
-        List<ComponentLine> componentLines = new ArrayList<>();
-        for (ComponentLineDto link : lines) {
-            ComponentLine componentLink = ComponentLine.createComponentLink(link, blueprint);
-            componentLines.add(componentLink);
-        }
-        componentLineRepository.saveAll(componentLines);
-    }
+		// ComponentLine 저장
+		private void saveComponentLines(AwsBluePrint blueprint, List<ComponentLineDto> lines) {
+				List<ComponentLine> componentLines = new ArrayList<>();
+				for (ComponentLineDto link : lines) {
+						ComponentLine componentLink = ComponentLine.createComponentLink(link, blueprint);
+						componentLines.add(componentLink);
+				}
+				componentLineRepository.saveAll(componentLines);
+		}
 
-    private void saveAwsAreas(AwsBluePrint blueprint, List<AwsAreaDto> areas) {
-        List<AwsArea> awsArea = new ArrayList<>();
-        for (AwsAreaDto link : areas) {
-            AwsArea area = AwsArea.createAwsArea(link, blueprint);
-            awsArea.add(area);
-        }
-        awsAreaRepository.saveAll(awsArea);
-    }
+		private void saveAwsAreas(AwsBluePrint blueprint, List<AwsAreaDto> areas) {
+				List<AwsArea> awsArea = new ArrayList<>();
+				for (AwsAreaDto link : areas) {
+						AwsArea area = AwsArea.createAwsArea(link, blueprint);
+						awsArea.add(area);
+				}
+				awsAreaRepository.saveAll(awsArea);
+		}
 
-    private String _getObjectKey(String memberId, String blueprintId) {
-        return memberId + "/" + blueprintId + ".svg";
-    }
+		private String _getObjectKey(String memberId, String blueprintId) {
+				return memberId + "/" + blueprintId + ".svg";
+		}
 }
