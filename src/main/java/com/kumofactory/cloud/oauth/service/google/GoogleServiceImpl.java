@@ -82,7 +82,7 @@ public class GoogleServiceImpl implements GoogleService {
 						if (responseBody != null) {
 								String id = responseBody.get("id").asText();
 								String provider = String.valueOf(OAuthProvider.GOOGLE);
-								return new UserInfoDto(id, provider);
+								return new UserInfoDto(id, provider, accessToken, "deprecated");
 						}
 				}
 				logger.error("response : {}", response.getBody());
