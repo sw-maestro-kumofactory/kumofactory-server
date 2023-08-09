@@ -4,6 +4,7 @@ import com.kumofactory.cloud.blueprint.domain.BluePrintScope;
 import com.kumofactory.cloud.blueprint.domain.ComponentLine;
 import com.kumofactory.cloud.blueprint.domain.ProvisionStatus;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsArea;
+import com.kumofactory.cloud.blueprint.domain.aws.AwsBluePrint;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsComponent;
 import com.kumofactory.cloud.blueprint.dto.ComponentLineDto;
 

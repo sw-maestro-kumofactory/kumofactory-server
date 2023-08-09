@@ -35,6 +35,8 @@ public class AwsBluePrint {
 
     private String name; // 블루프린트 이름
 
+    private String keyName; // 썸네일 이미지 파일명 (S3)
+
     @Enumerated(EnumType.STRING)
     private ProvisionStatus status; // 배포 상태
 

@@ -62,6 +62,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         AwsBluePrintDto awsBluePrintDto = new AwsBluePrintDto();
         awsBluePrintDto.setName(awsBluePrintById.getName());
         awsBluePrintDto.setStatus(awsBluePrintById.getStatus());
+        awsBluePrintDto.setUuid(awsBluePrintById.getUuid());
         awsBluePrintDto.setAreas(AwsBluePrintDto.awsAreaDtosMapper(awsAreas));
         awsBluePrintDto.setComponents(AwsBluePrintDto.awsComponentDtosMapper(awsComponents));
         awsBluePrintDto.setLinks(AwsBluePrintDto.componentLinkDtoListMapper(componentLines));
@@ -84,7 +85,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
             dto.setId(awsBluePrint.getId());
             dto.setCreatedAt(awsBluePrint.getCreated_at());
             dto.setStatus(awsBluePrint.getStatus());
-            dto.setPresignedUrl(_getObjectKey(member.getOauthId(), awsBluePrint.getUuid()));
+            dto.setPresignedUrl(awsBluePrint.getKeyName());
             awsBluePrintDtos.add(dto);
         }
         return awsBluePrintDtos;
@@ -146,26 +147,29 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
             status = ProvisionStatus.PENDING;
         }
         // BluePrint 저장
+        String keyname = saveThumbnail(awsBluePrintDto, member);// thumbnail 저장
+
         AwsBluePrint awsBluePrint = new AwsBluePrint();
         awsBluePrint.setUuid(awsBluePrintDto.getUuid());
         awsBluePrint.setName(awsBluePrintDto.getName());
         awsBluePrint.setStatus(status);
         awsBluePrint.setMember(member);
         awsBluePrint.setScope(BluePrintScope.PRIVATE);
-
-        saveThumbnail(awsBluePrintDto, member); // thumbnail 저장
+        awsBluePrint.setKeyName(keyname);
 
         return awsBluePrintRepository.save(awsBluePrint);
     }
 
     // thumbnail 저장
-    private void saveThumbnail(AwsBluePrintDto bluePrint, Member member) {
+    private String saveThumbnail(AwsBluePrintDto bluePrint, Member member) {
         String objectKey = _getObjectKey(member.getOauthId(), bluePrint.getUuid());
         try {
             awsS3Helper.putS3Object(bluePrint.getSvgFile(), objectKey);
         } catch (Exception e) {
             logger.error("thumbnail upload failed: {}", e.getMessage());
         }
+
+        return objectKey;
     }
 
     // ComponentLine 저장
