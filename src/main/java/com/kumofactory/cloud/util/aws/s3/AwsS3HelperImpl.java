@@ -40,7 +40,7 @@ public class AwsS3HelperImpl implements AwsS3Helper {
                             .bucket(s3Config.getBucket())
                             .key(keyName)
                             .build(),
-                    RequestBody.fromFile(svgFile.getResource().getFile()));
+                    RequestBody.fromInputStream(svgFile.getInputStream(), svgFile.getSize()));
 
             logger.info("File uploaded to S3 bucket successfully");
         } catch (S3Exception e) {
