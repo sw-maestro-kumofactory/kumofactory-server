@@ -83,6 +83,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 						dto.setId(awsBluePrint.getId());
 						dto.setCreatedAt(awsBluePrint.getCreated_at());
 						dto.setStatus(awsBluePrint.getStatus());
+						dto.setScope(awsBluePrint.getScope());
 						dto.setPresignedUrl(awsS3Helper.getPresignedUrl(awsBluePrint.getKeyName()));
 						awsBluePrintDtos.add(dto);
 				}
