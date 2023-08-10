@@ -93,3 +93,15 @@ jobs:
             docker login --username AWS --password $password ${{ secrets.ECR_REGISTRY }}
             docker-compose pull
             docker-compose up -d
+
+  notification:
+    needs: deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Discord Notification
+        run: |
+          curl -X POST \
+          -H "Content-Type: application/json" \
+          -d '{"username": "GitHub Actions", "content": "효근아 서버 올라갔어~"}' \
+          ${{ secrets.DISCORD_WEBHOOK }}
