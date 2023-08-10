@@ -112,10 +112,13 @@ public class OAuthService {
 
 		// 처음 가입한 member 일때만 저장
 		private void saveMember(UserInfoDto userInfo) {
-				Member member = memberRepository.findMemberByOauthId(userInfo.id());
-				if (member == null) {
-						member = Member.createMember(userInfo);
-						memberRepository.save(member);
-				}
+			Member member = memberRepository.findMemberByOauthId(userInfo.id());
+			if (member == null) {
+				member = Member.createMember(userInfo);
+				memberRepository.save(member);
+			} else if (member.getGithubAccessToken() != userInfo.accessToken()) {
+				member.setGithubAccessToken(userInfo.accessToken());
+				memberRepository.save(member);
+			}
 		}
 }
