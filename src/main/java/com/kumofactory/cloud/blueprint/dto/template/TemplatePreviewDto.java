@@ -13,14 +13,14 @@ public class TemplatePreviewDto {
 		private String uuid;
 		private String name;
 		private BluePrintScope scope;
-		private String presignedURL;
+		private String presignedUrl;
 
 		public static TemplatePreviewDto mapper(AwsBluePrint bluePrint, String thumbnailUrl) {
 				return TemplatePreviewDto.builder()
 																 .uuid(bluePrint.getUuid())
 																 .name(bluePrint.getName())
 																 .scope(bluePrint.getScope())
-																 .presignedURL(thumbnailUrl)
+																 .presignedUrl(thumbnailUrl)
 																 .build();
 		}
 }
