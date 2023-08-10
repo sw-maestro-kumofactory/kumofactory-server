@@ -53,23 +53,18 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 
 
 		@Override
-		public AwsBluePrintDto getAwsBlueprint(String uuid) {
+		public AwsBluePrintDto getAwsBlueprint(String uuid, String userId) {
 				AwsBluePrint awsBluePrintById = awsBluePrintRepository.findAwsBluePrintByUuid(uuid);
-				if (awsBluePrintById == null) {
-						throw new RuntimeException("awsBluePrintById is null");
+				if (awsBluePrintById.getMember().getOauthId().equals(userId)) {
+
+						List<AwsArea> awsAreas = awsAreaRepository.findAllByBluePrint(awsBluePrintById);
+						List<AwsComponent> awsComponents = awsComponentRepository.findAllByBluePrint(awsBluePrintById);
+						List<ComponentLine> componentLines = componentLineRepository.findAllByBluePrint(awsBluePrintById);
+
+						return AwsBluePrintDto.build(awsBluePrintById, awsAreas, awsComponents, componentLines);
 				}
 
-				List<AwsArea> awsAreas = awsAreaRepository.findAllByBluePrint(awsBluePrintById);
-				List<AwsComponent> awsComponents = awsComponentRepository.findAllByBluePrint(awsBluePrintById);
-				List<ComponentLine> componentLines = componentLineRepository.findAllByBluePrint(awsBluePrintById);
-				AwsBluePrintDto awsBluePrintDto = new AwsBluePrintDto();
-				awsBluePrintDto.setName(awsBluePrintById.getName());
-				awsBluePrintDto.setStatus(awsBluePrintById.getStatus());
-				awsBluePrintDto.setUuid(awsBluePrintById.getUuid());
-				awsBluePrintDto.setAreas(AwsBluePrintDto.awsAreaDtosMapper(awsAreas));
-				awsBluePrintDto.setComponents(AwsBluePrintDto.awsComponentDtosMapper(awsComponents));
-				awsBluePrintDto.setLinks(AwsBluePrintDto.componentLinkDtoListMapper(componentLines));
-				return awsBluePrintDto;
+				throw new RuntimeException("Not Authorized");
 		}
 
 		@Override
@@ -157,7 +152,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 				awsBluePrint.setName(awsBluePrintDto.getName());
 				awsBluePrint.setStatus(status);
 				awsBluePrint.setMember(member);
-				awsBluePrint.setScope(BluePrintScope.PRIVATE);
+				awsBluePrint.setScope(awsBluePrintDto.getScope() == null ? BluePrintScope.PRIVATE : awsBluePrintDto.getScope());
 				awsBluePrint.setKeyName(keyname);
 
 				return awsBluePrintRepository.save(awsBluePrint);

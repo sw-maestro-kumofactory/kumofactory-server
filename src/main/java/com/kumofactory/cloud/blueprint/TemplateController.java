@@ -1,7 +1,9 @@
 package com.kumofactory.cloud.blueprint;
 
+import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
 import com.kumofactory.cloud.blueprint.dto.template.TemplatePreviewDto;
 import com.kumofactory.cloud.blueprint.service.AwsTemplateService;
+import com.kumofactory.cloud.global.annotation.auth.AuthorizationFromToken;
 import com.kumofactory.cloud.global.dto.PagingDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -12,10 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,6 +26,17 @@ import java.util.List;
 public class TemplateController {
 		private final AwsTemplateService templateService;
 		private final Logger logger = LoggerFactory.getLogger(TemplateController.class);
+
+		@Operation(
+						summary = "Template 상세 정보 가져오기",
+						description = "Requires authentication.",
+						security = @SecurityRequirement(name = "bearerAuth")
+		)
+		@GetMapping("/template/{uuid}")
+		@AuthorizationFromToken
+		public AwsBluePrintDto getAwsBlueprint(@PathVariable String uuid, String userId) {
+				return null;
+		}
 
 		@Operation(
 						summary = "Template 전체 조회하기",
