@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Tag(name = "TemplateController", description = "TemplateController")
 @RestController
@@ -26,17 +27,6 @@ import java.util.List;
 public class TemplateController {
 		private final AwsTemplateService templateService;
 		private final Logger logger = LoggerFactory.getLogger(TemplateController.class);
-
-		@Operation(
-						summary = "Template 상세 정보 가져오기",
-						description = "Requires authentication.",
-						security = @SecurityRequirement(name = "bearerAuth")
-		)
-		@GetMapping("/template/{uuid}")
-		@AuthorizationFromToken
-		public AwsBluePrintDto getAwsBlueprint(@PathVariable String uuid, String userId) {
-				return null;
-		}
 
 		@Operation(
 						summary = "Template 전체 조회하기",
@@ -66,5 +56,16 @@ public class TemplateController {
 		public List<TemplatePreviewDto> searchTemplateByName(PagingDto page, @RequestParam("value") String templateName) {
 				Pageable pageable = PagingDto.createPageAble(page);
 				return templateService.searchTemplateFromTemplateName(pageable, templateName);
+		}
+
+		@Operation(
+						summary = "Template 상세 정보 가져오기",
+						description = "Requires authentication.",
+						security = @SecurityRequirement(name = "bearerAuth")
+		)
+		@GetMapping("/{uuid}")
+		@AuthorizationFromToken
+		public AwsBluePrintDto getAwsBlueprint(@PathVariable("uuid") String uuid, String userId) {
+				return templateService.getAwsBlueprint(uuid);
 		}
 }

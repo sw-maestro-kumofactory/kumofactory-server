@@ -42,6 +42,7 @@ public class AwsTemplateServiceImpl implements AwsTemplateService {
 				List<AwsComponent> awsComponents = awsComponentRepository.findAllByBluePrint(awsBluePrintById);
 				List<ComponentLine> componentLines = componentLineRepository.findAllByBluePrint(awsBluePrintById);
 
+				logger.info("awsAreas: {}", uuid);
 				return AwsBluePrintDto.build(awsBluePrintById, awsAreas, awsComponents, componentLines);
 		}
 
