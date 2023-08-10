@@ -48,11 +48,8 @@ public class UserRepoServiceImpl implements UserRepoService {
                 GitHubRepoDto.RepoInfoDto repoInfo = new GitHubRepoDto.RepoInfoDto(name, fullName, isPrivate, isFork);
                 repoInfoList.add(repoInfo);
             }
-            logger.info("response : {}", responseBody);
             return repoInfoList;
         }
-        logger.error("response : {}", response.getBody());
-        logger.error("response : {}", response.getStatusCode());
         return null;
     }
 
@@ -88,11 +85,8 @@ public class UserRepoServiceImpl implements UserRepoService {
                 GitHubRepoDto.RepoInfoDto repoInfo = new GitHubRepoDto.RepoInfoDto(name, fullName, isPrivate, isFork);
                 repoInfoList.add(repoInfo);
             }
-            logger.info("response : {}", responseBody);
             return repoInfoList;
         }
-        logger.error("response : {}", response.getBody());
-        logger.error("response : {}", response.getStatusCode());
         return null;
     }
 
@@ -104,7 +98,6 @@ public class UserRepoServiceImpl implements UserRepoService {
 
         if (response.getStatusCode() == HttpStatus.OK) {
             JsonNode responseBody = response.getBody();
-            logger.info("response : {}", responseBody);
 
             if (responseBody.isArray()) {
                 for (JsonNode node : responseBody) {
@@ -115,8 +108,6 @@ public class UserRepoServiceImpl implements UserRepoService {
             }
             return organizationList;
         }
-        logger.error("response : {}", response.getBody());
-        logger.error("response : {}", response.getStatusCode());
         return organizationList;
     }
 
@@ -131,7 +122,6 @@ public class UserRepoServiceImpl implements UserRepoService {
 
         if (response.getStatusCode() == HttpStatus.OK) {
             JsonNode responseBody = response.getBody();
-            logger.info("response : {}", responseBody);
 
             if (responseBody.isArray()) {
                 for (JsonNode node : responseBody) {
@@ -142,8 +132,6 @@ public class UserRepoServiceImpl implements UserRepoService {
             }
             return branchList;
         }
-        logger.error("response : {}", response.getBody());
-        logger.error("response : {}", response.getStatusCode());
         return branchList;
     }
 
