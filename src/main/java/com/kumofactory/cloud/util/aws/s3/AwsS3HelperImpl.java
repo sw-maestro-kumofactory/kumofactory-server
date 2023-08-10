@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -25,14 +24,13 @@ import java.time.Duration;
 public class AwsS3HelperImpl implements AwsS3Helper {
 
     private final S3Config s3Config;
-    private final ProfileCredentialsProvider credentialsProvider = ProfileCredentialsProvider.create();
     private final Logger logger = LoggerFactory.getLogger(AwsS3HelperImpl.class);
 
     public void putS3Object(MultipartFile svgFile, String keyName) throws S3Exception, IOException {
 
         S3Client s3Client = S3Client.builder()
                 .region(Region.of(s3Config.getRegion()))
-                .credentialsProvider(credentialsProvider)
+                .credentialsProvider(s3Config.getCredentialsProvider())
                 .build();
 
         try {
@@ -56,7 +54,7 @@ public class AwsS3HelperImpl implements AwsS3Helper {
 
         S3Presigner presigner = S3Presigner.builder()
                 .region(Region.of(s3Config.getRegion()))
-                .credentialsProvider(credentialsProvider)
+                .credentialsProvider(s3Config.getCredentialsProvider())
                 .build();
 
         try {

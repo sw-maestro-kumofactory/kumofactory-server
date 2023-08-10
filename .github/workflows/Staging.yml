@@ -13,11 +13,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
-        name: Set up JDK 17
+      - name: Set up JDK 17 
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -38,9 +37,24 @@ jobs:
           echo "${{ secrets.YML_STAGING }}" > ./application-dev.yml
           cat ./application-dev.yml
         shell: bash
+        
+      - name: Setup Gradle 7.6
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.6
+          
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Build Spring Boot application
-        run: ./gradlew clean build
+        run: gradle build
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -60,3 +74,34 @@ jobs:
       - name: Push Docker image to ECR
         run: |
           docker push ${{ secrets.ECR_REGISTRY }}/dev:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy on Staging Server
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.AWS_STAGING }}
+          username: ${{ secrets.AWS_SSH_USERNAME }}
+          key: ${{ secrets.AWS_SSH_KEY }}
+          script_stop: true
+          script: |
+            cd /app
+            password=$(aws ecr get-login-password --region ${{ env.REGION }})
+            docker login --username AWS --password $password ${{ secrets.ECR_REGISTRY }}
+            docker-compose pull
+            docker-compose up -d
+
+  notification:
+    needs: deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Discord Notification
+        run: |
+          curl -X POST \
+          -H "Content-Type: application/json" \
+          -d '{"username": "GitHub Actions", "content": "효근아 서버 올라갔어~"}' \
+          ${{ secrets.DISCORD_WEBHOOK }}

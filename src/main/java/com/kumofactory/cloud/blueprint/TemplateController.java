@@ -32,7 +32,7 @@ public class TemplateController {
 						summary = "Template 전체 조회하기",
 						description = "scope 가 PRIVATE 인 것은 조회하지 않음. example : ?page=0&size=10"
 		)
-		@GetMapping("/")
+		@GetMapping("")
 		public List<TemplatePreviewDto> getAll(PagingDto page) {
 				Pageable pageable = PagingDto.createPageAble(page);
 				return templateService.getAll(pageable);
