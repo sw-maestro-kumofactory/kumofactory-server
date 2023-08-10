@@ -1,9 +1,16 @@
 package com.kumofactory.cloud.blueprint.service;
 
 import com.kumofactory.cloud.blueprint.domain.BluePrintScope;
+import com.kumofactory.cloud.blueprint.domain.ComponentLine;
+import com.kumofactory.cloud.blueprint.domain.aws.AwsArea;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsBluePrint;
+import com.kumofactory.cloud.blueprint.domain.aws.AwsComponent;
+import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
 import com.kumofactory.cloud.blueprint.dto.template.TemplatePreviewDto;
+import com.kumofactory.cloud.blueprint.repository.ComponentLineRepository;
+import com.kumofactory.cloud.blueprint.repository.aws.AwsAreaRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsBluePrintRepository;
+import com.kumofactory.cloud.blueprint.repository.aws.AwsComponentRepository;
 import com.kumofactory.cloud.util.aws.s3.AwsS3Helper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +29,21 @@ import java.util.List;
 @Slf4j
 public class AwsTemplateServiceImpl implements AwsTemplateService {
 		private final AwsBluePrintRepository templateRepository;
+		private final ComponentLineRepository componentLineRepository;
+		private final AwsAreaRepository awsAreaRepository;
+		private final AwsComponentRepository awsComponentRepository;
 		private final AwsS3Helper s3;
 		private final Logger logger = LoggerFactory.getLogger(AwsTemplateServiceImpl.class);
+
+		@Override
+		public AwsBluePrintDto getAwsBlueprint(String uuid) {
+				AwsBluePrint awsBluePrintById = templateRepository.findAwsBluePrintByUuid(uuid);
+				List<AwsArea> awsAreas = awsAreaRepository.findAllByBluePrint(awsBluePrintById);
+				List<AwsComponent> awsComponents = awsComponentRepository.findAllByBluePrint(awsBluePrintById);
+				List<ComponentLine> componentLines = componentLineRepository.findAllByBluePrint(awsBluePrintById);
+
+				return AwsBluePrintDto.build(awsBluePrintById, awsAreas, awsComponents, componentLines);
+		}
 
 		@Override
 		public List<TemplatePreviewDto> getAll(Pageable pageable) throws S3Exception {
