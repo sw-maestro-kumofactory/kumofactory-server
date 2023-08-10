@@ -10,17 +10,17 @@ import lombok.Setter;
 @Setter
 @Builder
 public class TemplatePreviewDto {
-    private String uuid;
-    private String name;
-    private BluePrintScope scope;
-    private String thumbnail_url;
+		private String uuid;
+		private String name;
+		private BluePrintScope scope;
+		private String presignedURL;
 
-    public static TemplatePreviewDto mapper(AwsBluePrint bluePrint, String thumbnailUrl) {
-        return TemplatePreviewDto.builder()
-                .uuid(bluePrint.getUuid())
-                .name(bluePrint.getName())
-                .scope(bluePrint.getScope())
-                .thumbnail_url(thumbnailUrl)
-                .build();
-    }
+		public static TemplatePreviewDto mapper(AwsBluePrint bluePrint, String thumbnailUrl) {
+				return TemplatePreviewDto.builder()
+																 .uuid(bluePrint.getUuid())
+																 .name(bluePrint.getName())
+																 .scope(bluePrint.getScope())
+																 .presignedURL(thumbnailUrl)
+																 .build();
+		}
 }
