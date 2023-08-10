@@ -69,7 +69,7 @@ public class AwsTemplateServiceImpl implements AwsTemplateService {
 				List<TemplatePreviewDto> dtos = new ArrayList<>();
 				try {
 						for (AwsBluePrint awsBluePrint : all) {
-								String url = s3.getPresignedUrl(awsBluePrint.getUuid()); // get url from s3
+								String url = s3.getPresignedUrl(awsBluePrint.getKeyName()); // get url from s3
 								TemplatePreviewDto dto = TemplatePreviewDto.mapper(awsBluePrint, url);
 								dtos.add(dto);
 						}
