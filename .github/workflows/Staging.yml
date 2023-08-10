@@ -89,5 +89,7 @@ jobs:
           script_stop: true
           script: |
             cd /app
+            password=$(aws ecr get-login-password --region ${{ env.AWS_REGION }})
+            docker login --username AWS --password $password ${{ env.ECR_REGISTRY }}
             docker-compose pull
             docker-compose up -d
