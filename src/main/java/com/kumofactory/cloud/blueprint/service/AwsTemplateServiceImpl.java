@@ -28,55 +28,58 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class AwsTemplateServiceImpl implements AwsTemplateService {
-		private final AwsBluePrintRepository templateRepository;
-		private final ComponentLineRepository componentLineRepository;
-		private final AwsAreaRepository awsAreaRepository;
-		private final AwsComponentRepository awsComponentRepository;
-		private final AwsS3Helper s3;
-		private final Logger logger = LoggerFactory.getLogger(AwsTemplateServiceImpl.class);
+    private final AwsBluePrintRepository templateRepository;
+    private final ComponentLineRepository componentLineRepository;
+    private final AwsAreaRepository awsAreaRepository;
+    private final AwsComponentRepository awsComponentRepository;
+    private final AwsS3Helper s3;
+    private final Logger logger = LoggerFactory.getLogger(AwsTemplateServiceImpl.class);
 
-		@Override
-		public AwsBluePrintDto getAwsBlueprint(String uuid) {
-				AwsBluePrint awsBluePrintById = templateRepository.findAwsBluePrintByUuid(uuid);
-				List<AwsArea> awsAreas = awsAreaRepository.findAllByBluePrint(awsBluePrintById);
-				List<AwsComponent> awsComponents = awsComponentRepository.findAllByBluePrint(awsBluePrintById);
-				List<ComponentLine> componentLines = componentLineRepository.findAllByBluePrint(awsBluePrintById);
+    @Override
+    public AwsBluePrintDto getAwsBlueprint(String uuid) {
+        AwsBluePrint awsBluePrintById = templateRepository.findAwsBluePrintByUuid(uuid);
+        // Download 횟수 증가
+        awsBluePrintById.setDownloadCount(awsBluePrintById.getDownloadCount() + 1);
+        templateRepository.save(awsBluePrintById);
 
-				logger.info("awsAreas: {}", uuid);
-				return AwsBluePrintDto.build(awsBluePrintById, awsAreas, awsComponents, componentLines);
-		}
+        List<AwsArea> awsAreas = awsAreaRepository.findAllByBluePrint(awsBluePrintById);
+        List<AwsComponent> awsComponents = awsComponentRepository.findAllByBluePrint(awsBluePrintById);
+        List<ComponentLine> componentLines = componentLineRepository.findAllByBluePrint(awsBluePrintById);
 
-		@Override
-		public List<TemplatePreviewDto> getAll(Pageable pageable) throws S3Exception {
-				List<AwsBluePrint> all = templateRepository.findAllByScopeNot(BluePrintScope.PRIVATE, pageable);
-				return mapToTemplatePreviewDto(all);
-		}
+        return AwsBluePrintDto.build(awsBluePrintById, awsAreas, awsComponents, componentLines);
+    }
 
-		@Override
-		public List<TemplatePreviewDto> searchTemplateFromKumofactory(Pageable pageable) throws S3Exception {
-				List<AwsBluePrint> all = templateRepository.findAllByScope(BluePrintScope.KUMOFACTORY, pageable);
-				return mapToTemplatePreviewDto(all);
-		}
+    @Override
+    public List<TemplatePreviewDto> getAll(Pageable pageable) throws S3Exception {
+        List<AwsBluePrint> all = templateRepository.findAllByScopeNot(BluePrintScope.PRIVATE, pageable);
+        return mapToTemplatePreviewDto(all);
+    }
 
-		@Override
-		public List<TemplatePreviewDto> searchTemplateFromTemplateName(Pageable pageable, String templateName) {
-				List<AwsBluePrint> all = templateRepository.findAllByNameContainsAndScope(templateName, pageable, BluePrintScope.PUBLIC);
-				return mapToTemplatePreviewDto(all);
-		}
+    @Override
+    public List<TemplatePreviewDto> searchTemplateFromKumofactory(Pageable pageable) throws S3Exception {
+        List<AwsBluePrint> all = templateRepository.findAllByScope(BluePrintScope.KUMOFACTORY, pageable);
+        return mapToTemplatePreviewDto(all);
+    }
 
-		// S3 에서 url 받아온 후 TemplatePreviewDto 로 변환
-		private List<TemplatePreviewDto> mapToTemplatePreviewDto(List<AwsBluePrint> all) {
-				List<TemplatePreviewDto> dtos = new ArrayList<>();
-				try {
-						for (AwsBluePrint awsBluePrint : all) {
-								String url = s3.getPresignedUrl(awsBluePrint.getKeyName()); // get url from s3
-								TemplatePreviewDto dto = TemplatePreviewDto.mapper(awsBluePrint, url);
-								dtos.add(dto);
-						}
-						return dtos;
-				} catch (S3Exception e) {
-						logger.error("S3Exception: {}", e.getMessage());
-						throw S3Exception.builder().build();
-				}
-		}
+    @Override
+    public List<TemplatePreviewDto> searchTemplateFromTemplateName(Pageable pageable, String templateName) {
+        List<AwsBluePrint> all = templateRepository.findAllByNameContainsAndScope(templateName, pageable, BluePrintScope.PUBLIC);
+        return mapToTemplatePreviewDto(all);
+    }
+
+    // S3 에서 url 받아온 후 TemplatePreviewDto 로 변환
+    private List<TemplatePreviewDto> mapToTemplatePreviewDto(List<AwsBluePrint> all) {
+        List<TemplatePreviewDto> dtos = new ArrayList<>();
+        try {
+            for (AwsBluePrint awsBluePrint : all) {
+                String url = s3.getPresignedUrl(awsBluePrint.getKeyName()); // get url from s3
+                TemplatePreviewDto dto = TemplatePreviewDto.mapper(awsBluePrint, url);
+                dtos.add(dto);
+            }
+            return dtos;
+        } catch (S3Exception e) {
+            logger.error("S3Exception: {}", e.getMessage());
+            throw S3Exception.builder().build();
+        }
+    }
 }

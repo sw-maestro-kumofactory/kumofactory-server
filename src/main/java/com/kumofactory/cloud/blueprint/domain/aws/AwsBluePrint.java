@@ -35,7 +35,12 @@ public class AwsBluePrint {
 
     private String name; // 블루프린트 이름
 
+    private String description; // 블루프린트 설명
+
     private String keyName; // 썸네일 이미지 파일명 (S3)
+
+    @Column(columnDefinition = "int default 0")
+    private Integer downloadCount; // 다운로드 횟수
 
     @Enumerated(EnumType.STRING)
     private ProvisionStatus status; // 배포 상태

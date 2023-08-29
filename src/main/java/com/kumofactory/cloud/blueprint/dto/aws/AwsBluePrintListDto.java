@@ -13,11 +13,13 @@ import java.util.Date;
 @Schema(name = "AwsBluePrintListDto", description = "AwsBluePrintListDto")
 public class AwsBluePrintListDto {
 
-		private Long id;
-		private String uuid;
-		private String name;
-		private BluePrintScope scope;
-		private Date createdAt;
-		private String presignedUrl;
-		private ProvisionStatus status;
+    private Long id;
+    private String uuid;
+    private String name;
+    private String description;
+    private Long downloadCount;
+    private BluePrintScope scope;
+    private Date createdAt;
+    private String presignedUrl;
+    private ProvisionStatus status;
 }

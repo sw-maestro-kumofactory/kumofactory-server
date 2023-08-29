@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.transform.Result;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,8 +85,19 @@ public class BlueprintController {
 
     @PostMapping("/aws")
     @AuthorizationFromToken
-    public Object createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto, @RequestParam String provision, String userId) throws JsonProcessingException {
-        awsBlueprintService.store(awsBluePrintDto, provision, userId);
-        return "hello-world";
+    public ResultDto createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto, @RequestParam String provision, String userId) throws JsonProcessingException {
+        try {
+            awsBlueprintService.store(awsBluePrintDto, provision, userId);
+            return ResultDto.builder()
+                    .result(true)
+                    .build();
+        } catch (Exception e) {
+            logger.error("createAwsBlueprint error", e);
+            return ResultDto.builder()
+                    .result(false)
+                    .message(e.getMessage())
+                    .build();
+        }
+
     }
 }
