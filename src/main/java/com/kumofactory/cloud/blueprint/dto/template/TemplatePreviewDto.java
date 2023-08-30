@@ -6,12 +6,17 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @Builder
 public class TemplatePreviewDto {
     private String uuid;
     private String name;
+    private Date createdAt;
+    private Date updatedAt;
+    private String username;
     private BluePrintScope scope;
     private String presignedUrl;
     private String description;
@@ -21,6 +26,9 @@ public class TemplatePreviewDto {
         return TemplatePreviewDto.builder()
                 .uuid(bluePrint.getUuid())
                 .name(bluePrint.getName())
+                .createdAt(bluePrint.getCreated_at())
+                .updatedAt(bluePrint.getUpdated_at())
+                .username(bluePrint.getMember().getProfileName())
                 .description(bluePrint.getDescription())
                 .downloadCount(bluePrint.getDownloadCount())
                 .scope(bluePrint.getScope())

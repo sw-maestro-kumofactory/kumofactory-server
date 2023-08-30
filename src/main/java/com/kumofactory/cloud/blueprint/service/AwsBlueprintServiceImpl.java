@@ -77,14 +77,8 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         List<AwsBluePrint> awsBluePrints = awsBluePrintRepository.findAwsBluePrintsByMember(member);
         List<AwsBluePrintListDto> awsBluePrintDtos = new ArrayList<>();
         for (AwsBluePrint awsBluePrint : awsBluePrints) {
-            AwsBluePrintListDto dto = new AwsBluePrintListDto();
-            dto.setName(awsBluePrint.getName());
-            dto.setUuid(awsBluePrint.getUuid());
-            dto.setId(awsBluePrint.getId());
-            dto.setCreatedAt(awsBluePrint.getCreated_at());
-            dto.setStatus(awsBluePrint.getStatus());
-            dto.setScope(awsBluePrint.getScope());
-            dto.setPresignedUrl(awsS3Helper.getPresignedUrl(awsBluePrint.getKeyName()));
+            String presignedUrl = awsS3Helper.getPresignedUrl(awsBluePrint.getKeyName());
+            AwsBluePrintListDto dto = AwsBluePrintListDto.fromAwsBluePrint(awsBluePrint, presignedUrl);
             awsBluePrintDtos.add(dto);
         }
         return awsBluePrintDtos;
