@@ -103,5 +103,5 @@ jobs:
         run: |
           curl -X POST \
           -H "Content-Type: application/json" \
-          -d '{"username": "GitHub Actions", "content": "효근아 서버 올라갔어~"}' \
+          -d '{"username": "'"${GITHUB_ACTOR}"'", "content": "효근아 서버 올라갔어~"}' \
           ${{ secrets.DISCORD_WEBHOOK }}

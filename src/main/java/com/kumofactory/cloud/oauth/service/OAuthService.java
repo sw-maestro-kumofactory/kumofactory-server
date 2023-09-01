@@ -14,7 +14,7 @@ import static com.kumofactory.cloud.oauth.dto.OAuthDto.*;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -42,19 +42,22 @@ public class OAuthService {
 
 				HttpHeaders responseHeaders = new HttpHeaders();
 
+				Pair<TokenDto, UserInfoDto> pair = null;
 				switch (provider) {
 						case GOOGLE: {
-								token = getAccessTokenFromGoogle(code);
+								pair = getAccessTokenFromGoogle(code);
 								break;
 						}
 						case GITHUB: {
-								token = getAccessTokenFromGitHub(code);
+								pair = getAccessTokenFromGitHub(code);
 								break;
 						}
 						default: {
 								throw new IllegalArgumentException("Unknown type of social login.");
 						}
 				}
+				token = pair.getFirst();
+				UserInfoDto userInfo = pair.getSecond();
 
 				responseHeaders.add(HttpHeaders.CONTENT_TYPE, "application/json");
 
@@ -69,6 +72,7 @@ public class OAuthService {
 
 				Map<String, String> map = new HashMap<>();
 				map.put("accessToken", token.getAccessToken());
+				map.put("profileName", userInfo.profileName());
 
 				return ResponseEntity.ok()
 														 .headers(responseHeaders)
@@ -81,7 +85,7 @@ public class OAuthService {
 		}
 
 		// TODO : 중복된 코드 간소화 (getAccessTokenFromXXX)
-		private TokenDto getAccessTokenFromGoogle(String code)
+		private Pair<TokenDto, UserInfoDto> getAccessTokenFromGoogle(String code)
 						throws JsonProcessingException {
 
 				GoogleToken accessTokenFromGoogle = googleService.requestAccessToken(code);
@@ -90,12 +94,12 @@ public class OAuthService {
 						UserInfoDto userInfo = googleService.requestUserInfo(accessTokenFromGoogle.accessToken());
 						saveMember(userInfo);
 
-						return jwtTokenProvider.create(userInfo.id());
+						return Pair.of(jwtTokenProvider.create(userInfo.id()), userInfo);
 				}
 				return null;
 		}
 
-		private TokenDto getAccessTokenFromGitHub(String code)
+		private Pair<TokenDto, UserInfoDto> getAccessTokenFromGitHub(String code)
 						throws JsonProcessingException {
 
 				GitHubToken accessTokenFromGithub = githubService.requestAccessToken(code);
@@ -104,8 +108,7 @@ public class OAuthService {
 						UserInfoDto userInfo = githubService.requestUserInfo(accessTokenFromGithub.accessToken());
 						saveMember(userInfo);
 
-
-						return jwtTokenProvider.create(userInfo.id());
+						return Pair.of(jwtTokenProvider.create(userInfo.id()), userInfo);
 				}
 				return null;
 		}
@@ -120,5 +123,9 @@ public class OAuthService {
 				member.setGithubAccessToken(userInfo.accessToken());
 				memberRepository.save(member);
 			}
+		}
+
+		private String getProfileName(UserInfoDto userInfo) {
+			return memberRepository.findMemberByOauthId(userInfo.id()).getProfileName();
 		}
 }

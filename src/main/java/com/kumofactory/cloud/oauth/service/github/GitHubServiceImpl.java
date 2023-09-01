@@ -27,68 +27,68 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 public class GitHubServiceImpl implements GitHubService {
 
-		private final OauthConfig oauthConfig;
-		private final Logger logger = LoggerFactory.getLogger(GitHubServiceImpl.class);
-		private final RestTemplate restTemplate = new RestTemplate();
+    private final OauthConfig oauthConfig;
+    private final Logger logger = LoggerFactory.getLogger(GitHubServiceImpl.class);
+    private final RestTemplate restTemplate = new RestTemplate();
 
-		@Override
-		public GitHubToken requestAccessToken(String code) throws JsonProcessingException {
-				HttpHeaders headers = new HttpHeaders();
-				headers.set("Accept", "application/json");
-				HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+    @Override
+    public GitHubToken requestAccessToken(String code) throws JsonProcessingException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", "application/json");
+        HttpEntity<String> httpEntity = new HttpEntity<>(headers);
 
-				MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
-				queryParams.add("client_id", oauthConfig.getGithubClientId());
-				queryParams.add("client_secret", oauthConfig.getGithubClientSecretId());
-				queryParams.add("code", code);
+        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+        queryParams.add("client_id", oauthConfig.getGithubClientId());
+        queryParams.add("client_secret", oauthConfig.getGithubClientSecretId());
+        queryParams.add("code", code);
+        logger.error("code : {}", code);
+        UriComponents uri = UriComponentsBuilder.fromHttpUrl(
+                        oauthConfig.getGetAccessTokenUrlFromGithub())
+                .queryParams(queryParams)
+                .build();
+        ResponseEntity<Map> response = restTemplate
+                .postForEntity(uri.toUriString(), httpEntity, Map.class);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            logger.info("response : {}", response.getBody());
+            return new ObjectMapper().readValue(new ObjectMapper().writeValueAsString(response.getBody()),
+                    GitHubToken.class);
+        }
+        logger.error("response : {}", response.getBody());
+        logger.error("response : {}", response.getStatusCode());
+        return null;
+    }
 
-				UriComponents uri = UriComponentsBuilder.fromHttpUrl(
-																												oauthConfig.getGetAccessTokenUrlFromGithub())
-																								.queryParams(queryParams)
-																								.build();
-				ResponseEntity<Map> response = restTemplate
-								.postForEntity(uri.toUriString(), httpEntity, Map.class);
-				if (response.getStatusCode() == HttpStatus.OK) {
-						logger.info("response : {}", response.getBody());
-						return new ObjectMapper().readValue(new ObjectMapper().writeValueAsString(response.getBody()),
-																								GitHubToken.class);
-				}
-				logger.error("response : {}", response.getBody());
-				logger.error("response : {}", response.getStatusCode());
-				return null;
-		}
+    @Override
+    public UserInfoDto requestUserInfo(String accessToken) throws JsonProcessingException {
 
-		@Override
-		public UserInfoDto requestUserInfo(String accessToken) throws JsonProcessingException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", "application/vnd.github+json");
+        headers.set("Authorization", "Bearer " + accessToken);
+        headers.set("X-GitHub-Api-Version", "2022-11-28");
 
-				HttpHeaders headers = new HttpHeaders();
-				headers.set("Accept", "application/vnd.github+json");
-				headers.set("Authorization", "Bearer " + accessToken);
-				headers.set("X-GitHub-Api-Version", "2022-11-28");
+        UriComponents uri = UriComponentsBuilder.fromHttpUrl(
+                oauthConfig.getGetUserInfoUrlFromGitHub()).build();
 
-				UriComponents uri = UriComponentsBuilder.fromHttpUrl(
-								oauthConfig.getGetUserInfoUrlFromGitHub()).build();
+        RequestEntity<Void> requestEntity = RequestEntity
+                .get(uri.toUri())
+                .headers(headers)
+                .build();
 
-				RequestEntity<Void> requestEntity = RequestEntity
-								.get(uri.toUri())
-								.headers(headers)
-								.build();
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<JsonNode> response = restTemplate.exchange(requestEntity, JsonNode.class);
 
-				RestTemplate restTemplate = new RestTemplate();
-				ResponseEntity<JsonNode> response = restTemplate.exchange(requestEntity, JsonNode.class);
-
-				if (response.getStatusCode() == HttpStatus.OK) {
-					JsonNode responseBody = response.getBody();
-					logger.info("response : {}", response.getBody());
-					if (responseBody != null) {
-							String owner = responseBody.get("login").asText();
-							String id = responseBody.get("id").asText();
-							String provider = String.valueOf(OAuthProvider.GITHUB);
-							return new UserInfoDto(id, provider, accessToken, owner);
-						}
-				}
-				logger.error("response : {}", response.getBody());
-				logger.error("response : {}", response.getStatusCode());
-				return null;
-		}
+        if (response.getStatusCode() == HttpStatus.OK) {
+            JsonNode responseBody = response.getBody();
+            logger.info("response : {}", response.getBody());
+            if (responseBody != null) {
+                String owner = responseBody.get("login").asText();
+                String id = responseBody.get("id").asText();
+                String provider = String.valueOf(OAuthProvider.GITHUB);
+                return new UserInfoDto(id, provider, accessToken, owner);
+            }
+        }
+        logger.error("response : {}", response.getBody());
+        logger.error("response : {}", response.getStatusCode());
+        return null;
+    }
 }

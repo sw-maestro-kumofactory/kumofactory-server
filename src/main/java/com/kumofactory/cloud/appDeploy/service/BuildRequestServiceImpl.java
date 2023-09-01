@@ -39,19 +39,10 @@ public class BuildRequestServiceImpl implements BuildRequestService {
         request.setDockerfile(isDockerfileExist(request.user(), request.repo()));
         request.setgithubToken(token);
 
-        logger.info(request.toString());
-
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
         HttpEntity<BuildRequestDto> httpEntity = new HttpEntity<>(request, headers);
         ResponseEntity<String> response = new RestTemplate().exchange(url, HttpMethod.POST, httpEntity, String.class);
-
-        if (response.getStatusCode().is2xxSuccessful()) {
-            logger.info("response : {}", response.getBody());
-        } else {
-            logger.error("response : {}", response.getBody());
-            logger.error("response : {}", response.getStatusCode());
-        }
     }
 
     private Boolean isDockerfileExist(String userName ,String repoName) {
