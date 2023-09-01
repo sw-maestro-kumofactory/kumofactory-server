@@ -95,6 +95,9 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         List<AwsComponent> components = new ArrayList<>();
         List<AwsCdkDto> awsCdkDtos = new ArrayList<>();
 
+        AwsCdkDto id = AwsCdkDto.builder().id(awsBluePrintDto.getUuid()).build();
+        awsCdkDtos.add(id);
+
         // Components 저장
         for (AwsComponentDto component : awsBluePrintDto.getComponents()) {
             AwsComponent awsComponent = AwsComponent.createAwsComponent(component, savedBlueprint);
