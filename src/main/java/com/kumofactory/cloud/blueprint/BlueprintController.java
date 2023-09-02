@@ -30,74 +30,74 @@ import java.util.List;
 @RequestMapping("/blueprint")
 @Slf4j
 public class BlueprintController {
-    private final Logger logger = LoggerFactory.getLogger(BlueprintController.class);
-    private final AwsBlueprintService awsBlueprintService;
+	private final Logger logger = LoggerFactory.getLogger(BlueprintController.class);
+	private final AwsBlueprintService awsBlueprintService;
 
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = AwsBluePrintDto.class)))
-    @GetMapping("/aws/{uuid}")
-    @AuthorizationFromToken
-    public AwsBluePrintDto getAwsBlueprint(@PathVariable("uuid") String uuid, String userId) {
-        return awsBlueprintService.getAwsBlueprint(uuid, userId);
-    }
+	@ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = AwsBluePrintDto.class)))
+	@GetMapping("/aws/{uuid}")
+	@AuthorizationFromToken
+	public AwsBluePrintDto getAwsBlueprint(@PathVariable("uuid") String uuid, String userId) {
+		return awsBlueprintService.getAwsBlueprint(uuid, userId);
+	}
 
-    @Operation(
-            summary = "BluePrint scope 업데이트",
-            description = "Requires authentication.",
-            security = @SecurityRequirement(name = "bearerAuth")
-    )
-    @PutMapping("/aws/{uuid}")
-    @AuthorizationFromToken
-    public ResultDto updateBluePrintScope(@PathVariable("uuid") String uuid, @RequestParam("scope") BluePrintScope scope, String userId) {
-        boolean result = awsBlueprintService.updateBluePrintScope(scope, uuid, userId);
-        return ResultDto.builder()
-                .result(result)
-                .message(!result ? "Not Found or Not Authorized" : "")
-                .build();
-    }
+	@Operation(
+					summary = "BluePrint scope 업데이트",
+					description = "Requires authentication.",
+					security = @SecurityRequirement(name = "bearerAuth")
+	)
+	@PutMapping("/aws/{uuid}")
+	@AuthorizationFromToken
+	public ResultDto updateBluePrintScope(@PathVariable("uuid") String uuid, @RequestParam("scope") BluePrintScope scope, String userId) {
+		boolean result = awsBlueprintService.updateBluePrintScope(scope, uuid, userId);
+		return ResultDto.builder()
+										.result(result)
+										.message(!result ? "Not Found or Not Authorized" : "")
+										.build();
+	}
 
-    @Operation(
-            summary = "BluePrint 삭제",
-            description = "Requires authentication.",
-            security = @SecurityRequirement(name = "bearerAuth")
-    )
-    @DeleteMapping("/aws/{uuid}")
-    @AuthorizationFromToken
-    public ResultDto deleteAwsBlueprint(@PathVariable("uuid") String uuid, String userId) {
-        boolean result = awsBlueprintService.delete(uuid);
-        return ResultDto.builder()
-                .result(result)
-                .message(!result ? "Not Found " : "")
-                .build();
-    }
+	@Operation(
+					summary = "BluePrint 삭제",
+					description = "Requires authentication.",
+					security = @SecurityRequirement(name = "bearerAuth")
+	)
+	@DeleteMapping("/aws/{uuid}")
+	@AuthorizationFromToken
+	public ResultDto deleteAwsBlueprint(@PathVariable("uuid") String uuid, String userId) {
+		boolean result = awsBlueprintService.delete(uuid);
+		return ResultDto.builder()
+										.result(result)
+										.message(!result ? "Not Found " : "")
+										.build();
+	}
 
-    @ApiResponse(responseCode = "200", description = "OK")
-    @GetMapping("/aws/list")
-    @AuthorizationFromToken
-    public List<AwsBluePrintListDto> getAwsBlueprintList(String userId) {
-        try {
-            return awsBlueprintService.getMyAwsBlueprints(userId);
-        } catch (Exception e) {
-            logger.error("getAwsBlueprintList error", e);
-            throw e;
-        }
+	@ApiResponse(responseCode = "200", description = "OK")
+	@GetMapping("/aws/list")
+	@AuthorizationFromToken
+	public List<AwsBluePrintListDto> getAwsBlueprintList(String userId) {
+		try {
+			return awsBlueprintService.getMyAwsBlueprints(userId);
+		} catch (Exception e) {
+			logger.error("getAwsBlueprintList error", e);
+			throw e;
+		}
 
-    }
+	}
 
-    @PostMapping("/aws")
-    @AuthorizationFromToken
-    public ResultDto createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto, @RequestParam String provision, String userId) throws JsonProcessingException {
-        try {
-            awsBlueprintService.store(awsBluePrintDto, provision, userId);
-            return ResultDto.builder()
-                    .result(true)
-                    .build();
-        } catch (Exception e) {
-            logger.error("createAwsBlueprint error", e);
-            return ResultDto.builder()
-                    .result(false)
-                    .message(e.getMessage())
-                    .build();
-        }
+	@PostMapping("/aws")
+	@AuthorizationFromToken
+	public ResultDto createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto, @RequestParam String provision, String userId) throws JsonProcessingException {
+		try {
+			awsBlueprintService.store(awsBluePrintDto, provision, userId);
+			return ResultDto.builder()
+											.result(true)
+											.build();
+		} catch (Exception e) {
+			logger.error("createAwsBlueprint error", e);
+			return ResultDto.builder()
+											.result(false)
+											.message(e.getMessage())
+											.build();
+		}
 
-    }
+	}
 }

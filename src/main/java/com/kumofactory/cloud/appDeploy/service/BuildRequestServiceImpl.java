@@ -1,7 +1,9 @@
 package com.kumofactory.cloud.appDeploy.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.kumofactory.cloud.appDeploy.domain.CfnOutput;
 import com.kumofactory.cloud.appDeploy.dto.BuildRequestDto;
+import com.kumofactory.cloud.appDeploy.repository.CfnOutputRepository;
 import com.kumofactory.cloud.member.MemberRepository;
 import com.kumofactory.cloud.member.domain.Member;
 import lombok.RequiredArgsConstructor;
@@ -24,44 +26,52 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class BuildRequestServiceImpl implements BuildRequestService {
 
-    private final MemberRepository memberRepository;
-    private final Logger logger = LoggerFactory.getLogger(BuildRequestServiceImpl.class);
-    private String token;
-    private String baseUri = "https://api.github.com";
-    @Value("${build.server}")
-    private String buildServerUri;
+	private final MemberRepository memberRepository;
+	private final CfnOutputRepository cfnOutputRepository;
+	private final Logger logger = LoggerFactory.getLogger(BuildRequestServiceImpl.class);
+	private String token;
+	private String baseUri = "https://api.github.com";
+	@Value("${build.server}")
+	private String buildServerUri;
 
-    @Override
-    public void RequestBuild(BuildRequestDto request, String oauthId) {
-        Member member = memberRepository.findMemberByOauthId(oauthId);
-        this.token = member.getGithubAccessToken();
-        String url = buildServerUri + "/api/v1/deploy";
-        request.setDockerfile(isDockerfileExist(request.user(), request.repo()));
-        request.setgithubToken(token);
+	@Override
+	public void RequestBuild(BuildRequestDto request, String oauthId) {
+		Member member = memberRepository.findMemberByOauthId(oauthId);
+		this.token = member.getGithubAccessToken();
+		String url = buildServerUri + "/api/v1/deploy";
+		request.setDockerfile(isDockerfileExist(request.user(), request.repo()));
+		request.setgithubToken(token);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", "application/json");
-        HttpEntity<BuildRequestDto> httpEntity = new HttpEntity<>(request, headers);
-        ResponseEntity<String> response = new RestTemplate().exchange(url, HttpMethod.POST, httpEntity, String.class);
-    }
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Accept", "application/json");
+		HttpEntity<BuildRequestDto> httpEntity = new HttpEntity<>(request, headers);
+		ResponseEntity<String> response = new RestTemplate().exchange(url, HttpMethod.POST, httpEntity, String.class);
+	}
 
-    private Boolean isDockerfileExist(String userName ,String repoName) {
-        String url = baseUri + "/repos/" + userName + "/" + repoName + "/contents/Dockerfile";
-        try {
-            ResponseEntity<JsonNode> response = RequestGitHubAPIs(url);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
+	@Override
+	public CfnOutput getMyResources(String blueprintUuid, String oauthId) {
+		logger.info("blueprintUuid: " + blueprintUuid);
+		CfnOutput output = cfnOutputRepository.findByKey(blueprintUuid);
+		return output;
+	}
 
-    private ResponseEntity<JsonNode> RequestGitHubAPIs(String uri) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", "application/json");
-        if( StringUtils.hasText(token) ) {
-            headers.setBearerAuth(token);
-        }
-        HttpEntity<String> httpEntity = new HttpEntity<>(headers);
-        return new RestTemplate().exchange(uri, HttpMethod.GET, httpEntity, JsonNode.class);
-    }
+	private Boolean isDockerfileExist(String userName, String repoName) {
+		String url = baseUri + "/repos/" + userName + "/" + repoName + "/contents/Dockerfile";
+		try {
+			ResponseEntity<JsonNode> response = RequestGitHubAPIs(url);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private ResponseEntity<JsonNode> RequestGitHubAPIs(String uri) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Accept", "application/json");
+		if (StringUtils.hasText(token)) {
+			headers.setBearerAuth(token);
+		}
+		HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+		return new RestTemplate().exchange(uri, HttpMethod.GET, httpEntity, JsonNode.class);
+	}
 }
