@@ -67,7 +67,7 @@ public class GitHubServiceImpl implements GitHubService {
         headers.set("X-GitHub-Api-Version", "2022-11-28");
 
         UriComponents uri = UriComponentsBuilder.fromHttpUrl(
-                oauthConfig.getGetUserInfoUrlFromGitHub()).build();
+                "https://api.github.com/user").build();
 
         RequestEntity<Void> requestEntity = RequestEntity
                 .get(uri.toUri())
