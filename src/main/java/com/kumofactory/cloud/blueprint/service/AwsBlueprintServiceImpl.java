@@ -133,6 +133,15 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         return true;
     }
 
+    @Override
+    public ProvisionStatus getProvisionStatus(String uuid, String userId) {
+        AwsBluePrint awsBluePrintByUuid = awsBluePrintRepository.findAwsBluePrintByUuid(uuid);
+        if (awsBluePrintByUuid == null || !awsBluePrintByUuid.getMember().getOauthId().equals(userId)) {
+            return null;
+        }
+        return awsBluePrintByUuid.getStatus();
+    }
+
     // Blueprint 저장
     private AwsBluePrint saveBlueprint(AwsBluePrintDto awsBluePrintDto, String provision, String userId) {
         Member member = memberRepository.findMemberByOauthId(userId);

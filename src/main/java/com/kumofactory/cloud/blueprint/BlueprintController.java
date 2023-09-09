@@ -2,6 +2,7 @@ package com.kumofactory.cloud.blueprint;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kumofactory.cloud.blueprint.domain.BluePrintScope;
+import com.kumofactory.cloud.blueprint.domain.ProvisionStatus;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintListDto;
 import com.kumofactory.cloud.blueprint.service.AwsBlueprintService;
@@ -38,6 +39,12 @@ public class BlueprintController {
     @AuthorizationFromToken
     public AwsBluePrintDto getAwsBlueprint(@PathVariable("uuid") String uuid, String userId) {
         return awsBlueprintService.getAwsBlueprint(uuid, userId);
+    }
+
+    @GetMapping("/aws/status/{uuid}")
+    @AuthorizationFromToken
+    public ProvisionStatus getProvisionStatus(@PathVariable("uuid") String uuid, String userId) {
+        return awsBlueprintService.getProvisionStatus(uuid, userId);
     }
 
     @Operation(
