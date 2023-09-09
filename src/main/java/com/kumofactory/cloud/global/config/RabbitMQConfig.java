@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
     public static final String topicExchangeName = "aws.cdk";
+    public static final String awsCdkResultQueue = "aws-cdk-result";
     private final String queueName = "kumofactory-queue";
 
     @Value("${rabbitmq.host}")
@@ -27,6 +28,11 @@ public class RabbitMQConfig {
     @Bean
     public Queue queue() {
         return new Queue(queueName, false);
+    }
+
+    @Bean
+    public Queue awsCdkResultQueue() {
+        return new Queue(awsCdkResultQueue, false);
     }
 
     @Bean
