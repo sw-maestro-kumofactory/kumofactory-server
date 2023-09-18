@@ -88,7 +88,7 @@ public class BuildRequestServiceImpl implements BuildRequestService {
 		WebClient webClient = WebClient.create();
 		Member member = memberRepository.findMemberByOauthId(oauthId);
 		this.token = member.getGithubAccessToken();
-		String url = buildServerUri + "/api/v1/deploy";
+		String url = buildServerUri + "/api/v1/deployAsync";
 		request.setDockerfile(isDockerfileExist(request.user(), request.repo()));
 		request.setgithubToken(token);
 
