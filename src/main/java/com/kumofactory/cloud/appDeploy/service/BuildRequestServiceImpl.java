@@ -107,7 +107,7 @@ public class BuildRequestServiceImpl implements BuildRequestService {
 
 		return sseFlux.map(response -> {
 					logger.info("Received SSE: " + response.event() + response.data());
-					if(response.event().equals("failed")) {
+					if(response.event().equals("fail")) {
 						buildLog.setStatus(-1);
 						buildLogRepository.save(buildLog);
 					} else if(response.event().equals("success")) {
@@ -119,7 +119,7 @@ public class BuildRequestServiceImpl implements BuildRequestService {
 							.data(response.data())
 							.build();
 				})
-				.takeUntil(response -> response.event().equals("failed") || response.event().equals("success"))
+				.takeUntil(response -> response.event().equals("fail") || response.event().equals("success"))
 				.doOnError(error -> {
 					error.printStackTrace();
 				})
@@ -153,14 +153,14 @@ public class BuildRequestServiceImpl implements BuildRequestService {
 		} else if (buildLog.getStatus() == 1) {
 			return Flux.just(
 					ServerSentEvent.<String>builder()
-							.event("log-status")
+							.event("status")
 							.data("success")
 							.build()
 			);
 		} else if (buildLog.getStatus() == -1) {
 			return Flux.just(
 					ServerSentEvent.<String>builder()
-							.event("log-status")
+							.event("status")
 							.data("fail")
 							.build()
 			);
