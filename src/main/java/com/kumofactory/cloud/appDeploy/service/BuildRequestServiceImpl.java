@@ -83,6 +83,8 @@ public class BuildRequestServiceImpl implements BuildRequestService {
 
 	@Override
 	public Flux<ServerSentEvent<String>> RequestBuildAsync(BuildRequestDto request, String oauthId) {
+		logger.info("RequestBuildAsync");
+
 		WebClient webClient = WebClient.create();
 		Member member = memberRepository.findMemberByOauthId(oauthId);
 		this.token = member.getGithubAccessToken();
@@ -108,9 +110,11 @@ public class BuildRequestServiceImpl implements BuildRequestService {
 		return sseFlux.map(response -> {
 					logger.info("Received SSE: " + response.event() + response.data());
 					if(response.event().equals("fail")) {
+						logger.info("#@#@#@#@#@ fail");
 						buildLog.setStatus(-1);
 						buildLogRepository.save(buildLog);
 					} else if(response.event().equals("success")) {
+						logger.info("#@#@#@#@#@ success");
 						buildLog.setStatus(1);
 						buildLogRepository.save(buildLog);
 					}
