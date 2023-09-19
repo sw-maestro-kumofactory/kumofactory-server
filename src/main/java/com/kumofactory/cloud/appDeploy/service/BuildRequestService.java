@@ -10,7 +10,9 @@ public interface BuildRequestService {
 
 	CfnOutput getMyResources(String blueprintUuid, String oauthId);
 
+
 	Flux<ServerSentEvent<String>> RequestBuildAsync(BuildRequestDto request, String oauthId);
+	void RequestBuildAsync2(BuildRequestDto request, String oauthId);
 
 	Flux<ServerSentEvent<String>> getBuildStatus(String instanceId);
 }

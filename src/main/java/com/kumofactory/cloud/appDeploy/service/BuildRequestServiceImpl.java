@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Repository;
@@ -24,6 +25,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -171,5 +174,50 @@ public class BuildRequestServiceImpl implements BuildRequestService {
 		} else {
 			return Flux.empty();
 		}
+	}
+
+
+	@Override
+	public void RequestBuildAsync2(BuildRequestDto request, String oauthId) {
+		logger.info("RequestBuildAsync");
+
+		WebClient webClient = WebClient.create(buildServerUri);
+		String endpoint = "/api/v1/deployAsync";
+
+//		Member member = memberRepository.findMemberByOauthId(oauthId);
+//		this.token = member.getGithubAccessToken();
+		this.token = "test";
+
+		request.setDockerfile(isDockerfileExist(request.user(), request.repo()));
+		request.setgithubToken(token);
+
+		saveBuildLog(request, 0);
+
+		Flux<ServerSentEvent<String>> events = webClient.post()
+				.uri(endpoint)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.TEXT_EVENT_STREAM)
+				.bodyValue(request)
+				.retrieve()
+				.bodyToFlux(new ParameterizedTypeReference<ServerSentEvent<String>>() {});
+
+		events.takeWhile(event -> !event.event().equals("finish"))
+				.subscribe(event -> {
+					logger.info("Received SSE: " + event.event() + " " + event.data());
+					if ("fail".equals(event.event()) || "error".equals(event.event())) {
+						saveBuildLog(request, -1);
+					} else if ("success".equals(event.event())) {
+						saveBuildLog(request, 1);
+					}
+				});
+	}
+
+	private void saveBuildLog(BuildRequestDto request, int status) {
+		BuildLog buildLog = new BuildLog();
+		buildLog.set_id(request.instanceId());
+		buildLog.setStatus(status);
+		buildLog.setRepository(request.user()+'/'+request.repo());
+		buildLog.setBranch(request.branch());
+		buildLogRepository.save(buildLog);
 	}
 }

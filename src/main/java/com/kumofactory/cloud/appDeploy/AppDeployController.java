@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/build")
@@ -72,5 +73,12 @@ public class AppDeployController {
 	@GetMapping(value = "/buildStatus/{instanceId}", produces = "text/event-stream")
 	public Flux<ServerSentEvent<String>> getBuildStatus(@PathVariable("instanceId") String instanceId) {
 		return buildRequestService.getBuildStatus(instanceId);
+	}
+
+	@PostMapping("/deployAsync/v2")
+	@AuthorizationFromToken
+	public ResponseEntity<String> deployRequestAsyncV2(@RequestBody BuildRequestDto request, String userId) {
+		CompletableFuture.runAsync(() -> buildRequestService.RequestBuildAsync2(request, userId));
+		return ResponseEntity.ok("Request Delivered");
 	}
 }
