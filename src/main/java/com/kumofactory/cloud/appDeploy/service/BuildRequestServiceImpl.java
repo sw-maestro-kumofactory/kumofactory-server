@@ -140,37 +140,32 @@ public class BuildRequestServiceImpl implements BuildRequestService {
 		Optional<BuildLog> buildLogOpt = buildLogRepository.findByInstanceId(instanceId);
 		// buildlog가 null이면 event: status, data:null 로 보내줌
 		if (!buildLogOpt.isPresent()) {
-			return Flux.just(
-					ServerSentEvent.<String>builder()
-							.event("status")
-							.data("null")
-							.build()
-			);
+			return Flux.just(createSSE("status", "null"));
 		}
+
 		BuildLog buildLog = buildLogOpt.get();
-		if (buildLog.getStatus() == 0) {
+
+		if (buildLog.getStatus() == -1) {
+			return Flux.just(createSSE("status", "fail"));
+		} else if (buildLog.getStatus() == 0 || buildLog.getStatus() == 1) {
 			return Flux.interval(Duration.ofSeconds(3))
 					.map(tick -> {
 						BuildLog updatedLog = buildLogRepository.findByInstanceId(instanceId).orElse(null);
-						return ServerSentEvent.<String>builder()
-								.event("status")
-								.data("ing")
-								.build();
-					});
-		} else if (buildLog.getStatus() == 1) {
-			return Flux.just(
-					ServerSentEvent.<String>builder()
-							.event("status")
-							.data("success")
-							.build()
-			);
-		} else if (buildLog.getStatus() == -1) {
-			return Flux.just(
-					ServerSentEvent.<String>builder()
-							.event("status")
-							.data("fail")
-							.build()
-			);
+						if (updatedLog == null) {
+							return createSSE("status", "null");
+						} else if (updatedLog.getStatus() == 2) {
+							return createSSE("status", "success");
+						} else if (updatedLog.getStatus() == 0) {
+							return createSSE("status", "building");
+						} else if (updatedLog.getStatus() == 1) {
+							return createSSE("status", "deploying");
+						} else {
+							return createSSE("status", "unknown");
+						}
+					})
+					.takeUntil(sse -> "success".equals(sse.data()));
+		} else if (buildLog.getStatus() == 2) {
+			return Flux.just(createSSE("status", "success"));
 		} else {
 			return Flux.empty();
 		}
@@ -184,9 +179,8 @@ public class BuildRequestServiceImpl implements BuildRequestService {
 		WebClient webClient = WebClient.create(buildServerUri);
 		String endpoint = "/api/v1/deployAsync";
 
-//		Member member = memberRepository.findMemberByOauthId(oauthId);
-//		this.token = member.getGithubAccessToken();
-		this.token = "test";
+		Member member = memberRepository.findMemberByOauthId(oauthId);
+		this.token = member.getGithubAccessToken();
 
 		request.setDockerfile(isDockerfileExist(request.user(), request.repo()));
 		request.setgithubToken(token);
@@ -219,5 +213,12 @@ public class BuildRequestServiceImpl implements BuildRequestService {
 		buildLog.setRepository(request.user()+'/'+request.repo());
 		buildLog.setBranch(request.branch());
 		buildLogRepository.save(buildLog);
+	}
+
+	private ServerSentEvent<String> createSSE(String event, String data) {
+		return ServerSentEvent.<String>builder()
+				.event(event)
+				.data(data)
+				.build();
 	}
 }
