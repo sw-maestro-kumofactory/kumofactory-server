@@ -10,9 +10,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/build")
@@ -55,9 +59,26 @@ public class AppDeployController {
 		return ResponseEntity.ok("success");
 	}
 
+	@PostMapping(value = "/deployAsync", produces = "text/event-stream")
+	@AuthorizationFromToken
+	public Flux<ServerSentEvent<String>> deployRequestAsync(@RequestBody BuildRequestDto request, String userId) {
+		return buildRequestService.RequestBuildAsync(request, userId);
+	}
+
 	@GetMapping("/resource/{blueprintUuid}")
 	public CfnOutput getMyResource(@PathVariable("blueprintUuid") String blueprintUuid, String userId) {
 		return buildRequestService.getMyResources(blueprintUuid, userId);
 	}
 
+	@GetMapping(value = "/buildStatus/{instanceId}", produces = "text/event-stream")
+	public Flux<ServerSentEvent<String>> getBuildStatus(@PathVariable("instanceId") String instanceId) {
+		return buildRequestService.getBuildStatus(instanceId);
+	}
+
+	@PostMapping("/deployAsync/v2")
+	@AuthorizationFromToken
+	public ResponseEntity<String> deployRequestAsyncV2(@RequestBody BuildRequestDto request, String userId) {
+		CompletableFuture.runAsync(() -> buildRequestService.RequestBuildAsync2(request, userId));
+		return ResponseEntity.ok("Request Delivered");
+	}
 }
