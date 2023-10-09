@@ -9,6 +9,7 @@ import com.kumofactory.cloud.blueprint.service.AwsBlueprintService;
 import com.kumofactory.cloud.global.annotation.auth.AuthorizationFromToken;
 import com.kumofactory.cloud.global.dto.ResultDto;
 import com.kumofactory.cloud.global.rabbitmq.MessageProducer;
+import com.kumofactory.cloud.global.rabbitmq.domain.CdkMessagePattern;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -94,7 +95,7 @@ public class BlueprintController {
     @AuthorizationFromToken
     public ResultDto createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto, @RequestParam String provision, String userId) throws JsonProcessingException {
         try {
-            awsBlueprintService.store(awsBluePrintDto, provision, userId);
+            awsBlueprintService.store(awsBluePrintDto, provision, CdkMessagePattern.USER, userId);
             return ResultDto.builder()
                     .result(true)
                     .build();
@@ -105,6 +106,5 @@ public class BlueprintController {
                     .message(e.getMessage())
                     .build();
         }
-
     }
 }

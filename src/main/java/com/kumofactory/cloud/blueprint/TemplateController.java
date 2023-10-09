@@ -1,14 +1,19 @@
 package com.kumofactory.cloud.blueprint;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
+import com.kumofactory.cloud.blueprint.dto.aws.AwsCdkDto;
 import com.kumofactory.cloud.blueprint.dto.template.TemplatePreviewDto;
+import com.kumofactory.cloud.blueprint.service.AwsBlueprintService;
 import com.kumofactory.cloud.blueprint.service.AwsTemplateService;
 import com.kumofactory.cloud.global.annotation.auth.AuthorizationFromToken;
 import com.kumofactory.cloud.global.dto.PagingDto;
+import com.kumofactory.cloud.global.dto.ResultDto;
+import com.kumofactory.cloud.global.rabbitmq.MessageProducer;
+import com.kumofactory.cloud.global.rabbitmq.domain.CdkMessagePattern;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -16,8 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Tag(name = "TemplateController", description = "TemplateController")
 @RestController
@@ -26,7 +31,9 @@ import java.util.Optional;
 @Slf4j
 public class TemplateController {
     private final AwsTemplateService templateService;
+    private final AwsBlueprintService awsBlueprintService;
     private final Logger logger = LoggerFactory.getLogger(TemplateController.class);
+    private final MessageProducer sender;
 
     @Operation(
             summary = "Template 전체 조회하기",
@@ -67,5 +74,27 @@ public class TemplateController {
     @AuthorizationFromToken
     public AwsBluePrintDto getAwsBlueprint(@PathVariable("uuid") String uuid, String userId) {
         return templateService.getAwsBlueprint(uuid);
+    }
+
+    @Operation(
+            summary = "template 으로 blueprint 생성하기 (나중에 ",
+            description = "Requires authentication.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PostMapping("/web-three-tier")
+    @AuthorizationFromToken
+    public ResultDto createAwsBlueprintByTemplate(@RequestBody AwsBluePrintDto awsBluePrintDto, @RequestParam String provision, String userId) throws JsonProcessingException {
+        try {
+            awsBlueprintService.store(awsBluePrintDto, provision, CdkMessagePattern.KUMO, userId);
+            return ResultDto.builder()
+                    .result(true)
+                    .build();
+        } catch (Exception e) {
+            logger.error("createAwsBlueprint error", e);
+            return ResultDto.builder()
+                    .result(false)
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 }

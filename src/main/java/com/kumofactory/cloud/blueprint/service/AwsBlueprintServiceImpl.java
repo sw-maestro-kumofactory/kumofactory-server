@@ -16,6 +16,7 @@ import com.kumofactory.cloud.blueprint.repository.aws.AwsAreaRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsBluePrintRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsComponentRepository;
 import com.kumofactory.cloud.global.rabbitmq.MessageProducer;
+import com.kumofactory.cloud.global.rabbitmq.domain.CdkMessagePattern;
 import com.kumofactory.cloud.member.MemberRepository;
 import com.kumofactory.cloud.member.domain.Member;
 import com.kumofactory.cloud.util.aws.s3.AwsS3Helper;
@@ -85,7 +86,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
     }
 
     @Override
-    public void store(AwsBluePrintDto awsBluePrintDto, String provision, String userId) throws JsonProcessingException {
+    public void store(AwsBluePrintDto awsBluePrintDto, String provision, CdkMessagePattern pattern, String userId) throws JsonProcessingException {
         this.delete(awsBluePrintDto.getUuid()); // 기존 BluePrint 삭제
 
         AwsBluePrint savedBlueprint = saveBlueprint(awsBluePrintDto, provision, userId); // BluePrint 저장
@@ -108,7 +109,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         awsComponentRepository.saveAll(components);
 
         if (parseBoolean(provision)) {
-            sender.sendAwsCdkOption(awsCdkDtos);
+            sender.sendAwsCdkOption(pattern, awsCdkDtos);
         }
     }
 
@@ -154,7 +155,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         }
 
         // thumbnail 저장
-        String keyname = saveThumbnail(awsBluePrintDto, member);
+//        String keyname = saveThumbnail(awsBluePrintDto, member);
 
         // BluePrint 저장
         AwsBluePrint awsBluePrint = new AwsBluePrint();
@@ -165,7 +166,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         awsBluePrint.setStatus(status);
         awsBluePrint.setMember(member);
         awsBluePrint.setScope(awsBluePrintDto.getScope() == null ? BluePrintScope.PRIVATE : awsBluePrintDto.getScope());
-        awsBluePrint.setKeyName(keyname);
+        awsBluePrint.setKeyName("temp");
 
         return awsBluePrintRepository.save(awsBluePrint);
     }
