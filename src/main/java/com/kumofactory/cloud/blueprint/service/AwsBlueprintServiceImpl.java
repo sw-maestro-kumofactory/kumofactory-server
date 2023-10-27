@@ -155,7 +155,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         }
 
         // thumbnail 저장
-//        String keyname = saveThumbnail(awsBluePrintDto, member);
+        String keyname = saveThumbnail(awsBluePrintDto, member);
 
         // BluePrint 저장
         AwsBluePrint awsBluePrint = new AwsBluePrint();
