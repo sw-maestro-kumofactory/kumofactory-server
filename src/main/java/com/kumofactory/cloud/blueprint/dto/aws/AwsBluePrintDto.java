@@ -1,6 +1,10 @@
 package com.kumofactory.cloud.blueprint.dto.aws;
 
+import com.kumofactory.cloud.blueprint.domain.BluePrintScope;
 import com.kumofactory.cloud.blueprint.domain.ComponentLine;
+import com.kumofactory.cloud.blueprint.domain.ProvisionStatus;
+import com.kumofactory.cloud.blueprint.domain.aws.AwsArea;
+import com.kumofactory.cloud.blueprint.domain.aws.AwsBluePrint;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsComponent;
 import com.kumofactory.cloud.blueprint.dto.ComponentLineDto;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -47,6 +51,14 @@ public class AwsBluePrintDto {
             awsAreaDtoList.add(AwsAreaDto.mapper(awsAreaDto));
         }
         return awsAreaDtoList;
+    }
+
+    public static List<AwsComponentDto> awsComponentDtosMapper(List<AwsComponent> awsComponentDtos) {
+        List<AwsComponentDto> awsComponentDtoList = new ArrayList<>();
+        for (AwsComponent awsComponent : awsComponentDtos) {
+            awsComponentDtoList.add(AwsComponentDto.mapper(awsComponent));
+        }
+        return awsComponentDtoList;
     }
 
     public static List<ComponentLineDto> componentLinkDtoListMapper(List<ComponentLine> componentLinks) {

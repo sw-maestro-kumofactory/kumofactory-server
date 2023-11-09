@@ -1,27 +1,32 @@
 package com.kumofactory.cloud.blueprint;
 
-import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
-import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintListDto;
-import com.kumofactory.cloud.blueprint.service.AwsBlueprintService;
-import com.kumofactory.cloud.global.rabbitmq.domain.CdkMessagePattern;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kumofactory.cloud.blueprint.domain.BluePrintScope;
 import com.kumofactory.cloud.blueprint.domain.ProvisionStatus;
+import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
+import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintListDto;
+import com.kumofactory.cloud.blueprint.service.AwsBlueprintService;
 import com.kumofactory.cloud.global.annotation.auth.AuthorizationFromToken;
 import com.kumofactory.cloud.global.dto.ResultDto;
+import com.kumofactory.cloud.global.rabbitmq.MessageProducer;
+import com.kumofactory.cloud.global.rabbitmq.domain.CdkMessagePattern;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.transform.Result;
+import java.util.ArrayList;
 import java.util.List;
 
+@Tag(name = "AwsBlueprintService", description = "AwsBlueprintService")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/blueprint")
@@ -58,12 +63,19 @@ public class BlueprintController {
                 .build();
     }
 
-    @PostMapping("/aws")
+    @Operation(
+            summary = "BluePrint 삭제",
+            description = "Requires authentication.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @DeleteMapping("/aws/{uuid}")
     @AuthorizationFromToken
-    public String createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto, String userId) {
-        logger.info(userId);
-        awsBlueprintService.store(awsBluePrintDto, userId);
-        return "hello-world";
+    public ResultDto deleteAwsBlueprint(@PathVariable("uuid") String uuid, String userId) {
+        boolean result = awsBlueprintService.delete(uuid);
+        return ResultDto.builder()
+                .result(result)
+                .message(!result ? "Not Found " : "")
+                .build();
     }
 
     @ApiResponse(responseCode = "200", description = "OK")

@@ -1,12 +1,12 @@
 package com.kumofactory.cloud.oauth.service.github;
 
-import com.kumofactory.cloud.config.OAuthProvider;
-import com.kumofactory.cloud.config.OauthConfig;
-import com.kumofactory.cloud.oauth.dto.UserInfoDto;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kumofactory.cloud.global.config.OAuthProvider;
+import com.kumofactory.cloud.global.config.OauthConfig;
 import com.kumofactory.cloud.oauth.dto.OAuthDto.GitHubToken;
+import com.kumofactory.cloud.oauth.dto.UserInfoDto;
+
+import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -18,8 +18,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.Map;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 @Slf4j

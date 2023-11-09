@@ -1,28 +1,41 @@
 package com.kumofactory.cloud.blueprint.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.kumofactory.cloud.blueprint.domain.BluePrintScope;
 import com.kumofactory.cloud.blueprint.domain.ComponentLine;
+import com.kumofactory.cloud.blueprint.domain.ProvisionStatus;
+import com.kumofactory.cloud.blueprint.domain.aws.AwsArea;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsBluePrint;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsComponent;
 import com.kumofactory.cloud.blueprint.dto.ComponentLineDto;
-import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
-import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintListDto;
-import com.kumofactory.cloud.blueprint.dto.aws.AwsComponentDto;
+import com.kumofactory.cloud.blueprint.dto.aws.*;
+
+import com.kumofactory.cloud.blueprint.repository.ComponentDotRepository;
 import com.kumofactory.cloud.blueprint.repository.ComponentLineRepository;
+import com.kumofactory.cloud.blueprint.repository.aws.AwsAreaRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsBluePrintRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsComponentRepository;
 import com.kumofactory.cloud.global.rabbitmq.MessageProducer;
 import com.kumofactory.cloud.global.rabbitmq.domain.CdkMessagePattern;
 import com.kumofactory.cloud.member.MemberRepository;
 import com.kumofactory.cloud.member.domain.Member;
+import com.kumofactory.cloud.util.aws.s3.AwsS3Helper;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
+
+import static java.lang.Boolean.parseBoolean;
 
 @Service
 @RequiredArgsConstructor

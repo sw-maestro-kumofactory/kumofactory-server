@@ -1,24 +1,25 @@
 package com.kumofactory.cloud.oauth.service.google;
 
-import com.kumofactory.cloud.config.OAuthProvider;
-import com.kumofactory.cloud.config.OauthConfig;
-import com.kumofactory.cloud.oauth.dto.UserInfoDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kumofactory.cloud.global.config.OAuthProvider;
+import com.kumofactory.cloud.global.config.OauthConfig;
 import com.kumofactory.cloud.oauth.dto.OAuthDto.GoogleToken;
+import com.kumofactory.cloud.oauth.dto.UserInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -81,7 +82,7 @@ public class GoogleServiceImpl implements GoogleService {
             if (responseBody != null) {
                 String id = responseBody.get("id").asText();
                 String provider = String.valueOf(OAuthProvider.GOOGLE);
-                return new UserInfoDto(id, provider);
+                return new UserInfoDto(id, provider, accessToken, "deprecated");
             }
         }
         logger.error("response : {}", response.getBody());
