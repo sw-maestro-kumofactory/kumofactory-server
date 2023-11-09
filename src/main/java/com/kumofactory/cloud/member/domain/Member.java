@@ -1,5 +1,6 @@
 package com.kumofactory.cloud.member.domain;
 
+import com.kumofactory.cloud.blueprint.domain.BaseBluePrint;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsBluePrint;
 
 import java.util.List;
@@ -20,22 +21,28 @@ import lombok.Setter;
 @Setter
 public class Member {
 
-		@Id
-		@GeneratedValue(strategy = GenerationType.IDENTITY)
-		private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-		private String oauthId;
+    private String oauthId;
 
-		private String provider;
+    private String provider;
 
-		@OneToMany(mappedBy = "member")
-		private List<AwsBluePrint> bluePrints;
+    private String githubAccessToken;
 
-		// =========== 생성함수 =========== //
-		public static Member createMember(UserInfoDto userInfoDto) {
-				Member member = new Member();
-				member.setOauthId(userInfoDto.id());
-				member.setProvider(userInfoDto.provider());
-				return member;
-		}
+    private String profileName;
+
+    @OneToMany(mappedBy = "member")
+    private List<BaseBluePrint> bluePrints;
+
+    // =========== 생성함수 =========== //
+    public static Member createMember(UserInfoDto userInfoDto) {
+        Member member = new Member();
+        member.setOauthId(userInfoDto.id());
+        member.setProvider(userInfoDto.provider());
+        member.setGithubAccessToken(userInfoDto.accessToken());
+        member.setProfileName(userInfoDto.profileName());
+        return member;
+    }
 }
