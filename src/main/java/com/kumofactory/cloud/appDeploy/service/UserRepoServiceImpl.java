@@ -44,8 +44,12 @@ public class UserRepoServiceImpl implements UserRepoService {
                 String fullName = node.get("full_name").asText();
                 Boolean isPrivate = node.get("private").asBoolean();
                 Boolean isFork = node.get("fork").asBoolean();
+                String description = node.get("description").asText();
+                String languages_url = node.get("languages_url").asText();
+                String stargazers_url = node.get("stargazers_url").asText();
+                Integer open_issues_count = node.get("open_issues_count").asInt();
 
-                GitHubRepoDto.RepoInfoDto repoInfo = new GitHubRepoDto.RepoInfoDto(name, fullName, isPrivate, isFork);
+                GitHubRepoDto.RepoInfoDto repoInfo = new GitHubRepoDto.RepoInfoDto(name, fullName, isPrivate, isFork, description, languages_url, stargazers_url, open_issues_count);
                 repoInfoList.add(repoInfo);
             }
             return repoInfoList;
@@ -76,13 +80,19 @@ public class UserRepoServiceImpl implements UserRepoService {
 
             List<GitHubRepoDto.RepoInfoDto> repoInfoList = new ArrayList<>();
 
+
             for (JsonNode node : responseBody.get("items")) {
                 String name = node.get("name").asText();
                 String fullName = node.get("full_name").asText();
                 Boolean isPrivate = node.get("private").asBoolean();
                 Boolean isFork = node.get("fork").asBoolean();
+                String description = node.get("description").asText();
+                String languages_url = node.get("languages_url").asText();
+                String stargazers_url = node.get("stargazers_url").asText();
+                Integer open_issues_count = node.get("open_issues_count").asInt();
 
-                GitHubRepoDto.RepoInfoDto repoInfo = new GitHubRepoDto.RepoInfoDto(name, fullName, isPrivate, isFork);
+
+                GitHubRepoDto.RepoInfoDto repoInfo = new GitHubRepoDto.RepoInfoDto(name, fullName, isPrivate, isFork, description, languages_url, stargazers_url, open_issues_count);
                 repoInfoList.add(repoInfo);
             }
             return repoInfoList;
