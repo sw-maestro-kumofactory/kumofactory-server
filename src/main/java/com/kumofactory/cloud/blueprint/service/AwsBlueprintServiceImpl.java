@@ -155,7 +155,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         }
 
         // thumbnail 저장
-//        String keyname = saveThumbnail(awsBluePrintDto, member);
+        String keyname = saveThumbnail(awsBluePrintDto, member);
 
         // BluePrint 저장
         AwsBluePrint awsBluePrint = new AwsBluePrint();
@@ -166,7 +166,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         awsBluePrint.setStatus(status);
         awsBluePrint.setMember(member);
         awsBluePrint.setScope(awsBluePrintDto.getScope() == null ? BluePrintScope.PRIVATE : awsBluePrintDto.getScope());
-        awsBluePrint.setKeyName("temp");
+        awsBluePrint.setKeyName(keyname);
 
         return awsBluePrintRepository.save(awsBluePrint);
     }
