@@ -1,0 +1,1 @@
+package com.kumofactory.cloud.auth.jwt.repository;

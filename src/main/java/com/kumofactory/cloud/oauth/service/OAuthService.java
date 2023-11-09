@@ -1,29 +1,29 @@
 package com.kumofactory.cloud.oauth.service;
 
-import com.kumofactory.cloud.config.OAuthProvider;
-import com.kumofactory.cloud.jwt.dto.TokenDto;
-import com.kumofactory.cloud.jwt.provider.JwtTokenProvider;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kumofactory.cloud.global.config.OAuthProvider;
+import com.kumofactory.cloud.auth.jwt.dto.TokenDto;
+import com.kumofactory.cloud.auth.jwt.provider.JwtTokenProvider;
 import com.kumofactory.cloud.member.MemberRepository;
 import com.kumofactory.cloud.member.domain.Member;
 import com.kumofactory.cloud.oauth.dto.UserInfoDto;
 import com.kumofactory.cloud.oauth.service.github.GitHubService;
 import com.kumofactory.cloud.oauth.service.google.GoogleService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
+
+import static com.kumofactory.cloud.oauth.dto.OAuthDto.*;
+
 import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.kumofactory.cloud.oauth.dto.OAuthDto.GitHubToken;
-import static com.kumofactory.cloud.oauth.dto.OAuthDto.GoogleToken;
 
 @Service
 @Slf4j
