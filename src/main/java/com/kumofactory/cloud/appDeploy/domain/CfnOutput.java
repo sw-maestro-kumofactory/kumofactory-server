@@ -9,9 +9,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @NoArgsConstructor
 public class CfnOutput {
-	@Id
-	private String id;
-	private String key;
-	private Object result;
+    @Id
+    private String id;
+    private String key;
+    private Object result;
 
 }

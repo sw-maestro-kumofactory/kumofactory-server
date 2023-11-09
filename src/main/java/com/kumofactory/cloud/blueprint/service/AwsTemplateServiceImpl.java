@@ -1,22 +1,21 @@
 package com.kumofactory.cloud.blueprint.service;
 
-import com.kumofactory.cloud.blueprint.domain.BluePrintScope;
 import com.kumofactory.cloud.blueprint.domain.ComponentLine;
-import com.kumofactory.cloud.blueprint.domain.aws.AwsArea;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsBluePrint;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsComponent;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
 import com.kumofactory.cloud.blueprint.dto.template.TemplatePreviewDto;
 import com.kumofactory.cloud.blueprint.repository.ComponentLineRepository;
-import com.kumofactory.cloud.blueprint.repository.aws.AwsAreaRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsBluePrintRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsComponentRepository;
+import com.kumofactory.cloud.blueprint.domain.BluePrintScope;
+import com.kumofactory.cloud.blueprint.domain.aws.AwsArea;
+import com.kumofactory.cloud.blueprint.repository.aws.AwsAreaRepository;
 import com.kumofactory.cloud.util.aws.s3.AwsS3Helper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.model.S3Exception;

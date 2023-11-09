@@ -1,7 +1,5 @@
 package com.kumofactory.cloud.global.rabbitmq.domain;
 
-import com.kumofactory.cloud.blueprint.domain.ProvisionStatus;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 

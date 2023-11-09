@@ -1,16 +1,14 @@
 package com.kumofactory.cloud.blueprint.domain.aws;
 
 import com.kumofactory.cloud.blueprint.dto.aws.AwsComponentDto;
-
-import java.util.Date;
-import java.util.List;
-import javax.persistence.*;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Getter

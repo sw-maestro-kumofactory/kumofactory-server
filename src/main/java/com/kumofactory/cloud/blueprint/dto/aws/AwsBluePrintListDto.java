@@ -1,8 +1,8 @@
 package com.kumofactory.cloud.blueprint.dto.aws;
 
+import com.kumofactory.cloud.blueprint.domain.aws.AwsBluePrint;
 import com.kumofactory.cloud.blueprint.domain.BluePrintScope;
 import com.kumofactory.cloud.blueprint.domain.ProvisionStatus;
-import com.kumofactory.cloud.blueprint.domain.aws.AwsBluePrint;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;

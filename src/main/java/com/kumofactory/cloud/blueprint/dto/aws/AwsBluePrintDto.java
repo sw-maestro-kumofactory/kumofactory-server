@@ -3,13 +3,12 @@ package com.kumofactory.cloud.blueprint.dto.aws;
 import com.kumofactory.cloud.blueprint.domain.ComponentLine;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsComponent;
 import com.kumofactory.cloud.blueprint.dto.ComponentLineDto;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Data
@@ -50,11 +49,11 @@ public class AwsBluePrintDto {
         return awsAreaDtoList;
     }
 
-		public static List<ComponentLineDto> componentLinkDtoListMapper(List<ComponentLine> componentLinks) {
-				List<ComponentLineDto> componentLinkDtoList = new ArrayList<>();
-				for (ComponentLine pointLink : componentLinks) {
-						componentLinkDtoList.add(ComponentLineDto.mapper(pointLink));
-				}
-				return componentLinkDtoList;
-		}
+    public static List<ComponentLineDto> componentLinkDtoListMapper(List<ComponentLine> componentLinks) {
+        List<ComponentLineDto> componentLinkDtoList = new ArrayList<>();
+        for (ComponentLine pointLink : componentLinks) {
+            componentLinkDtoList.add(ComponentLineDto.mapper(pointLink));
+        }
+        return componentLinkDtoList;
+    }
 }

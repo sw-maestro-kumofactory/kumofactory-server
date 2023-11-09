@@ -2,11 +2,10 @@ package com.kumofactory.cloud.blueprint.dto.aws;
 
 import com.kumofactory.cloud.blueprint.domain.aws.AwsComponent;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsComponentType;
-
-import javax.validation.constraints.NotNull;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter

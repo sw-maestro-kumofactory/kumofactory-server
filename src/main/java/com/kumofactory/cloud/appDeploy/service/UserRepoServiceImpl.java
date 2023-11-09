@@ -1,9 +1,9 @@
 package com.kumofactory.cloud.appDeploy.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.kumofactory.cloud.appDeploy.dto.GitHubRepoDto;
 import com.kumofactory.cloud.member.MemberRepository;
 import com.kumofactory.cloud.member.domain.Member;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.kumofactory.cloud.appDeploy.dto.GitHubRepoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +59,7 @@ public class UserRepoServiceImpl implements UserRepoService {
         String token = member.getGithubAccessToken();
         List<GitHubRepoDto.RepoInfoDto> repoInfoList = listUserRepos(owner, token);
         List<String> orgList = new ArrayList<>();
-        if( StringUtils.hasText(token) ) {
+        if (StringUtils.hasText(token)) {
             orgList = listOrganization(token);
         }
 
@@ -145,7 +144,7 @@ public class UserRepoServiceImpl implements UserRepoService {
     private ResponseEntity<JsonNode> RequestGitHubAPIs(String uri, String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
-        if( StringUtils.hasText(token) ) {
+        if (StringUtils.hasText(token)) {
             headers.setBearerAuth(token);
         }
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
