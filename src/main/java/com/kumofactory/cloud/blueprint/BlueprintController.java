@@ -26,14 +26,13 @@ import javax.xml.transform.Result;
 import java.util.ArrayList;
 import java.util.List;
 
-@Tag(name = "AwsBlueprintService", description = "AwsBlueprintService")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/blueprint")
 @Slf4j
 public class BlueprintController {
-    private final Logger logger = LoggerFactory.getLogger(BlueprintController.class);
-    private final AwsBlueprintService awsBlueprintService;
+		private final Logger logger = LoggerFactory.getLogger(BlueprintController.class);
+		private final AwsBlueprintService awsBlueprintService;
 
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = AwsBluePrintDto.class)))
     @GetMapping("/aws/{uuid}")
@@ -63,20 +62,13 @@ public class BlueprintController {
                 .build();
     }
 
-    @Operation(
-            summary = "BluePrint 삭제",
-            description = "Requires authentication.",
-            security = @SecurityRequirement(name = "bearerAuth")
-    )
-    @DeleteMapping("/aws/{uuid}")
-    @AuthorizationFromToken
-    public ResultDto deleteAwsBlueprint(@PathVariable("uuid") String uuid, String userId) {
-        boolean result = awsBlueprintService.delete(uuid);
-        return ResultDto.builder()
-                .result(result)
-                .message(!result ? "Not Found " : "")
-                .build();
-    }
+		@PostMapping("/aws")
+		@AuthorizationFromToken
+		public String createAwsBlueprint(@RequestBody AwsBluePrintDto awsBluePrintDto, String userId) {
+				logger.info(userId);
+				awsBlueprintService.store(awsBluePrintDto, userId);
+				return "hello-world";
+		}
 
     @ApiResponse(responseCode = "200", description = "OK")
     @GetMapping("/aws/list")

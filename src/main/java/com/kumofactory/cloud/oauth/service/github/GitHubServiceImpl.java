@@ -1,12 +1,11 @@
 package com.kumofactory.cloud.oauth.service.github;
 
-import com.kumofactory.cloud.global.config.OAuthProvider;
-import com.kumofactory.cloud.global.config.OauthConfig;
+import com.kumofactory.cloud.config.OAuthProvider;
+import com.kumofactory.cloud.config.OauthConfig;
 import com.kumofactory.cloud.oauth.dto.OAuthDto.GitHubToken;
 import com.kumofactory.cloud.oauth.dto.UserInfoDto;
 
 import java.util.Map;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;

@@ -1,9 +1,9 @@
 package com.kumofactory.cloud.oauth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kumofactory.cloud.global.config.OAuthProvider;
-import com.kumofactory.cloud.auth.jwt.dto.TokenDto;
-import com.kumofactory.cloud.auth.jwt.provider.JwtTokenProvider;
+import com.kumofactory.cloud.config.OAuthProvider;
+import com.kumofactory.cloud.jwt.dto.TokenDto;
+import com.kumofactory.cloud.jwt.provider.JwtTokenProvider;
 import com.kumofactory.cloud.member.MemberRepository;
 import com.kumofactory.cloud.member.domain.Member;
 import com.kumofactory.cloud.oauth.dto.UserInfoDto;
