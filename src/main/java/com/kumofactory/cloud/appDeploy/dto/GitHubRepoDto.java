@@ -10,9 +10,11 @@ public class GitHubRepoDto {
             @JsonProperty("fullName") String fullName,
             @JsonProperty("private") Boolean isPrivate,
             @JsonProperty("fork") Boolean isFork,
+            @JsonProperty("forksCount") Integer forksCount,
             @JsonProperty("description") String description,
-            @JsonProperty("languagesUrl") String languagesUrl,
+            @JsonProperty("language") String language,
             @JsonProperty("stargazersUrl") String stargazersUrl,
+            @JsonProperty("starCount") Integer starCount,
             @JsonProperty("openIssuesCount") Integer openIssuesCount
 
     ) { }

@@ -44,12 +44,16 @@ public class UserRepoServiceImpl implements UserRepoService {
                 String fullName = node.get("full_name").asText();
                 Boolean isPrivate = node.get("private").asBoolean();
                 Boolean isFork = node.get("fork").asBoolean();
+                Integer forksCount = node.get("forks_count").asInt();
                 String description = node.get("description").asText();
-                String languages_url = node.get("languages_url").asText();
+                String languages = node.get("languages").asText();
                 String stargazers_url = node.get("stargazers_url").asText();
+                Integer starCount = node.get("stargazers_count").asInt();
                 Integer open_issues_count = node.get("open_issues_count").asInt();
 
-                GitHubRepoDto.RepoInfoDto repoInfo = new GitHubRepoDto.RepoInfoDto(name, fullName, isPrivate, isFork, description, languages_url, stargazers_url, open_issues_count);
+
+
+                GitHubRepoDto.RepoInfoDto repoInfo = new GitHubRepoDto.RepoInfoDto(name, fullName, isPrivate, isFork, forksCount, description, languages, stargazers_url, starCount , open_issues_count);
                 repoInfoList.add(repoInfo);
             }
             return repoInfoList;
@@ -86,13 +90,15 @@ public class UserRepoServiceImpl implements UserRepoService {
                 String fullName = node.get("full_name").asText();
                 Boolean isPrivate = node.get("private").asBoolean();
                 Boolean isFork = node.get("fork").asBoolean();
+                Integer forksCount = node.get("forks_count").asInt();
                 String description = node.get("description").asText();
-                String languages_url = node.get("languages_url").asText();
+                String languages = node.get("languages").asText();
                 String stargazers_url = node.get("stargazers_url").asText();
+                Integer starCount = node.get("stargazers_count").asInt();
                 Integer open_issues_count = node.get("open_issues_count").asInt();
 
 
-                GitHubRepoDto.RepoInfoDto repoInfo = new GitHubRepoDto.RepoInfoDto(name, fullName, isPrivate, isFork, description, languages_url, stargazers_url, open_issues_count);
+                GitHubRepoDto.RepoInfoDto repoInfo = new GitHubRepoDto.RepoInfoDto(name, fullName, isPrivate, isFork, forksCount, description, languages, stargazers_url, starCount ,open_issues_count);
                 repoInfoList.add(repoInfo);
             }
             return repoInfoList;
