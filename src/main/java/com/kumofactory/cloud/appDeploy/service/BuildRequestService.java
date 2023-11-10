@@ -15,4 +15,5 @@ public interface BuildRequestService {
 	void RequestBuildAsync2(BuildRequestDto request, String oauthId);
 
 	Flux<ServerSentEvent<String>> getBuildStatus(String instanceId);
+	String getInstanceInfo(String instanceId);
 }

@@ -81,4 +81,12 @@ public class AppDeployController {
 		CompletableFuture.runAsync(() -> buildRequestService.RequestBuildAsync2(request, userId));
 		return ResponseEntity.ok("Request Delivered");
 	}
+
+	@GetMapping("/info")
+	@AuthorizationFromToken
+	public ResponseEntity<String> instanceInfo(@RequestParam("instanceId") String instanceId, String userId) {
+
+		return ResponseEntity.ok(buildRequestService.getInstanceInfo(instanceId));
+	}
+
 }
