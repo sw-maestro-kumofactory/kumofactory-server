@@ -15,7 +15,10 @@ public class GitHubRepoDto {
             @JsonProperty("language") String language,
             @JsonProperty("stargazersUrl") String stargazersUrl,
             @JsonProperty("starCount") Integer starCount,
-            @JsonProperty("openIssuesCount") Integer openIssuesCount
+            @JsonProperty("openIssuesCount") Integer openIssuesCount,
+            @JsonProperty("visibility") String visibility,
+            @JsonProperty("updatedAt") String updatedAt,
+            @JsonProperty("createdAt") String createdAt
 
     ) { }
 
