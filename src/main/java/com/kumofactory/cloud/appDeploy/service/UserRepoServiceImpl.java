@@ -46,7 +46,7 @@ public class UserRepoServiceImpl implements UserRepoService {
                 Boolean isFork = node.get("fork").asBoolean();
                 Integer forksCount = node.get("forks_count").asInt();
                 String description = node.get("description").asText();
-                String languages = node.get("languages").asText();
+                String language = node.get("language").asText();
                 String stargazers_url = node.get("stargazers_url").asText();
                 Integer starCount = node.get("stargazers_count").asInt();
                 Integer open_issues_count = node.get("open_issues_count").asInt();
@@ -56,7 +56,8 @@ public class UserRepoServiceImpl implements UserRepoService {
 
 
 
-                GitHubRepoDto.RepoInfoDto repoInfo = new GitHubRepoDto.RepoInfoDto(name, fullName, isPrivate, isFork, forksCount, description, languages, stargazers_url, starCount , open_issues_count, visibility, updatedAt, createdAt);
+                GitHubRepoDto.RepoInfoDto repoInfo =
+                        new GitHubRepoDto.RepoInfoDto(name, fullName, isPrivate, isFork, forksCount, description, language, stargazers_url, starCount , open_issues_count, visibility, updatedAt, createdAt);
                 repoInfoList.add(repoInfo);
             }
             return repoInfoList;
@@ -92,19 +93,24 @@ public class UserRepoServiceImpl implements UserRepoService {
                 String name = node.get("name").asText();
                 String fullName = node.get("full_name").asText();
                 Boolean isPrivate = node.get("private").asBoolean();
+                logger.info("1");
                 Boolean isFork = node.get("fork").asBoolean();
                 Integer forksCount = node.get("forks_count").asInt();
                 String description = node.get("description").asText();
-                String languages = node.get("languages").asText();
+                logger.info("2");
+                String language = node.get("language").asText();
+                logger.info("3");
                 String stargazers_url = node.get("stargazers_url").asText();
                 Integer starCount = node.get("stargazers_count").asInt();
+                logger.info("4");
                 Integer open_issues_count = node.get("open_issues_count").asInt();
                 String visibility = node.get("visibility").asText();
                 String updatedAt = node.get("updated_at").asText();
                 String createdAt = node.get("created_at").asText();
 
 
-                GitHubRepoDto.RepoInfoDto repoInfo = new GitHubRepoDto.RepoInfoDto(name, fullName, isPrivate, isFork, forksCount, description, languages, stargazers_url, starCount ,open_issues_count, visibility, updatedAt, createdAt);
+                GitHubRepoDto.RepoInfoDto repoInfo =
+                        new GitHubRepoDto.RepoInfoDto(name, fullName, isPrivate, isFork, forksCount, description, language, stargazers_url, starCount ,open_issues_count, visibility, updatedAt, createdAt);
                 repoInfoList.add(repoInfo);
             }
             return repoInfoList;
