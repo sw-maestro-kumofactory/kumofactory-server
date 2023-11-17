@@ -34,6 +34,7 @@ public class AwsBluePrintDto {
     private List<AwsComponentDto> components;
     private List<ComponentLineDto> links;
     private String svgFile;
+    private Boolean isTemplate;
 
     public static AwsBluePrintDto build(AwsBluePrint blueprint, List<AwsArea> areas, List<AwsComponent> components, List<ComponentLine> links) {
         return AwsBluePrintDto.builder()
@@ -46,6 +47,7 @@ public class AwsBluePrintDto {
                 .downloadCount(blueprint.getScope() == BluePrintScope.PUBLIC ? blueprint.getDownloadCount() : -1)
                 .components(awsComponentDtosMapper(components))
                 .links(componentLinkDtoListMapper(links))
+                .isTemplate(blueprint.getIsTemplate() != null && blueprint.getIsTemplate())
                 .build();
     }
 
