@@ -26,7 +26,7 @@ public class AwsBluePrintListDto {
     private Date updatedAt;
     private String presignedUrl;
     private ProvisionStatus status;
-    private boolean isTemplate;
+    private Boolean isTemplate;
 
     public static AwsBluePrintListDto fromAwsBluePrint(AwsBluePrint awsBluePrint, String presignedUrl) {
         return AwsBluePrintListDto.builder()
