@@ -10,6 +10,7 @@ import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintListDto;
 import com.kumofactory.cloud.global.rabbitmq.domain.CdkMessagePattern;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AwsBlueprintService {
 
@@ -24,4 +25,6 @@ public interface AwsBlueprintService {
     boolean updateBluePrintScope(BluePrintScope scope, String uuid, String userId);
 
     ProvisionStatus getProvisionStatus(String uuid, String userId);
+
+    Object getInfraCost(String uuid, String userId);
 }

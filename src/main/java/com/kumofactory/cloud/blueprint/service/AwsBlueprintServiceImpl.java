@@ -12,6 +12,7 @@ import com.kumofactory.cloud.blueprint.dto.aws.*;
 
 import com.kumofactory.cloud.blueprint.repository.ComponentDotRepository;
 import com.kumofactory.cloud.blueprint.repository.ComponentLineRepository;
+import com.kumofactory.cloud.blueprint.repository.InfraCostRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsAreaRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsBluePrintRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsComponentRepository;
@@ -34,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.Boolean.parseBoolean;
 
@@ -48,6 +50,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
     private final AwsComponentRepository awsComponentRepository;
     private final ComponentLineRepository componentLineRepository;
     private final AwsAreaRepository awsAreaRepository;
+    private final InfraCostRepository infraCostRepository;
     private final MessageProducer sender;
     private final AwsS3Helper awsS3Helper;
     private final Logger logger = LoggerFactory.getLogger(AwsBlueprintServiceImpl.class);
@@ -209,5 +212,10 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 
     private String _getObjectKey(String memberId, String blueprintId) {
         return memberId + "/" + blueprintId + ".svg";
+    }
+
+    @Override
+    public Object getInfraCost(String uuid, String userId) {
+        return infraCostRepository.findByUuid(uuid);
     }
 }
