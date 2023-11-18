@@ -107,6 +107,8 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 
         if (parseBoolean(provision)) {
             sender.sendAwsCdkOption(pattern, awsCdkDtos);
+        }else {
+            sender.sendAwsCdkOption(CdkMessagePattern.COST, awsCdkDtos);
         }
     }
 
