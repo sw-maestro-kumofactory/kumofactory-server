@@ -1,9 +1,12 @@
 package com.kumofactory.cloud.util.aws.s3;
 
+import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
 import com.kumofactory.cloud.global.config.S3Config;
+import com.kumofactory.cloud.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -18,6 +21,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Base64;
 
 @Service
 @RequiredArgsConstructor
@@ -79,5 +83,26 @@ public class AwsS3HelperImpl implements AwsS3Helper {
         } finally {
             presigner.close();
         }
+    }
+
+    // thumbnail 저장
+    public String saveThumbnail(AwsBluePrintDto bluePrint, Member member) {
+        String objectKey = _getObjectKey(member.getOauthId(), bluePrint.getUuid());
+        logger.info("thumbnail upload start: {}", objectKey);
+        try {
+            byte[] svgContent = Base64.getDecoder().decode(bluePrint.getSvgFile().split(",")[1]);
+            MultipartFile svgFile = new MockMultipartFile("file", objectKey, "image/svg+xml", svgContent);
+            putS3Object(svgFile, objectKey);
+            logger.info("thumbnail upload success: {}", objectKey);
+            logger.info("thumbnail url: {}", getPresignedUrl(objectKey));
+        } catch (Exception e) {
+            logger.error("thumbnail upload failed: {}", e.getMessage());
+        }
+
+        return objectKey;
+    }
+
+    private String _getObjectKey(String memberId, String blueprintId) {
+        return memberId + "/" + blueprintId + ".svg";
     }
 }

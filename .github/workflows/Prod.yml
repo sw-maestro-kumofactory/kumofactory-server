@@ -75,25 +75,6 @@ jobs:
         run: |
           docker push ${{ secrets.ECR_REGISTRY }}/prod:latest
 
-  deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Deploy on Staging Server
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.AWS_STAGING }}
-          username: ${{ secrets.AWS_SSH_USERNAME }}
-          key: ${{ secrets.AWS_SSH_KEY }}
-          script_stop: true
-          script: |
-            cd /app
-            password=$(aws ecr get-login-password --region ${{ env.REGION }})
-            docker login --username AWS --password $password ${{ secrets.ECR_REGISTRY }}
-            docker-compose pull
-            docker-compose up -d
-
 #  notification:
 #    needs: deploy
 #    runs-on: ubuntu-latest
