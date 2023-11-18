@@ -11,6 +11,7 @@ import com.kumofactory.cloud.blueprint.dto.ComponentLineDto;
 import com.kumofactory.cloud.blueprint.dto.aws.*;
 
 import com.kumofactory.cloud.blueprint.repository.ComponentLineRepository;
+import com.kumofactory.cloud.blueprint.repository.InfraCostRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsAreaRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsBluePrintRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsComponentRepository;
@@ -43,6 +44,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
     private final AwsComponentRepository awsComponentRepository;
     private final ComponentLineRepository componentLineRepository;
     private final AwsAreaRepository awsAreaRepository;
+    private final InfraCostRepository infraCostRepository;
     private final MessageProducer sender;
     private final AwsS3Helper awsS3Helper;
     private final Logger logger = LoggerFactory.getLogger(AwsBlueprintServiceImpl.class);
@@ -183,6 +185,11 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
             awsArea.add(area);
         }
         awsAreaRepository.saveAll(awsArea);
+    }
+
+    @Override
+    public Object getInfraCost(String uuid, String userId) {
+        return infraCostRepository.findByUuid(uuid);
     }
 
 
