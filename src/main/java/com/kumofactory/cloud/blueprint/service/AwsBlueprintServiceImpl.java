@@ -106,8 +106,10 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         awsComponentRepository.saveAll(components);
 
         if (parseBoolean(provision)) {
+            logger.info("send message to cdk server: {}", pattern);
             sender.sendAwsCdkOption(pattern, awsCdkDtos);
         }else {
+            logger.info("send message to cdk server: {}", CdkMessagePattern.COST);
             sender.sendAwsCdkOption(CdkMessagePattern.COST, awsCdkDtos);
         }
     }
