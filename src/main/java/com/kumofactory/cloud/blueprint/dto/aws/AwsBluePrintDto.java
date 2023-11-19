@@ -35,6 +35,7 @@ public class AwsBluePrintDto {
     private List<ComponentLineDto> links;
     private String svgFile;
     private Boolean isTemplate;
+    private String templateName; 
 
     public static AwsBluePrintDto build(AwsBluePrint blueprint, List<AwsArea> areas, List<AwsComponent> components, List<ComponentLine> links) {
         return AwsBluePrintDto.builder()
@@ -48,6 +49,7 @@ public class AwsBluePrintDto {
                 .components(awsComponentDtosMapper(components))
                 .links(componentLinkDtoListMapper(links))
                 .isTemplate(blueprint.getIsTemplate() != null && blueprint.getIsTemplate())
+                .templateName(blueprint.getTemplateName() == null ? "undefined" : blueprint.getTemplateName()) 
                 .build();
     }
 

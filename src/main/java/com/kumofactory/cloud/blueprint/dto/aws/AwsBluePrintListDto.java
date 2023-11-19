@@ -27,6 +27,7 @@ public class AwsBluePrintListDto {
     private String presignedUrl;
     private ProvisionStatus status;
     private Boolean isTemplate;
+    private String templateName;
 
     public static AwsBluePrintListDto fromAwsBluePrint(AwsBluePrint awsBluePrint, String presignedUrl) {
         return AwsBluePrintListDto.builder()
@@ -42,6 +43,7 @@ public class AwsBluePrintListDto {
                 .presignedUrl(presignedUrl)
                 .status(awsBluePrint.getStatus())
                 .isTemplate(awsBluePrint.getIsTemplate() != null && awsBluePrint.getIsTemplate())
+                .templateName(awsBluePrint.getTemplateName() == null ? "undefined" : awsBluePrint.getTemplateName())
                 .build();
     }
 }

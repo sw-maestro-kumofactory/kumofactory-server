@@ -140,6 +140,8 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
 
     // Blueprint 저장
     private AwsBluePrint saveBlueprint(AwsBluePrintDto awsBluePrintDto, String provision, String userId) throws IOException {
+        logger.info("awsBluePrintDto {}", awsBluePrintDto.toString());
+
         Member member = memberRepository.findMemberByOauthId(userId);
         // Provision 여부 설정
         ProvisionStatus status;
