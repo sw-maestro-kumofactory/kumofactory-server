@@ -11,6 +11,7 @@ import com.kumofactory.cloud.global.rabbitmq.domain.CdkMessagePattern;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public interface AwsBlueprintService {
 
@@ -25,4 +26,6 @@ public interface AwsBlueprintService {
     boolean updateBluePrintScope(BluePrintScope scope, String uuid, String userId);
 
     ProvisionStatus getProvisionStatus(String uuid, String userId);
+
+    Object getInfraCost(String uuid, String userId);
 }
