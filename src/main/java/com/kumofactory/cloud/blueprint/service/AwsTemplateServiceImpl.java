@@ -127,7 +127,7 @@ public class AwsTemplateServiceImpl implements AwsTemplateService {
     private void saveAwsBluePrint(AwsBluePrintDto dto, Member member, String templateName, ProvisionStatus status, String keyname) throws IOException {
         AwsBluePrint blueprint = new AwsBluePrint();
         blueprint.setUuid(dto.getUuid());
-        blueprint.setName(templateName);
+        blueprint.setName(dto.getName());
         blueprint.setDescription(dto.getDescription());
         blueprint.setDownloadCount(0);
         blueprint.setStatus(status);
@@ -135,6 +135,7 @@ public class AwsTemplateServiceImpl implements AwsTemplateService {
         blueprint.setScope(dto.getScope());
         blueprint.setKeyName(keyname);
         blueprint.setIsTemplate(true);
+        blueprint.setTemplateName(templateName);
         templateRepository.save(blueprint);
     }
 }
