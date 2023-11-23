@@ -72,6 +72,7 @@ public class AwsTemplateServiceImpl implements AwsTemplateService {
     public ResultDto deployTemplate(AwsBluePrintDto dto, String templateName, boolean provision, String userId) throws IOException {
         logger.info("dto {}", dto.toString());
         logger.info("USERID {}", userId);
+        this.delete(dto.getUuid()); // 기존 BluePrint 삭제
         Member member = memberRepository.findMemberByOauthId(userId);
         ProvisionStatus status = provision ? ProvisionStatus.PROVISIONING : ProvisionStatus.PENDING; // provision 설정
 
@@ -125,6 +126,8 @@ public class AwsTemplateServiceImpl implements AwsTemplateService {
     }
 
     private void saveAwsBluePrint(AwsBluePrintDto dto, Member member, String templateName, ProvisionStatus status, String keyname) throws IOException {
+        logger.info("AWSBLUEPRINTDTO {}", dto);
+        logger.info("TEMPLATE NAME {}", templateName);
         AwsBluePrint blueprint = new AwsBluePrint();
         blueprint.setUuid(dto.getUuid());
         blueprint.setName(dto.getName());
@@ -137,5 +140,14 @@ public class AwsTemplateServiceImpl implements AwsTemplateService {
         blueprint.setIsTemplate(true);
         blueprint.setTemplateName(templateName);
         templateRepository.save(blueprint);
+    }
+
+    public boolean delete(String uuid) {
+        AwsBluePrint awsBluePrint = templateRepository.findAwsBluePrintByUuid(uuid);
+        if (awsBluePrint == null) {
+            return false;
+        }
+        templateRepository.delete(awsBluePrint);
+        return true;
     }
 }
