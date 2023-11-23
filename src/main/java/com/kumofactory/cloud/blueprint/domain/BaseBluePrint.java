@@ -29,6 +29,7 @@ public class BaseBluePrint {
 
     private String name; // 블루프린트 이름
 
+    @Lob
     private String description; // 블루프린트 설명
 
     private String keyName; // 썸네일 이미지 파일명 (S3)
