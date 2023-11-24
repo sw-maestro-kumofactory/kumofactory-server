@@ -72,7 +72,7 @@ public class UserRepoServiceImpl implements UserRepoService {
         String token = member.getGithubAccessToken();
         List<GitHubRepoDto.RepoInfoDto> repoInfoList = listUserRepos(owner, token);
         List<String> orgList = new ArrayList<>();
-        if( StringUtils.hasText(token) ) {
+        if (StringUtils.hasText(token)) {
             orgList = listOrganization(token);
         }
 
@@ -169,7 +169,7 @@ public class UserRepoServiceImpl implements UserRepoService {
     private ResponseEntity<JsonNode> RequestGitHubAPIs(String uri, String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
-        if( StringUtils.hasText(token) ) {
+        if (StringUtils.hasText(token)) {
             headers.setBearerAuth(token);
         }
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);

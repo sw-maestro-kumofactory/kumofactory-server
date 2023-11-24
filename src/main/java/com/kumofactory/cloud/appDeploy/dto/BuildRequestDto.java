@@ -13,17 +13,18 @@ public record BuildRequestDto(
         @JsonProperty("Dockerfile") Boolean Dockerfile,
         @JsonProperty("language") String language, // required
         @JsonProperty("env") List<EnvInfoDTO> env) // required
- {
+{
+    public BuildRequestDto setDockerfile(Boolean Dockerfile) {
+        return new BuildRequestDto(instanceId, gitHubToken, user, repo, branch, Dockerfile, language, env);
+    }
+
+    public BuildRequestDto setgithubToken(String gitHubToken) {
+        return new BuildRequestDto(instanceId, gitHubToken, user, repo, branch, Dockerfile, language, env);
+    }
+
     public record EnvInfoDTO(
             @JsonProperty("key") String key,
             @JsonProperty("value") String value
-    ) { }
-
-     public BuildRequestDto setDockerfile(Boolean Dockerfile) {
-         return new BuildRequestDto(instanceId, gitHubToken, user, repo, branch, Dockerfile, language, env);
-     }
-
-     public BuildRequestDto setgithubToken(String gitHubToken) {
-         return new BuildRequestDto(instanceId, gitHubToken, user, repo, branch, Dockerfile, language, env);
-     }
+    ) {
+    }
 }

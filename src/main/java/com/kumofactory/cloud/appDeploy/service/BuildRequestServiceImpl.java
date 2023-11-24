@@ -1,14 +1,14 @@
 package com.kumofactory.cloud.appDeploy.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.kumofactory.cloud.appDeploy.domain.BuildLog;
 import com.kumofactory.cloud.appDeploy.domain.CfnOutput;
-import com.kumofactory.cloud.appDeploy.dto.BuildRequestDto;
 import com.kumofactory.cloud.appDeploy.dto.SseResponseDto;
 import com.kumofactory.cloud.appDeploy.repository.BuildLogRepository;
 import com.kumofactory.cloud.appDeploy.repository.CfnOutputRepository;
 import com.kumofactory.cloud.member.MemberRepository;
 import com.kumofactory.cloud.member.domain.Member;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.kumofactory.cloud.appDeploy.dto.BuildRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -25,8 +25,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Optional;
 
 @Service

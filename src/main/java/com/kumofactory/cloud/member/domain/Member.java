@@ -1,20 +1,12 @@
 package com.kumofactory.cloud.member.domain;
 
 import com.kumofactory.cloud.blueprint.domain.BaseBluePrint;
-import com.kumofactory.cloud.blueprint.domain.aws.AwsBluePrint;
-
-import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-
 import com.kumofactory.cloud.oauth.dto.UserInfoDto;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter

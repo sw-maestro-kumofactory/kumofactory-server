@@ -7,4 +7,5 @@ public record UserInfoDto(
         @JsonProperty("provider") String provider,
         @JsonProperty("accessToken") String accessToken,
         @JsonProperty("profileName") String profileName
-){}
+) {
+}

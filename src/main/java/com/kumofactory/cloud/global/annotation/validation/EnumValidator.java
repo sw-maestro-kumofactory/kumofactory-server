@@ -11,12 +11,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Constraint(validatedBy = EnumValidatorImpl.class)
 public @interface EnumValidator {
-		Class<? extends Enum<?>> enumClass();
+    Class<? extends Enum<?>> enumClass();
 
-		String message() default "must be any of enum {enumClass}";
+    String message() default "must be any of enum {enumClass}";
 
-		Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-		Class<?>[] payload() default {};
+    Class<?>[] payload() default {};
 
 }

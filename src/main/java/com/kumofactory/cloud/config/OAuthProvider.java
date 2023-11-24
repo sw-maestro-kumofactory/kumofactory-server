@@ -1,4 +1,4 @@
-package com.kumofactory.cloud.global.config;
+package com.kumofactory.cloud.config;
 
 public enum OAuthProvider {
     GOOGLE,

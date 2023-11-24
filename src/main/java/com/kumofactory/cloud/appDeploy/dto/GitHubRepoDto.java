@@ -31,5 +31,6 @@ public class GitHubRepoDto {
             @JsonProperty("repoInfo") List<RepoInfoDto> personalRepo,
             @JsonProperty("orgCount") Integer organizationCount,
             @JsonProperty("orgList") List<String> organizationList
-    ) { }
+    ) {
+    }
 }

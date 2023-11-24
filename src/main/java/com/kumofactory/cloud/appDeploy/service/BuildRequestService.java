@@ -6,14 +6,14 @@ import org.springframework.http.codec.ServerSentEvent;
 import reactor.core.publisher.Flux;
 
 public interface BuildRequestService {
-	void RequestBuild(BuildRequestDto request, String oauthId);
+    void RequestBuild(BuildRequestDto request, String oauthId);
 
-	CfnOutput getMyResources(String blueprintUuid, String oauthId);
+    CfnOutput getMyResources(String blueprintUuid, String oauthId);
 
 
-	Flux<ServerSentEvent<String>> RequestBuildAsync(BuildRequestDto request, String oauthId);
-	void RequestBuildAsync2(BuildRequestDto request, String oauthId);
+    Flux<ServerSentEvent<String>> RequestBuildAsync(BuildRequestDto request, String oauthId);
 
 	Flux<ServerSentEvent<String>> getBuildStatus(String instanceId);
 	String getInstanceInfo(String instanceId);
+
 }

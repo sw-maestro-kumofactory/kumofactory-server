@@ -8,7 +8,10 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.Date;
 
 @Entity
@@ -17,24 +20,24 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ComponentDot {
-		@Id
-		@GeneratedValue(strategy = GenerationType.IDENTITY)
-		private Long id;
-		@CreationTimestamp
-		private Date created_at;
-		@UpdateTimestamp
-		private Date updated_at;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @CreationTimestamp
+    private Date created_at;
+    @UpdateTimestamp
+    private Date updated_at;
 
-		private Integer x; // 점의 x 좌표
-		private Integer y; // 점의 y 좌표
-		private String componentId; // 점이 속한 컴포넌트의 id
+    private Integer x; // 점의 x 좌표
+    private Integer y; // 점의 y 좌표
+    private String componentId; // 점이 속한 컴포넌트의 id
 
-		public static ComponentDot createComponentDot(ComponentDotDto componentDotDto) {
-				ComponentDot componentDot = new ComponentDot();
-				componentDot.setComponentId(componentDotDto.getComponentId());
-				componentDot.setX(componentDotDto.getX());
-				componentDot.setY(componentDotDto.getY());
-				return componentDot;
-		}
+    public static ComponentDot createComponentDot(ComponentDotDto componentDotDto) {
+        ComponentDot componentDot = new ComponentDot();
+        componentDot.setComponentId(componentDotDto.getComponentId());
+        componentDot.setX(componentDotDto.getX());
+        componentDot.setY(componentDotDto.getY());
+        return componentDot;
+    }
 
 }

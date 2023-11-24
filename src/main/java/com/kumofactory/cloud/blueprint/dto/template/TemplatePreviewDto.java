@@ -1,7 +1,7 @@
 package com.kumofactory.cloud.blueprint.dto.template;
 
-import com.kumofactory.cloud.blueprint.domain.BluePrintScope;
 import com.kumofactory.cloud.blueprint.domain.aws.AwsBluePrint;
+import com.kumofactory.cloud.blueprint.domain.BluePrintScope;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

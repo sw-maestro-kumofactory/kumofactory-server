@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface AwsComponentRepository extends JpaRepository<AwsComponent, Long> {
-		List<AwsComponent> findAllByBluePrint(AwsBluePrint awsBluePrint);
+    List<AwsComponent> findAllByBluePrint(AwsBluePrint awsBluePrint);
 }

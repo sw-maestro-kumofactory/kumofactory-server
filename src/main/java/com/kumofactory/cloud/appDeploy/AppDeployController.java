@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
@@ -23,57 +22,57 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 @Slf4j
 public class AppDeployController {
-	private final Logger logger = org.slf4j.LoggerFactory.getLogger(AppDeployController.class);
+    private final Logger logger = org.slf4j.LoggerFactory.getLogger(AppDeployController.class);
 
-	private final UserRepoService userRepoService;
-	private final BuildRequestService buildRequestService;
+    private final UserRepoService userRepoService;
+    private final BuildRequestService buildRequestService;
 
-	@GetMapping("/list/{org}/repo")
-	@AuthorizationFromToken
-	public List<GitHubRepoDto.RepoInfoDto> listOrgRepo(@PathVariable String org, String userId) {
-		return userRepoService.RequestOrgRepoInfo(org, userId);
-	}
+    @GetMapping("/list/{org}/repo")
+    @AuthorizationFromToken
+    public List<GitHubRepoDto.RepoInfoDto> listOrgRepo(@PathVariable String org, String userId) {
+        return userRepoService.RequestOrgRepoInfo(org, userId);
+    }
 
-	@GetMapping("/list")
-	@AuthorizationFromToken
-	public GitHubRepoDto.UserDto listUserRepoAndOrgs(String userId) {
-		return userRepoService.RequestUserRepoInfoAndOrgList(userId);
-	}
+    @GetMapping("/list")
+    @AuthorizationFromToken
+    public GitHubRepoDto.UserDto listUserRepoAndOrgs(String userId) {
+        return userRepoService.RequestUserRepoInfoAndOrgList(userId);
+    }
 
-	@GetMapping("/list/{org}/{repo}/branch")
-	@AuthorizationFromToken
-	public List<String> listRepoBranches(@PathVariable String org, @PathVariable String repo, String userId) {
-		return userRepoService.RequestRepoBranches(org, repo, userId);
-	}
+    @GetMapping("/list/{org}/{repo}/branch")
+    @AuthorizationFromToken
+    public List<String> listRepoBranches(@PathVariable String org, @PathVariable String repo, String userId) {
+        return userRepoService.RequestRepoBranches(org, repo, userId);
+    }
 
-	@GetMapping("/list/{repo}/branch")
-	@AuthorizationFromToken
-	public List<String> listRepoBranches(@PathVariable String repo, String userId) {
-		return userRepoService.RequestRepoBranches(repo, userId);
-	}
+    @GetMapping("/list/{repo}/branch")
+    @AuthorizationFromToken
+    public List<String> listRepoBranches(@PathVariable String repo, String userId) {
+        return userRepoService.RequestRepoBranches(repo, userId);
+    }
 
-	@PostMapping("/deploy")
-	@AuthorizationFromToken
-	public ResponseEntity<String> deployRequest(@RequestBody BuildRequestDto request, String userId) {
-		buildRequestService.RequestBuild(request, userId);
-		return ResponseEntity.ok("success");
-	}
+    @PostMapping("/deploy")
+    @AuthorizationFromToken
+    public ResponseEntity<String> deployRequest(@RequestBody BuildRequestDto request, String userId) {
+        buildRequestService.RequestBuild(request, userId);
+        return ResponseEntity.ok("success");
+    }
 
-	@PostMapping(value = "/deployAsync", produces = "text/event-stream")
-	@AuthorizationFromToken
-	public Flux<ServerSentEvent<String>> deployRequestAsync(@RequestBody BuildRequestDto request, String userId) {
-		return buildRequestService.RequestBuildAsync(request, userId);
-	}
+    @PostMapping(value = "/deployAsync", produces = "text/event-stream")
+    @AuthorizationFromToken
+    public Flux<ServerSentEvent<String>> deployRequestAsync(@RequestBody BuildRequestDto request, String userId) {
+        return buildRequestService.RequestBuildAsync(request, userId);
+    }
 
-	@GetMapping("/resource/{blueprintUuid}")
-	public CfnOutput getMyResource(@PathVariable("blueprintUuid") String blueprintUuid, String userId) {
-		return buildRequestService.getMyResources(blueprintUuid, userId);
-	}
+    @GetMapping("/resource/{blueprintUuid}")
+    public CfnOutput getMyResource(@PathVariable("blueprintUuid") String blueprintUuid, String userId) {
+        return buildRequestService.getMyResources(blueprintUuid, userId);
+    }
 
-	@GetMapping(value = "/buildStatus/{instanceId}", produces = "text/event-stream")
-	public Flux<ServerSentEvent<String>> getBuildStatus(@PathVariable("instanceId") String instanceId) {
-		return buildRequestService.getBuildStatus(instanceId);
-	}
+    @GetMapping(value = "/buildStatus/{instanceId}", produces = "text/event-stream")
+    public Flux<ServerSentEvent<String>> getBuildStatus(@PathVariable("instanceId") String instanceId) {
+        return buildRequestService.getBuildStatus(instanceId);
+    }
 
 	@PostMapping("/deployAsync/v2")
 	@AuthorizationFromToken

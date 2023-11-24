@@ -12,18 +12,18 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class OAuthController {
 
-		private final OAuthService oauthService;
+    private final OAuthService oauthService;
 
-		@GetMapping("/{socialLoginType}")
-		public ResponseEntity<String> socialLoginRedirect(@PathVariable(name = "socialLoginType") String SocialLoginPath,
-																											@RequestParam("code") String code)
-						throws JsonProcessingException {
-				OAuthProvider provider = OAuthProvider.valueOf(SocialLoginPath.toUpperCase());
-				return oauthService.request(provider, code);
-		}
+    @GetMapping("/{socialLoginType}")
+    public ResponseEntity<String> socialLoginRedirect(@PathVariable(name = "socialLoginType") String SocialLoginPath,
+                                                      @RequestParam("code") String code)
+            throws JsonProcessingException {
+        OAuthProvider provider = OAuthProvider.valueOf(SocialLoginPath.toUpperCase());
+        return oauthService.request(provider, code);
+    }
 
-		@GetMapping("/test")
-		public String test() throws JsonProcessingException {
-				return oauthService.generateTestToken().getAccessToken();
-		}
+    @GetMapping("/test")
+    public String test() throws JsonProcessingException {
+        return oauthService.generateTestToken().getAccessToken();
+    }
 }

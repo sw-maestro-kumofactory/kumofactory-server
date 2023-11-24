@@ -1,20 +1,16 @@
 package com.kumofactory.cloud.blueprint.domain.aws;
 
 import com.kumofactory.cloud.blueprint.domain.BaseBluePrint;
-import com.kumofactory.cloud.blueprint.domain.BluePrintScope;
 import com.kumofactory.cloud.blueprint.domain.ComponentLine;
-import com.kumofactory.cloud.blueprint.domain.ProvisionStatus;
-import com.kumofactory.cloud.member.domain.Member;
-
-import java.util.Date;
-import java.util.List;
-import javax.persistence.*;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,7 +26,7 @@ public class AwsBluePrint extends BaseBluePrint {
     @OneToMany(mappedBy = "bluePrint", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AwsComponent> cspComponents;
 
-    @OneToMany(mappedBy = "bluePrint", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "bluePrint", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<ComponentLine> lines;
 
 }
