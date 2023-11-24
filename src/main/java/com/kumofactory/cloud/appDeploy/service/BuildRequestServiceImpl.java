@@ -222,4 +222,14 @@ public class BuildRequestServiceImpl implements BuildRequestService {
                 .data(data)
                 .build();
     }
+
+    @Override
+    public String getInstanceInfo(String instanceId) {
+        Optional<BuildLog> buildLogOpt = buildLogRepository.findByInstanceId(instanceId);
+        if (!buildLogOpt.isPresent()) {
+            return null;
+        }
+        BuildLog buildLog = buildLogOpt.get();
+        return buildLog.getRepository() + " " + buildLog.getBranch();
+    }
 }
