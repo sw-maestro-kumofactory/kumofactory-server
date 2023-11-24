@@ -1,5 +1,6 @@
 package com.kumofactory.cloud.blueprint.service;
 
+import com.kumofactory.cloud.blueprint.domain.BluePrintScope;
 import com.kumofactory.cloud.blueprint.domain.ComponentLine;
 
 import com.kumofactory.cloud.blueprint.domain.ProvisionStatus;
@@ -11,6 +12,7 @@ import com.kumofactory.cloud.blueprint.dto.aws.AwsBluePrintDto;
 import com.kumofactory.cloud.blueprint.dto.aws.AwsCdkDto;
 import com.kumofactory.cloud.blueprint.dto.template.TemplatePreviewDto;
 import com.kumofactory.cloud.blueprint.repository.ComponentLineRepository;
+import com.kumofactory.cloud.blueprint.repository.aws.AwsAreaRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsBluePrintRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsComponentRepository;
 

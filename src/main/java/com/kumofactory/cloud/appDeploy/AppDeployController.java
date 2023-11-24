@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
@@ -74,18 +75,10 @@ public class AppDeployController {
         return buildRequestService.getBuildStatus(instanceId);
     }
 
-	@PostMapping("/deployAsync/v2")
-	@AuthorizationFromToken
-	public ResponseEntity<String> deployRequestAsyncV2(@RequestBody BuildRequestDto request, String userId) {
-		CompletableFuture.runAsync(() -> buildRequestService.RequestBuildAsync2(request, userId));
-		return ResponseEntity.ok("Request Delivered");
-	}
-
-	@GetMapping("/info")
-	@AuthorizationFromToken
-	public ResponseEntity<String> instanceInfo(@RequestParam("instanceId") String instanceId, String userId) {
-
-		return ResponseEntity.ok(buildRequestService.getInstanceInfo(instanceId));
-	}
-
+    @PostMapping("/deployAsync/v2")
+    @AuthorizationFromToken
+    public ResponseEntity<String> deployRequestAsyncV2(@RequestBody BuildRequestDto request, String userId) {
+        CompletableFuture.runAsync(() -> buildRequestService.RequestBuildAsync2(request, userId));
+        return ResponseEntity.ok("Request Delivered");
+    }
 }
