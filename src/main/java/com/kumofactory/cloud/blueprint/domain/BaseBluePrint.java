@@ -1,9 +1,7 @@
 package com.kumofactory.cloud.blueprint.domain;
 
 import com.kumofactory.cloud.member.domain.Member;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,6 +12,8 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @Entity
+@Builder
+@AllArgsConstructor
 public class BaseBluePrint {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +29,7 @@ public class BaseBluePrint {
 
     private String name; // 블루프린트 이름
 
+    @Lob
     private String description; // 블루프린트 설명
 
     private String keyName; // 썸네일 이미지 파일명 (S3)
@@ -41,6 +42,8 @@ public class BaseBluePrint {
 
     @Enumerated(EnumType.STRING)
     private BluePrintScope scope; // 블루프린트 공개 범위
+
+    private Boolean isTemplate;
 
     @ManyToOne
     private Member member;

@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.xml.transform.Result;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Tag(name = "AwsBlueprintService", description = "AwsBlueprintService")
 @RestController
@@ -106,5 +107,11 @@ public class BlueprintController {
                     .message(e.getMessage())
                     .build();
         }
+    }
+
+    @GetMapping("/cost/{uuid}")
+    @AuthorizationFromToken
+    public Object getCost(@PathVariable("uuid") String uuid, String userId) {
+        return awsBlueprintService.getInfraCost(uuid, userId);
     }
 }

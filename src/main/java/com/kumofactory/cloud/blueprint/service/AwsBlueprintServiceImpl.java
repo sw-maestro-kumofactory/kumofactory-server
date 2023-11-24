@@ -10,8 +10,8 @@ import com.kumofactory.cloud.blueprint.domain.aws.AwsComponent;
 import com.kumofactory.cloud.blueprint.dto.ComponentLineDto;
 import com.kumofactory.cloud.blueprint.dto.aws.*;
 
-import com.kumofactory.cloud.blueprint.repository.ComponentDotRepository;
 import com.kumofactory.cloud.blueprint.repository.ComponentLineRepository;
+import com.kumofactory.cloud.blueprint.repository.InfraCostRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsAreaRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsBluePrintRepository;
 import com.kumofactory.cloud.blueprint.repository.aws.AwsComponentRepository;
@@ -20,19 +20,15 @@ import com.kumofactory.cloud.global.rabbitmq.domain.CdkMessagePattern;
 import com.kumofactory.cloud.member.MemberRepository;
 import com.kumofactory.cloud.member.domain.Member;
 import com.kumofactory.cloud.util.aws.s3.AwsS3Helper;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 import static java.lang.Boolean.parseBoolean;
@@ -48,6 +44,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
     private final AwsComponentRepository awsComponentRepository;
     private final ComponentLineRepository componentLineRepository;
     private final AwsAreaRepository awsAreaRepository;
+    private final InfraCostRepository infraCostRepository;
     private final MessageProducer sender;
     private final AwsS3Helper awsS3Helper;
     private final Logger logger = LoggerFactory.getLogger(AwsBlueprintServiceImpl.class);
@@ -86,7 +83,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
     }
 
     @Override
-    public void store(AwsBluePrintDto awsBluePrintDto, String provision, CdkMessagePattern pattern, String userId) throws JsonProcessingException {
+    public void store(AwsBluePrintDto awsBluePrintDto, String provision, CdkMessagePattern pattern, String userId) throws IOException {
         this.delete(awsBluePrintDto.getUuid()); // 기존 BluePrint 삭제
 
         AwsBluePrint savedBlueprint = saveBlueprint(awsBluePrintDto, provision, userId); // BluePrint 저장
@@ -109,7 +106,11 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         awsComponentRepository.saveAll(components);
 
         if (parseBoolean(provision)) {
+            logger.info("send message to cdk server: {}", pattern);
             sender.sendAwsCdkOption(pattern, awsCdkDtos);
+        }else {
+            logger.info("send message to cdk server: {}", CdkMessagePattern.COST);
+            sender.sendAwsCdkOption(CdkMessagePattern.COST, awsCdkDtos);
         }
     }
 
@@ -144,7 +145,9 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
     }
 
     // Blueprint 저장
-    private AwsBluePrint saveBlueprint(AwsBluePrintDto awsBluePrintDto, String provision, String userId) {
+    private AwsBluePrint saveBlueprint(AwsBluePrintDto awsBluePrintDto, String provision, String userId) throws IOException {
+        logger.info("awsBluePrintDto {}", awsBluePrintDto.toString());
+
         Member member = memberRepository.findMemberByOauthId(userId);
         // Provision 여부 설정
         ProvisionStatus status;
@@ -155,7 +158,7 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         }
 
         // thumbnail 저장
-        String keyname = saveThumbnail(awsBluePrintDto, member);
+        String keyname = awsS3Helper.saveThumbnail(awsBluePrintDto, member);
 
         // BluePrint 저장
         AwsBluePrint awsBluePrint = new AwsBluePrint();
@@ -167,25 +170,8 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         awsBluePrint.setMember(member);
         awsBluePrint.setScope(awsBluePrintDto.getScope() == null ? BluePrintScope.PRIVATE : awsBluePrintDto.getScope());
         awsBluePrint.setKeyName(keyname);
-
+        awsBluePrint.setIsTemplate(false);
         return awsBluePrintRepository.save(awsBluePrint);
-    }
-
-    // thumbnail 저장
-    private String saveThumbnail(AwsBluePrintDto bluePrint, Member member) {
-        String objectKey = _getObjectKey(member.getOauthId(), bluePrint.getUuid());
-        logger.info("thumbnail upload start: {}", objectKey);
-        try {
-            byte[] svgContent = Base64.getDecoder().decode(bluePrint.getSvgFile().split(",")[1]);
-            MultipartFile svgFile = new MockMultipartFile("file", objectKey, "image/svg+xml", svgContent);
-            awsS3Helper.putS3Object(svgFile, objectKey);
-            logger.info("thumbnail upload success: {}", objectKey);
-            logger.info("thumbnail url: {}", awsS3Helper.getPresignedUrl(objectKey));
-        } catch (Exception e) {
-            logger.error("thumbnail upload failed: {}", e.getMessage());
-        }
-
-        return objectKey;
     }
 
     // ComponentLine 저장
@@ -207,7 +193,10 @@ public class AwsBlueprintServiceImpl implements AwsBlueprintService {
         awsAreaRepository.saveAll(awsArea);
     }
 
-    private String _getObjectKey(String memberId, String blueprintId) {
-        return memberId + "/" + blueprintId + ".svg";
+    @Override
+    public Object getInfraCost(String uuid, String userId) {
+        return infraCostRepository.findByUuid(uuid);
     }
+
+
 }

@@ -20,7 +20,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+
+import java.io.IOException;
+
 import java.util.List;
+
+import static java.lang.Boolean.parseBoolean;
 
 @Tag(name = "TemplateController", description = "TemplateController")
 @RestController
@@ -31,7 +36,6 @@ public class TemplateController {
     private final AwsTemplateService templateService;
     private final AwsBlueprintService awsBlueprintService;
     private final Logger logger = LoggerFactory.getLogger(TemplateController.class);
-    private final MessageProducer sender;
 
     @Operation(
             summary = "Template 전체 조회하기",
@@ -41,6 +45,18 @@ public class TemplateController {
     public List<TemplatePreviewDto> getAll(PagingDto page) {
         Pageable pageable = PagingDto.createPageAble(page);
         return templateService.getAll(pageable);
+    }
+
+    @Operation(
+            summary = "template 으로 blueprint 생성하기(static file)",
+            description = "Requires authentication.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PostMapping("")
+    @AuthorizationFromToken
+    public ResultDto createTemplate(@RequestBody AwsBluePrintDto awsBluePrintDto, @RequestParam String name, @RequestParam String provision, String userId) throws IOException {
+        templateService.deployTemplate(awsBluePrintDto, name, parseBoolean(provision), userId);
+        return ResultDto.builder().result(true).build();
     }
 
     @Operation(

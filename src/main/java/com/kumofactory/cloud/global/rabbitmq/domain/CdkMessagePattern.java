@@ -1,5 +1,5 @@
 package com.kumofactory.cloud.global.rabbitmq.domain;
 
 public enum CdkMessagePattern {
-    USER, KUMO
+    USER, KUMO, TEMPLATE, COST
 }

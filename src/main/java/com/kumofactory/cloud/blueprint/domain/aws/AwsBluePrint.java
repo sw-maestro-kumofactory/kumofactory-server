@@ -17,6 +17,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class AwsBluePrint extends BaseBluePrint {
+    @Column(nullable = false)
+    private String templateName = "undefined";
+
     @OneToMany(mappedBy = "bluePrint", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AwsArea> areas;
 

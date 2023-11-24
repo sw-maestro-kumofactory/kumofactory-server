@@ -9,9 +9,18 @@ public class GitHubRepoDto {
             @JsonProperty("name") String name,
             @JsonProperty("fullName") String fullName,
             @JsonProperty("private") Boolean isPrivate,
-            @JsonProperty("fork") Boolean isFork
-    ) {
-    }
+            @JsonProperty("fork") Boolean isFork,
+            @JsonProperty("forksCount") Integer forksCount,
+            @JsonProperty("description") String description,
+            @JsonProperty("language") String language,
+            @JsonProperty("stargazersUrl") String stargazersUrl,
+            @JsonProperty("starCount") Integer starCount,
+            @JsonProperty("openIssuesCount") Integer openIssuesCount,
+            @JsonProperty("visibility") String visibility,
+            @JsonProperty("updatedAt") String updatedAt,
+            @JsonProperty("createdAt") String createdAt
+
+    ) { }
 
     public record UserDto(
 //            @JsonProperty("personal_repo_count") Integer personalRepoCount,
